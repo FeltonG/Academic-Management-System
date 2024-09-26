@@ -58,7 +58,19 @@ public class alumnoValidator {
 
             throw new IllegalArgumentException("Debe ingresar apellido ");
         }
+        if(!alumnoDto.getApellido().matches("^[A-Za-záéíóúÁÉÍÓÚÑñ ]+$"))
+        {
+            throw new IllegalArgumentException(" Utilice caracteres correctos.");
+        }
 
+        if(alumnoDto.getApellido().length()<=2)
+        {
+            throw new IllegalArgumentException(" no abrevies el nombre  ");
+        }
+        if(alumnoDto.getApellido().length()>12)
+        {
+            throw new IllegalArgumentException(" No se permiten nombre tan largo  ");
+        }
 
 
 
