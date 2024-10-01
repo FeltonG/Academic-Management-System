@@ -1,7 +1,8 @@
 package ar.edu.utn.frbb.tup.persistence;
 
+import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.Profesor;
 
 public interface ProfesorDao {
-    public Profesor get(long id);
+    public void guardarProfesor(Profesor profesor);
 }

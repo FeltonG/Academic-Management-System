@@ -22,6 +22,15 @@ public class Alumno {
 
     }
 
+    public Alumno(long id, String nombre, String apellido, long dni) {
+
+        this.id = id;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.dni = dni;
+
+    }
+
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }

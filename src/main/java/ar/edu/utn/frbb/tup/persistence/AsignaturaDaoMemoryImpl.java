@@ -1,12 +1,14 @@
 package ar.edu.utn.frbb.tup.persistence;
 
 import ar.edu.utn.frbb.tup.model.Asignatura;
+import org.springframework.stereotype.Service;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-public class AsignaturaDaoMemoryImpl implements AsignaturaDao {
+@Service
+public  abstract class AsignaturaDaoMemoryImpl implements AsignaturaDao {
 
     private static final String CSV_FILE_PATH = "ar/edu/utn/frbb/tup/persistence/dataCSV/asignaturaDATA.csv";
 

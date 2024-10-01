@@ -24,11 +24,21 @@ public class AlumnoServiceImpl implements AlumnoService {
     public Alumno crearAlumno(AlumnoDto alumnodto) {
         // el servicio ademas de crear la informacion y retornarla la almacena en DAO
         // tambien lo que hace es VERIFICAR que todo este BIEN antes de el guardado.
-
         Alumno alumno = new Alumno(alumnodto.getNombre(), alumnodto.getApellido(),alumnodto.getDni());
         alumnoDaoMemoryImpl.guardarAlumno(alumno);
         return alumno; // lo retorno
     }
+
+    @Override
+    public Alumno borrarAlumno(long id) {
+        // primero salgo a buscarlo.
+        Alumno alumnoExistente = alumnoDaoMemoryImpl.buscarAlumno(id);
+        if (alumnoExistente != null)
+        {
+            alumnoDaoMemoryImpl.borrarAlumno(alumnoExistente);
+        }
+    }
+
     @Override
     public void aprobarAsignatura(int materiaId, int nota, long dni) throws EstadoIncorrectoException, CorrelatividadesNoAprobadasException {
 

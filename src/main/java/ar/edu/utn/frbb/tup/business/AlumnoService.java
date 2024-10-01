@@ -10,5 +10,7 @@ public interface AlumnoService {
 
     Alumno crearAlumno(AlumnoDto alumno);
 
+    Alumno borrarAlumno(long id);
+
     Alumno buscarAlumno(String apellidoAlumno);
 }

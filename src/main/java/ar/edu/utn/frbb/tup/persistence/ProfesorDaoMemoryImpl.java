@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 @Service
-public class ProfesorDaoMemoryImpl implements ProfesorDao{
+public  abstract class ProfesorDaoMemoryImpl implements ProfesorDao{
 
     private static final String CSV_FILE_PATH = "ar/edu/utn/frbb/tup/persistence/dataCSV/profesorDATA.csv";
 
@@ -52,8 +52,5 @@ public class ProfesorDaoMemoryImpl implements ProfesorDao{
 
 
 
-    @Override
-    public Profesor get(long id) {
-            return new Profesor("Luciano", "Salotto", "Lic. Ciencias Computación");
-    }
+
 }
