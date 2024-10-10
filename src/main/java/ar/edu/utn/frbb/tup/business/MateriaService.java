@@ -9,6 +9,11 @@ import java.util.List;
 public interface MateriaService {
     Materia crearMateria(MateriaDto materia);
 
+    Materia buscarmateriaId(long id);
+
+    Materia buscarmateriaDni(int Dni);
+
+    Materia buscarMateria();
 
 
 }

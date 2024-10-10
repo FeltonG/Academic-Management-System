@@ -30,8 +30,18 @@ public class MateriaServiceImpl implements MateriaService {
         return materia; // lo retorno
     }
 
+    @Override
+    public Materia buscarMateria() {
+        return null;
+    }
 
+    @Override
+    public Materia buscarmateriaDni(int Dni) {
+        return null;
+    }
 
-
-
+    @Override
+    public Materia buscarmateriaId(long id) {
+        return null;
+    }
 }

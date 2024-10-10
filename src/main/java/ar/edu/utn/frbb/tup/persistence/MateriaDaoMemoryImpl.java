@@ -5,12 +5,8 @@ import ar.edu.utn.frbb.tup.model.Materia;
 
 import org.springframework.stereotype.Service;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.io.*;
+import java.util.*;
 
 @Service
 public  abstract class MateriaDaoMemoryImpl implements MateriaDao {
@@ -57,4 +53,109 @@ public  abstract class MateriaDaoMemoryImpl implements MateriaDao {
 
 
 
+    @Override
+    public List<Materia> buscarMateria() {
+        List<Materia> materias = new ArrayList<>();
+        BufferedReader bufferedReader = null;
+
+        try {
+            bufferedReader = new BufferedReader(new FileReader(CSV_FILE_PATH));
+            String linea;
+
+            while ((linea = bufferedReader.readLine()) != null) {
+                String[] datos = linea.split(",");
+
+                if (datos.length < 5) {
+                    System.err.println("Línea con formato incorrecto: " + linea);
+                    continue; // Saltar líneas con formato incorrecto
+                }
+
+                try {
+                    String nombre = String.valueOf(datos[1].trim());
+                    int cuatrimestre =Integer.parseInt(datos[3].trim());
+                    int anio = Integer.parseInt(datos[2].trim());
+                    long idprofesor = Long.parseLong(datos[3].trim());
+
+                    Materia materia = new Materia(nombre,anio,cuatrimestre,idprofesor);
+                    materias.add(materia);
+                } catch (NumberFormatException e) {
+                    System.err.println("Error al parsear números en la línea: " + linea);
+                    // Puedes decidir si continuar o lanzar una excepción
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo CSV: " + e.getMessage());
+            // Dependiendo de tu lógica, podrías lanzar una excepción aquí
+        } finally {
+            if (bufferedReader != null) {
+                try {
+                    bufferedReader.close();
+                } catch (IOException e) {
+                    System.err.println("Error al cerrar el archivo: " + e.getMessage());
+                }
+            }
+        }
+
+        return materias;
+    }
+
+    @Override
+    public Materia buscarMateriaId(long id) {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(CSV_FILE_PATH))) {
+            String linea;
+            while ((linea = bufferedReader.readLine()) != null) {
+                String[] datos = linea.split(","); //
+                if (datos.length < 5) {
+                    System.err.println("Línea con formato incorrecto: " + linea);
+                    continue; // Salta la línea con formato incorrecto
+                }
+                try {
+                    String nombre= String.valueOf(datos[1]);
+                    int anio=Integer.parseInt(datos[2]);
+                    int cuatrimestre=Integer.parseInt(datos[3]);
+                    long idprofesor = Long.parseLong(datos[4].trim());
+
+
+                    if (idprofesor ==id) {
+                        return new Materia(nombre,anio,cuatrimestre,idprofesor);
+                    }
+                } catch (NumberFormatException e) {
+                    System.err.println("Error al parsear número: " + e.getMessage());
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo CSV: " + e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
+    public Materia buscarMateriaDni(int Dni) {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(CSV_FILE_PATH))) {
+            String linea;
+            while ((linea = bufferedReader.readLine()) != null) {
+                String[] datos = linea.split(","); //
+                if (datos.length < 5) {
+                    System.err.println("Línea con formato incorrecto: " + linea);
+                    continue; // Salta la línea con formato incorrecto
+                }
+                try {
+                    String nombre= String.valueOf(datos[1]);
+                    int anio=Integer.parseInt(datos[2]);
+                    int cuatrimestre=Integer.parseInt(datos[3]);
+                    long idprofesor = Long.parseLong(datos[4].trim());
+
+
+                    if (idprofesor ==id) {
+                        return new Materia(nombre,anio,cuatrimestre,idprofesor);
+                    }
+                } catch (NumberFormatException e) {
+                    System.err.println("Error al parsear número: " + e.getMessage());
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo CSV: " + e.getMessage());
+        }
+        return null;
+    }
 }
