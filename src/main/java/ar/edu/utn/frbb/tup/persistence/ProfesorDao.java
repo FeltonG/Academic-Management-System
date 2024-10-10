@@ -5,4 +5,6 @@ import ar.edu.utn.frbb.tup.model.Profesor;
 
 public interface ProfesorDao {
     public void guardarProfesor(Profesor profesor);
+    public Profesor borrarProfesorporid(long id);
+    public Profesor buscarProfesorporid(long id);
 }

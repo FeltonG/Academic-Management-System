@@ -8,6 +8,8 @@ import ar.edu.utn.frbb.tup.model.dto.AlumnoDto;
 import ar.edu.utn.frbb.tup.model.dto.AsignaturaDto;
 import ar.edu.utn.frbb.tup.persistence.AsignaturaDaoMemoryImpl;
 
+import java.util.List;
+
 public class AsignaturaServiceImpl implements AsignaturaService {
 
     private AsignaturaDaoMemoryImpl asignaturaDaoMemoryImpl;
@@ -21,9 +23,23 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         return asignatura; // lo retorno
     }
 
+    @Override
+    public Asignatura buscarAsignaturaDni(int Dni) {
+        Asignatura asignatura = asignaturaDaoMemoryImpl.buscarAsignaturaporDni(Dni);
+        return asignatura;
+    }
 
+    @Override
+    public Asignatura buscarAsignaturaId(long id) {
+        Asignatura asignatura=asignaturaDaoMemoryImpl.buscarAsignaturaporId(id);
+        return asignatura;
+    }
 
-
+    public List<Asignatura> buscarAsignatura()
+    {
+        List<Asignatura> lista_de_asignaturas = asignaturaDaoMemoryImpl.buscarAsignatura();
+        return lista_de_asignaturas;
+    }
     @Override
     public Asignatura getAsignatura(int materiaId, long dni) {
         return null;

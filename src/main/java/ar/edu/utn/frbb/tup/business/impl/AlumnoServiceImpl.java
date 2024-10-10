@@ -11,13 +11,18 @@ import ar.edu.utn.frbb.tup.model.exception.CorrelatividadesNoAprobadasException;
 import ar.edu.utn.frbb.tup.model.exception.EstadoIncorrectoException;
 import ar.edu.utn.frbb.tup.persistence.AlumnoDao;
 import ar.edu.utn.frbb.tup.persistence.AlumnoDaoMemoryImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Random;
 
 @Component
 public class AlumnoServiceImpl implements AlumnoService {
 
+    @Autowired
+    // el objetivo de este objeto debajo es usar las herramientas de Dao sin ser por ejemplo
+    // un alumno existente
     private  AlumnoDaoMemoryImpl alumnoDaoMemoryImpl;
 
     @Override
@@ -32,20 +37,63 @@ public class AlumnoServiceImpl implements AlumnoService {
     @Override
     public Alumno borrarAlumno(long id) {
         // primero salgo a buscarlo.
-        Alumno alumnoExistente = alumnoDaoMemoryImpl.buscarAlumno(id);
+        Alumno alumnoExistente = alumnoDaoMemoryImpl.buscarAlumnoporid(id);
         if (alumnoExistente != null)
         {
-            alumnoDaoMemoryImpl.borrarAlumno(alumnoExistente);
+            alumnoDaoMemoryImpl.borrarAlumnoporid(id);
         }
+        return alumnoExistente;
     }
 
-    @Override
+    /*@Override
     public void aprobarAsignatura(int materiaId, int nota, long dni) throws EstadoIncorrectoException, CorrelatividadesNoAprobadasException {
 
-    }
+    }*/
+
+
     @Override
-    public Alumno buscarAlumno(String apellidoAlumno) {
-        return null;
+    public Alumno buscarAlumnoId(long id) {
+        Alumno alumno = alumnoDaoMemoryImpl.buscarAlumnoporid(id);
+        return alumno;
+    }
+
+    // buscar alumno dni
+    public Alumno buscarAlumnoDni(int dni) {
+        Alumno alumno = alumnoDaoMemoryImpl.buscarAlumnoporDni(dni);
+        return alumno;
+    }
+
+
+    public Alumno modificarAlumno(long id, AlumnoDto alumnoModificado)
+    {
+
+        // a traves del id por parametro se busca si ese id pertenece a un alumno existente
+        Alumno alumnoExistente = alumnoDaoMemoryImpl.buscarAlumnoporid(id);
+        if (alumnoExistente != null)
+        {
+            alumnoDaoMemoryImpl.borrarAlumnoporid(id);
+        }
+
+        // cambiar (uno a uno) los datos del alumnoExistente (existente de dao->csv)
+        // los datos son reemplezados por el alumnoModificado
+        alumnoExistente.setDni(alumnoModificado.getDni());
+        // hacer lo mismo para apellido y nombre
+        alumnoExistente.setApellido(alumnoModificado.getApellido());
+        alumnoExistente.setNombre(alumnoModificado.getNombre());
+
+        // el problema es el siguiente: necesitamos modificar alumnoExistente usando alumnoDaoMemoryImpl.
+        // pero no puedo llamar a modificaralumno desde alumnoExistente
+        alumnoDaoMemoryImpl.modificarAlumno(alumnoExistente);
+        // Cuidado que debemos de crear un xxxx_DaoMemoryImpl con Autowired con el fin de que pueda usar
+        // el metodo modificarAlumno desde un dato que no es en si un alumno real.
+        return alumnoExistente;
+
+    }
+
+    public List<Alumno> buscarAlumnos()
+    {
+        List<Alumno> lista_de_alumnos = alumnoDaoMemoryImpl.buscarAlumnos();
+        return lista_de_alumnos;
     }
 
 
