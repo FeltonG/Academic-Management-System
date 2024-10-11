@@ -9,9 +9,23 @@ import java.util.List;
 public interface AsignaturaDao {
 
     public void guardarAsignatura(Asignatura asignatura);
-    public Asignatura buscarAsignaturaporDni(int Dni);
-    public Asignatura modificarASignatura(Asignatura asignatura);
+
     public List<Asignatura> buscarAsignatura();
+
     public Asignatura buscarAsignaturaporId(long id);
+
+    public Asignatura buscarAsignaturaporDni(int Dni);
+
+    public Asignatura borrarAsignaturaDni(int Dni);
+
+    public Asignatura borrarAsignaturaporid(long id);
+
+    public Asignatura modificarAsignatura(Asignatura asignatura);
+
+
+
+
+
+
 
 }

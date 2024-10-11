@@ -64,30 +64,29 @@ public class AlumnoServiceImpl implements AlumnoService {
     }
 
 
-    public Alumno modificarAlumno(long id, AlumnoDto alumnoModificado)
-    {
+    @Override
+    public Alumno modificarAlumno(long id, AlumnoDto alumnoModificado) {
 
-        // a traves del id por parametro se busca si ese id pertenece a un alumno existente
+        // Buscar si existe el alumno a través del id
         Alumno alumnoExistente = alumnoDaoMemoryImpl.buscarAlumnoporid(id);
-        if (alumnoExistente != null)
-        {
-            alumnoDaoMemoryImpl.borrarAlumnoporid(id);
+
+        if (alumnoExistente != null) {
+            // Actualizar los datos del alumno existente con los nuevos datos del DTO
+            alumnoExistente.setDni(alumnoModificado.getDni());
+            alumnoExistente.setApellido(alumnoModificado.getApellido());
+            alumnoExistente.setNombre(alumnoModificado.getNombre());
+            // Aquí puedes seguir actualizando otros campos que tengas en AlumnoDto
+
+            // Guardar los cambios
+            alumnoDaoMemoryImpl.modificarAlumno(alumnoExistente);
+
+            // Retornar el alumno modificado
+            return alumnoExistente;
+        } else {
+            // Si no se encuentra el alumno, retornar null o lanzar una excepción
+            System.out.println("No se encontró un alumno con el id proporcionado");
+            return null;
         }
-
-        // cambiar (uno a uno) los datos del alumnoExistente (existente de dao->csv)
-        // los datos son reemplezados por el alumnoModificado
-        alumnoExistente.setDni(alumnoModificado.getDni());
-        // hacer lo mismo para apellido y nombre
-        alumnoExistente.setApellido(alumnoModificado.getApellido());
-        alumnoExistente.setNombre(alumnoModificado.getNombre());
-
-        // el problema es el siguiente: necesitamos modificar alumnoExistente usando alumnoDaoMemoryImpl.
-        // pero no puedo llamar a modificaralumno desde alumnoExistente
-        alumnoDaoMemoryImpl.modificarAlumno(alumnoExistente);
-        // Cuidado que debemos de crear un xxxx_DaoMemoryImpl con Autowired con el fin de que pueda usar
-        // el metodo modificarAlumno desde un dato que no es en si un alumno real.
-        return alumnoExistente;
-
     }
 
     public List<Alumno> buscarAlumnos()

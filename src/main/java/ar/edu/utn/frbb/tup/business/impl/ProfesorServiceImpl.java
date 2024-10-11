@@ -13,6 +13,8 @@ import ar.edu.utn.frbb.tup.persistence.ProfesorDaoMemoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProfesorServiceImpl implements ProfesorService {
     @Autowired
@@ -37,10 +39,7 @@ public class ProfesorServiceImpl implements ProfesorService {
        return profesorexistente;
     }
 
-    @Override
-    public Profesor buscarProfesor(long id) {
-        return null;
-    }
+
 
     @Override
     public Profesor borrarProfesorporid(long id) {
@@ -54,5 +53,23 @@ public class ProfesorServiceImpl implements ProfesorService {
 
         // Si el profesor no existe, puedes lanzar una excepción o retornar null.
         return null;
+    }
+
+    @Override
+    public List<Profesor> buscarProfesor() {
+        List<Profesor> lista_de_profesor = profesorDaoMemoryimpl.buscarProfesor();
+        return lista_de_profesor;
+    }
+
+    @Override
+    public Profesor buscaProfesorporid(long id) {
+        Profesor profesordni=profesorDaoMemoryimpl.buscarProfesorporid(id);
+        return profesordni;
+    }
+
+    @Override
+    public Profesor buscarProfesorporDni(int dni) {
+        Profesor profesorId=profesorDaoMemoryimpl.buscarProfesorDni(dni);
+        return  profesorId;
     }
 }

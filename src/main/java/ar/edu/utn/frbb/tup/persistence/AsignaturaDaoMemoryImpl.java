@@ -3,7 +3,9 @@ package ar.edu.utn.frbb.tup.persistence;
 import ar.edu.utn.frbb.tup.model.Alumno;
 import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.EstadoAsignatura;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -157,5 +159,190 @@ public  abstract class AsignaturaDaoMemoryImpl implements AsignaturaDao {
 
     }
 
+    @Override
+    public Asignatura modificarAsignatura(Asignatura asignatura) {
+        File inputFile = new File(CSV_FILE_PATH);
+        File tempFile = new File("tempFile.csv");
+        BufferedReader bufferedReader = null;
+        PrintWriter printWriter = null;
+        Asignatura asignaturamodificado = null;
+
+        try {
+            bufferedReader = new BufferedReader(new FileReader(inputFile));
+            printWriter = new PrintWriter(new FileWriter(tempFile));
+            String linea;
+
+            while ((linea = bufferedReader.readLine()) != null) {
+                String[] datos = linea.split(",");
+                if (datos.length < 5) {
+                    // Si la línea no tiene el formato correcto, la copiamos tal cual
+                    printWriter.println(linea);
+                    continue;
+                }
+
+                long id= Long.parseLong(datos[0]);
+
+                if (id == asignatura.getId()) {
+                    // Reemplazamos la línea con los datos actualizados del alumno
+                    printWriter.println(
+                            asignatura.getId() + "," +
+                                    asignatura.getNota() + "," +
+                                    asignatura.getIdmateria() + "," +
+                                    asignatura.getEstado()+ ","+
+                                    asignatura.getIdalumno()+ ","+
+                                    asignatura.getNota()
+
+                    );
+                    asignaturamodificado = asignatura;
+                } else {
+                    // Escribimos la línea existente sin modificaciones
+                    printWriter.println(linea);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error al procesar el archivo CSV: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al modificar la asignatura.");
+        } finally {
+            try {
+                if (bufferedReader != null) bufferedReader.close();
+                if (printWriter != null) printWriter.close();
+            } catch (IOException e) {
+                System.err.println("Error al cerrar los recursos: " + e.getMessage());
+            }
+        }
+
+        // Reemplazamos el archivo original con el temporal
+        if (inputFile.delete()) {
+            if (!tempFile.renameTo(inputFile)) {
+                System.err.println("No se pudo renombrar el archivo temporal.");
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al renombrar el archivo temporal.");
+            }
+        } else {
+            System.err.println("No se pudo eliminar el archivo original.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al eliminar el archivo original.");
+        }
+
+        if (asignaturamodificado != null) {
+            System.out.println("asignatura modificado exitosamente.");
+            return asignaturamodificado;
+        } else {
+            System.out.println("No se encontró un asignatura con el ID proporcionado.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "asignatura no encontrado.");
+        }
+    }
+
+    @Override
+    public Asignatura borrarAsignaturaporid(long id) {
+        File inputFile = new File(CSV_FILE_PATH);
+        BufferedReader bufferedReader = null;
+        File tempFile = new File("tempFile.csv");
+        PrintWriter printWriter = null;
+        Asignatura asignaturaEliminada = null;
+
+        try {
+            bufferedReader = new BufferedReader(new FileReader(inputFile));
+            printWriter = new PrintWriter(new FileWriter(tempFile));
+            String linea;
+
+            while ((linea = bufferedReader.readLine()) != null) {
+                String[] datos = linea.split(",");
+                int nota = Integer.parseInt(datos[0].trim());
+                long idmateria = Long.parseLong(datos[1].trim());
+                long idalumno = Long.parseLong(datos[2].trim());
+
+                // Si el id de la materia no coincide, escribir la línea en el archivo temporal
+                if (idmateria != id) {
+                    printWriter.println(linea);
+                } else {
+                    // Si coincide, guardar la asignatura eliminada
+                    asignaturaEliminada = new Asignatura(nota, idalumno, idmateria);
+                }
+            }
+
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo CSV: " + e.getMessage());
+        } finally {
+            try {
+                if (bufferedReader != null) bufferedReader.close();
+                if (printWriter != null) printWriter.close();
+            } catch (IOException e) {
+                System.err.println("Error al cerrar los recursos: " + e.getMessage());
+            }
+        }
+
+        if (asignaturaEliminada != null) {
+            if (!inputFile.delete()) {
+                System.out.println("No se pudo eliminar el archivo original");
+                return null;
+            }
+            if (!tempFile.renameTo(inputFile)) {
+                System.out.println("No se pudo renombrar el archivo temporal");
+                return null;
+            }
+            System.out.println("Asignatura eliminada exitosamente!");
+
+            return asignaturaEliminada;
+        } else {
+            System.out.println("No existe asignatura con el id proporcionado: " + id);
+            return null;
+        }
+    }
+
+    @Override
+    public Asignatura borrarAsignaturaDni(int Dni) {
+        File inputFile = new File(CSV_FILE_PATH);
+        BufferedReader bufferedReader = null;
+        File tempFile = new File("tempFile.csv");
+        PrintWriter printWriter = null;
+        Asignatura asignaturaEliminada = null;
+
+        try {
+            bufferedReader = new BufferedReader(new FileReader(inputFile));
+            printWriter = new PrintWriter(new FileWriter(tempFile));
+            String linea;
+
+            while ((linea = bufferedReader.readLine()) != null) {
+                String[] datos = linea.split(",");
+                int nota = Integer.parseInt(datos[0].trim());
+                long idmateria = Long.parseLong(datos[1].trim());
+                long idalumno = Long.parseLong(datos[2].trim());
+
+                // Si el id del alumno no coincide, escribir la línea en el archivo temporal
+                if (idalumno != Dni) {
+                    printWriter.println(linea);
+                } else {
+                    // Si coincide, guardar la asignatura eliminada
+                    asignaturaEliminada = new Asignatura(nota, idalumno, idmateria);
+                }
+            }
+
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo CSV: " + e.getMessage());
+        } finally {
+            try {
+                if (bufferedReader != null) bufferedReader.close();
+                if (printWriter != null) printWriter.close();
+            } catch (IOException e) {
+                System.err.println("Error al cerrar los recursos: " + e.getMessage());
+            }
+        }
+
+        if (asignaturaEliminada != null) {
+            if (!inputFile.delete()) {
+                System.out.println("No se pudo eliminar el archivo original");
+                return null;
+            }
+            if (!tempFile.renameTo(inputFile)) {
+                System.out.println("No se pudo renombrar el archivo temporal");
+                return null;
+            }
+            System.out.println("Asignatura eliminada exitosamente!");
+
+            return asignaturaEliminada;
+        } else {
+            System.out.println("No existe asignatura para el DNI proporcionado: " + Dni);
+            return null;
+        }
+    }
 
 }

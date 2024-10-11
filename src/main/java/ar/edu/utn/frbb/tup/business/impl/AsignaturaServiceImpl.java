@@ -45,5 +45,39 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         return null;
     }
 
+    @Override
+    public Asignatura borrarAsignatura(long id) {
+        // primero salgo a buscarlo.
+        Asignatura asignatura_Existente = asignaturaDaoMemoryImpl.borrarAsignaturaporid(id);
+        if (asignatura_Existente != null)
+        {
+            asignaturaDaoMemoryImpl.borrarAsignaturaporid(id);
+        }
+        return asignatura_Existente;
+    }
+
+    @Override
+    public Asignatura modificarAsignatura(long id, AsignaturaDto asignaturaDto) {
+
+        // Buscar si existe la asignatura a través del id
+        Asignatura asignaturaExistente = asignaturaDaoMemoryImpl.buscarAsignaturaporId(id);
+
+        if (asignaturaExistente != null) {
+            // Actualizar los datos de la asignatura existente con los nuevos datos del DTO
+            asignaturaExistente.setNota(asignaturaDto.getNota());
+            asignaturaExistente.setIdalumno(asignaturaDto.getIdalumno());
+            asignaturaExistente.setIdmateria(asignaturaDto.getIdmateria()); // Corregido el error de sintaxis
+
+            // Guardar los cambios
+            asignaturaDaoMemoryImpl.modificarAsignatura(asignaturaExistente);
+
+            // Retornar la asignatura modificada
+            return asignaturaExistente;
+        }
+
+        // Si no se encontró la asignatura, imprimir un mensaje y retornar null
+        System.out.println("No se encontró la asignatura con el id proporcionado: " + id);
+        return null;
+    }
 
 }
