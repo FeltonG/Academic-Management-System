@@ -16,10 +16,10 @@ public interface AsignaturaService {
 
     List<Asignatura> buscarAsignatura();
 
-    Asignatura getAsignatura(int materiaId, long dni);
-
     Asignatura modificarAsignatura(long id, AsignaturaDto asignatura);
 
-    Asignatura borrarAsignatura(long id);
+    Asignatura borrarAsignaturaporid(long id);
+
+    Asignatura borrarAsignaturaporDni(int dni);
 
 }

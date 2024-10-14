@@ -5,6 +5,7 @@ import ar.edu.utn.frbb.tup.business.ProfesorService;
 import ar.edu.utn.frbb.tup.model.Alumno;
 import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.Materia;
+import ar.edu.utn.frbb.tup.model.Profesor;
 import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
 import ar.edu.utn.frbb.tup.persistence.MateriaDao;
 import ar.edu.utn.frbb.tup.persistence.MateriaDaoMemoryImpl;
@@ -51,12 +52,32 @@ public class MateriaServiceImpl implements MateriaService {
 
     @Override
     public Materia modificarMateria(long id, MateriaDto materia) {
-        System.out.println("preguntar esta");
-        return null;
+
+        // Buscar si existe el alumno a través del id
+        Materia materiaExistente= materiaDaoMemoryimp.buscarMateriaId(id);
+
+        if (materiaExistente != null) {
+            // Actualizar los datos del alumno existente con los nuevos datos del DTO
+            materiaExistente.getNombre();
+            materiaExistente.getCuatrimestre();
+            materiaExistente.getAnio();
+
+            // Aquí puedes seguir actualizando otros campos que tengas en AlumnoDto
+
+            // Guardar los cambios
+            materiaDaoMemoryimp.modificarMateria(materiaExistente);
+
+            // Retornar el alumno modificado
+            return materiaExistente;
+        } else {
+            // Si no se encuentra el alumno, retornar null o lanzar una excepción
+            System.out.println("No se encontró un profesor con el id proporcionado");
+            return null;
+        }
     }
 
     @Override
-    public Materia borrarMateria(long id) {
+    public Materia borrarmateriaId(long id) {
         // primero salgo a buscarlo.
         Materia materia_Existente = materiaDaoMemoryimp.buscarMateriaId(id);
         if (materia_Existente != null)
@@ -66,4 +87,13 @@ public class MateriaServiceImpl implements MateriaService {
         return materia_Existente;
     }
 
+    @Override
+    public Materia borrarmateriaDni(int dni) {
+        Materia materia_Existente = materiaDaoMemoryimp.borrarmateriaDni(dni);
+        if (materia_Existente != null)
+        {
+            materiaDaoMemoryimp.borrarmateriaDni(dni);
+        }
+        return materia_Existente;
+    }
 }

@@ -12,7 +12,10 @@ public interface AlumnoService {
 
     Alumno crearAlumno(AlumnoDto alumno);
 
-    Alumno borrarAlumno(long id);
+    Alumno borraralumnoId(long id);
+
+    Alumno borraralumnoDni(int dni);
+
 
     Alumno buscarAlumnoId(long id);
 
@@ -21,5 +24,6 @@ public interface AlumnoService {
     Alumno modificarAlumno(long id, AlumnoDto alumno);
 
     List<Alumno> buscarAlumnos();
+
 
 }

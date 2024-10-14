@@ -3,6 +3,7 @@ package ar.edu.utn.frbb.tup.persistence;
 import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.Materia;
 
+import ar.edu.utn.frbb.tup.model.Profesor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -283,7 +284,77 @@ public  abstract class MateriaDaoMemoryImpl implements MateriaDao {
 
     @Override
     public Materia modificarMateria(Materia materia) {
-        return null;
-    }
+        File inputFile = new File(CSV_FILE_PATH);
+        File tempFile = new File("tempFile.csv");
+        BufferedReader bufferedReader = null;
+        PrintWriter printWriter = null;
+        Materia materiaModificada = null;
 
+        try {
+            bufferedReader = new BufferedReader(new FileReader(inputFile));
+            printWriter = new PrintWriter(new FileWriter(tempFile));
+            String linea;
+
+            while ((linea = bufferedReader.readLine()) != null) {
+                String[] datos = linea.split(",");
+                if (datos.length < 4) {  // Se espera que haya al menos 4 campos: nombre, anio, cuatrimestre, profesorId
+                    printWriter.println(linea);  // Si la línea no tiene el formato correcto, la copiamos tal cual
+                    continue;
+                }
+
+                String nombre = datos[0];
+                int anio = Integer.parseInt(datos[1]);
+                int cuatrimestre = Integer.parseInt(datos[2]);
+                long profesorId = Long.parseLong(datos[3]);
+
+                // Comparar con los datos de la materia a modificar
+                if (nombre.equals(materia.getNombre()) && anio == materia.getAnio() && cuatrimestre == materia.getCuatrimestre()) {
+                    // Reemplazar la línea con los datos actualizados de la asignatura
+                    printWriter.println(
+                            materia.getNombre() + "," +          // Nombre de la materia
+                                    materia.getAnio() + "," +            // Año de la materia
+                                    materia.getCuatrimestre() + ","    // Cuatrimestre de la materia
+                                                  // ID del profesor
+                    );
+
+                    materiaModificada = materia;  // Guardar la referencia de la materia modificada
+                } else {
+                    // Escribir la línea existente sin modificaciones
+                    printWriter.println(linea);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error al procesar el archivo CSV: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al modificar la asignatura.");
+        } finally {
+            try {
+                if (bufferedReader != null) bufferedReader.close();
+                if (printWriter != null) printWriter.close();
+            } catch (IOException e) {
+                System.err.println("Error al cerrar los recursos: " + e.getMessage());
+            }
+        }
+
+// Reemplazar el archivo original con el archivo temporal
+        if (inputFile.delete()) {
+            if (!tempFile.renameTo(inputFile)) {
+                System.err.println("No se pudo renombrar el archivo temporal.");
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al renombrar el archivo temporal.");
+            }
+        } else {
+            System.err.println("No se pudo eliminar el archivo original.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al eliminar el archivo original.");
+        }
+
+// Devolver la materia modificada si se realizó el cambio
+        if (materiaModificada != null) {
+            System.out.println("Asignatura modificada exitosamente.");
+            return materiaModificada;
+        } else {
+            System.out.println("No se encontró una asignatura con los datos proporcionados.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Asignatura no encontrada.");
+        }
+
+
+    }
 }

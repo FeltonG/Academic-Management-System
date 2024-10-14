@@ -35,7 +35,7 @@ public class AlumnoServiceImpl implements AlumnoService {
     }
 
     @Override
-    public Alumno borrarAlumno(long id) {
+    public Alumno borraralumnoId(long id) {
         // primero salgo a buscarlo.
         Alumno alumnoExistente = alumnoDaoMemoryImpl.buscarAlumnoporid(id);
         if (alumnoExistente != null)
@@ -45,6 +45,16 @@ public class AlumnoServiceImpl implements AlumnoService {
         return alumnoExistente;
     }
 
+    @Override
+    public Alumno borraralumnoDni(int dni) {
+        // primero salgo a buscarlo.
+        Alumno alumnoExistente = alumnoDaoMemoryImpl.borrarAlumnoDNI(dni);
+        if (alumnoExistente != null)
+        {
+            alumnoDaoMemoryImpl.borrarAlumnoDNI(dni);
+        }
+        return alumnoExistente;
+    }
     /*@Override
     public void aprobarAsignatura(int materiaId, int nota, long dni) throws EstadoIncorrectoException, CorrelatividadesNoAprobadasException {
 

@@ -19,7 +19,9 @@ public interface MateriaService {
 
     Materia modificarMateria(long id, MateriaDto materia);
 
-    Materia borrarMateria(long id);
+    Materia borrarmateriaId(long id);
+
+    Materia borrarmateriaDni(int dni);
 
 
 }

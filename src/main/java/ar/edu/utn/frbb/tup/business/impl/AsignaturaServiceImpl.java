@@ -40,13 +40,10 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         List<Asignatura> lista_de_asignaturas = asignaturaDaoMemoryImpl.buscarAsignatura();
         return lista_de_asignaturas;
     }
-    @Override
-    public Asignatura getAsignatura(int materiaId, long dni) {
-        return null;
-    }
+
 
     @Override
-    public Asignatura borrarAsignatura(long id) {
+    public Asignatura borrarAsignaturaporid(long id) {
         // primero salgo a buscarlo.
         Asignatura asignatura_Existente = asignaturaDaoMemoryImpl.borrarAsignaturaporid(id);
         if (asignatura_Existente != null)
@@ -80,4 +77,14 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         return null;
     }
 
+    @Override
+    public Asignatura borrarAsignaturaporDni(int dni) {
+        // primero salgo a buscarlo.
+        Asignatura asignatura_Existente = asignaturaDaoMemoryImpl.borrarAsignaturaDni(dni);
+        if (asignatura_Existente != null)
+        {
+            asignaturaDaoMemoryImpl.borrarAsignaturaDni(dni);
+        }
+        return asignatura_Existente;
+    }
 }
