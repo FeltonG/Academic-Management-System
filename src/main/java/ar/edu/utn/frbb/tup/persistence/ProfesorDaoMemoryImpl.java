@@ -6,6 +6,7 @@ import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.Profesor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -14,10 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@Service
-public  abstract class ProfesorDaoMemoryImpl implements ProfesorDao{
+@Repository
+public   class ProfesorDaoMemoryImpl implements ProfesorDao{
 
-    private static final String CSV_FILE_PATH = "ar/edu/utn/frbb/tup/persistence/dataCSV/profesorDATA.csv";
+    private static final String CSV_FILE_PATH = "C:/Users/Felipe/IdeaProjects/LABORATORIO3/src/main/java/ar/edu/utn/frbb/tup/persistence/dataCSV/profesorDATA.csv";
 
     public void guardarProfesor(Profesor profesor) {
         FileWriter fileWriter = null;
@@ -30,9 +31,11 @@ public  abstract class ProfesorDaoMemoryImpl implements ProfesorDao{
 
             // Escribir los atributos del alumno en formato CSV
             printWriter.println(
-                    profesor.getNombre() + "," +
+                    profesor.getId()+ "," +
+                      profesor.getNombre() + "," +
                             profesor.getApellido() + "," +
                             profesor.getTitulo() + ","
+
 
 
 
@@ -146,19 +149,19 @@ public  abstract class ProfesorDaoMemoryImpl implements ProfesorDao{
                 System.out.println("No se pudo renombrar el archivo temporal");
                 return null;
             }
-            System.out.println("Alumno eliminado exitosamente! ");
+            System.out.println("Profesor eliminado exitosamente! ");
             return profesoreliminado;
         }
         else
         {
-            System.out.println("No existe alumno con ese id");
+            System.out.println("No existe profesor con ese id");
             return null;
         }
 
     }
 
     @Override
-    public List<Profesor> buscarProfesor() {
+    public List<Profesor> buscarProfesores() {
         List<Profesor> profesor = new ArrayList<>();
         BufferedReader bufferedReader = null;
 
@@ -175,12 +178,13 @@ public  abstract class ProfesorDaoMemoryImpl implements ProfesorDao{
                 }
 
                 try {
+                    Long id = Long.parseLong(datos[0].trim());
                     String nombre = String.valueOf(datos[1].trim());
                     String apellido =String.valueOf(datos[2].trim());
                     String titulo=String.valueOf(datos[3].trim());
 
 
-                    Profesor profesor1 = new Profesor(nombre,apellido,titulo);
+                    Profesor profesor1 = new Profesor(id,nombre,apellido,titulo);
                     profesor.add(profesor1);
                 } catch (NumberFormatException e) {
                     System.err.println("Error al parsear números en la línea: " + linea);
@@ -203,95 +207,7 @@ public  abstract class ProfesorDaoMemoryImpl implements ProfesorDao{
         return profesor;
     }
 
-    @Override
-    public Profesor buscarProfesorDni(int Dni) {
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(CSV_FILE_PATH))) {
-            String linea;
-            while ((linea = bufferedReader.readLine()) != null) {
-                String[] datos = linea.split(","); //
-                if (datos.length < 5) {
-                    System.err.println("Línea con formato incorrecto: " + linea);
-                    continue; // Salta la línea con formato incorrecto
-                }
-                try {
-                    int profesorDni = Integer.parseInt(datos[0].trim());  // Asumiendo que el DNI está en la primera columna
-                    String nombre = datos[1].trim();
-                    String apellido = datos[2].trim();
-                    String titulo = datos[3].trim();
 
-
-                    if (profesorDni ==Dni) {
-                        return new Profesor(nombre,apellido,titulo);
-                    }
-                } catch (NumberFormatException e) {
-                    System.err.println("Error al parsear número: " + e.getMessage());
-                }
-            }
-        } catch (IOException e) {
-            System.err.println("Error al leer el archivo CSV: " + e.getMessage());
-        }
-        return null;
-    }
-
-    @Override
-    public Profesor borrarProfesordni(int dni) {
-        File inputFile = new File(CSV_FILE_PATH);
-        File tempFile = new File("tempFile.csv");
-        Profesor profesorEliminado = null;
-        BufferedReader bufferedReader = null;
-        PrintWriter printWriter = null;
-
-        try {
-            bufferedReader = new BufferedReader(new FileReader(inputFile));
-            printWriter = new PrintWriter(new FileWriter(tempFile));
-            String linea;
-
-            while ((linea = bufferedReader.readLine()) != null) {
-                String[] datos = linea.split(",");
-                int profesorDni = Integer.parseInt(datos[3]); // Suponiendo que el DNI está en la posición 3
-
-                if (profesorDni == dni) {
-                    // Crear un objeto Profesor con los datos leídos
-                    profesorEliminado = new Profesor(datos[1], datos[2], datos[3]); // Nombre, Apellido, DNI
-                    // No escribimos esta línea en el archivo temporal, eliminándola efectivamente
-                } else {
-                    // Escribimos todas las demás líneas
-                    printWriter.println(linea);
-                }
-            }
-
-        } catch (IOException e) {
-            System.err.println("Error al leer el archivo CSV: " + e.getMessage());
-        } finally {
-            if (bufferedReader != null) {
-                try {
-                    bufferedReader.close();
-                } catch (IOException e) {
-                    System.err.println("Error al cerrar el archivo: " + e.getMessage());
-                }
-            }
-            if (printWriter != null) {
-                printWriter.close();
-            }
-        }
-
-        // Reemplazamos el archivo original con el temporal
-        if (profesorEliminado != null) {
-            if (!inputFile.delete()) {
-                System.err.println("No se pudo eliminar el archivo original.");
-                return null; // Si no se puede eliminar, retornamos null
-            }
-            if (!tempFile.renameTo(inputFile)) {
-                System.err.println("No se pudo renombrar el archivo temporal.");
-                return null; // Si no se puede renombrar, retornamos null
-            }
-            System.out.println("Profesor eliminado: " + profesorEliminado.getNombre() + " " + profesorEliminado.getApellido());
-            return profesorEliminado;
-        } else {
-            System.out.println("No se encontró un profesor con el DNI proporcionado.");
-            return null; // Si no se encontró, retornamos null
-        }
-    }
 
     @Override
     public Profesor modificarProfesor(Profesor profesor) {
@@ -359,6 +275,43 @@ public  abstract class ProfesorDaoMemoryImpl implements ProfesorDao{
         }
     }
 
+    @Override
+    public int obtenerUltimoId() {
+        BufferedReader bufferedReader = null;
+        int ultimoId = 0;
 
+        try {
+            bufferedReader = new BufferedReader(new FileReader(CSV_FILE_PATH));
+            String linea;
 
+            while ((linea = bufferedReader.readLine()) != null) {
+                String[] datos = linea.split(",");
+
+                if (datos.length > 0) {
+                    try {
+                        int idActual = Integer.parseInt(datos[0].trim());
+                        // Guardar el ID más alto encontrado
+                        if (idActual > ultimoId) {
+                            ultimoId = idActual;
+                        }
+                    } catch (NumberFormatException e) {
+                        System.err.println("Error al parsear el ID en la línea: " + linea);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo CSV: " + e.getMessage());
+        } finally {
+            if (bufferedReader != null) {
+                try {
+                    bufferedReader.close();
+                } catch (IOException e) {
+                    System.err.println("Error al cerrar el archivo: " + e.getMessage());
+                }
+            }
+        }
+
+        return ultimoId;
+    }
 }
+

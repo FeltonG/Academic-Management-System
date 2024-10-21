@@ -1,8 +1,10 @@
 package ar.edu.utn.frbb.tup.persistence;
 
 import ar.edu.utn.frbb.tup.model.Alumno;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
+
 
 public interface AlumnoDao {
 
@@ -20,5 +22,6 @@ public interface AlumnoDao {
 
      public Alumno modificarAlumno(Alumno alumno);
 
+     public int obtenerUltimoId();
 
 }

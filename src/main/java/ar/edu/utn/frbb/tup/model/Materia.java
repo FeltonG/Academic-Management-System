@@ -1,12 +1,14 @@
 package ar.edu.utn.frbb.tup.model;
 
+import ar.edu.utn.frbb.tup.persistence.AsignaturaDaoMemoryImpl;
+import ar.edu.utn.frbb.tup.persistence.MateriaDaoMemoryImpl;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class Materia {
 
-    private static long contador=0;
 
     private long id;
     private String nombre;
@@ -36,21 +38,65 @@ public class Materia {
         this.cuatrimestre = cuatrimestre;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public long getIdprofesor() {
+        return idprofesor;
+    }
+
+    public List<Long> getCorrelatividades() {
+        return correlatividades;
+    }
 
     public Materia(){}
 
 
+    public Materia(Long id, String nombre, int anio, int cuatrimestre, long idprofesor,  List<Long> correlatividades) {
+        this.id=id;
+        this.anio = anio;
+        this.cuatrimestre = cuatrimestre;
+        this.nombre = nombre;
+        this.idprofesor = idprofesor;
+        this.correlatividades = correlatividades;
+    }
+
+    public Materia(String nombre, int anio, int cuatrimestre, long idprofesor,  List<Long> correlatividades) {
+
+
+        this.id=incrementarId();
+        this.anio = anio;
+        this.cuatrimestre = cuatrimestre;
+        this.nombre = nombre;
+        this.idprofesor = idprofesor;
+        this.correlatividades = correlatividades;
+    }
+/*
+
     public Materia(String nombre, int anio, int cuatrimestre, long idprofesor) {
 
-        incrementarId();
-        this.id=contador;
+
+        this.id=incrementarId();
         this.anio = anio;
         this.cuatrimestre = cuatrimestre;
         this.nombre = nombre;
         this.idprofesor = idprofesor;
         correlatividades = new ArrayList<>();
     }
+*/
 
+    @Override
+    public String toString() {
+        return "Materia{" +
+                "id=" + id +
+                ", nombre='" + nombre + '\'' +
+                ", anio=" + anio +
+                ", cuatrimestre=" + cuatrimestre +
+                ", idprofesor=" + idprofesor +
+                ", correlatividades=" + correlatividades +
+                '}';
+    }
 
     public String getNombre() {
         return nombre;
@@ -66,9 +112,12 @@ public class Materia {
 
     }
 
-    private void incrementarId()
+    private int incrementarId()
     {
-        this.contador++;
+        MateriaDaoMemoryImpl admi = new MateriaDaoMemoryImpl();
+        int ultimoId = admi.obtenerUltimoId();
+        ultimoId++;
+        return ultimoId;
 
     }
 }

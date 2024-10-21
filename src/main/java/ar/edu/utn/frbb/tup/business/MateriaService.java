@@ -13,7 +13,7 @@ public interface MateriaService {
 
     Materia buscarmateriaId(long id);
 
-    Materia buscarmateriaDni(int Dni);
+
 
     List<Materia> buscarMateria();
 
@@ -21,7 +21,6 @@ public interface MateriaService {
 
     Materia borrarmateriaId(long id);
 
-    Materia borrarmateriaDni(int dni);
 
 
 }

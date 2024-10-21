@@ -12,13 +12,9 @@ public interface ProfesorService {
 
     public Profesor borrarProfesorporid(long id);
 
-    public Profesor borrarProfesorporDni(int dni);
-
     public Profesor buscaProfesorporid(long id);
 
-    public Profesor buscarProfesorporDni(int dni);
-
-    List<Profesor> buscarProfesor();
+    List<Profesor> buscarProfesores();
 
     Profesor crearProfesor(ProfesorDto profesor);
 

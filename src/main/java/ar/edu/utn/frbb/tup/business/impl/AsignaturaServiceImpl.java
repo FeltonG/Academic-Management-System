@@ -7,27 +7,43 @@ import ar.edu.utn.frbb.tup.model.EstadoAsignatura;
 import ar.edu.utn.frbb.tup.model.dto.AlumnoDto;
 import ar.edu.utn.frbb.tup.model.dto.AsignaturaDto;
 import ar.edu.utn.frbb.tup.persistence.AsignaturaDaoMemoryImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Service
 public class AsignaturaServiceImpl implements AsignaturaService {
 
+    @Autowired
     private AsignaturaDaoMemoryImpl asignaturaDaoMemoryImpl;
 
     @Override
     public Asignatura crearAsignatura(AsignaturaDto asignaturadto) {
-        // el servicio ademas de crear la informacion y retornarla la almacena en DAO
-        // tambien lo que hace es VERIFICAR que todo este BIEN antes de el guardado.
-        Asignatura asignatura = new Asignatura(asignaturadto.getNota(),asignaturadto.getIdalumno(), asignaturadto.getNota());
-        asignaturaDaoMemoryImpl.guardarAsignatura(asignatura);
-        return asignatura; // lo retorno
+        // Verificar que los datos del DTO sean válidos
+        if (asignaturadto.getNota() == null) { // Si 'Nota' es un objeto que puede ser null
+            throw new IllegalArgumentException("La nota no puede ser nula");
+        }
+
+        // Verificar si 'idalumno' y 'idmateria' son 0 o valores inválidos
+        if (asignaturadto.getIdalumno() == 0) {
+            throw new IllegalArgumentException("El ID del alumno es inválido");
+        }
+
+        if (asignaturadto.getIdmateria() == 0) {
+            throw new IllegalArgumentException("El ID de la materia es inválido");
+        }
+
+
+        // Crear una nueva Asignatura a partir del DTO
+        Asignatura asignatura1 = new Asignatura(asignaturadto.getEstado(),asignaturadto.getNota(), asignaturadto.getIdalumno(), asignaturadto.getIdmateria());
+
+        // Guardar la asignatura en el DAO
+        asignaturaDaoMemoryImpl.guardarAsignatura(asignatura1);
+
+        // Retornar la asignatura creada
+        return asignatura1;
     }
 
-    @Override
-    public Asignatura buscarAsignaturaDni(int Dni) {
-        Asignatura asignatura = asignaturaDaoMemoryImpl.buscarAsignaturaporDni(Dni);
-        return asignatura;
-    }
 
     @Override
     public Asignatura buscarAsignaturaId(long id) {
@@ -35,9 +51,9 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         return asignatura;
     }
 
-    public List<Asignatura> buscarAsignatura()
+    public List<Asignatura> buscarAsignaturas()
     {
-        List<Asignatura> lista_de_asignaturas = asignaturaDaoMemoryImpl.buscarAsignatura();
+        List<Asignatura> lista_de_asignaturas = asignaturaDaoMemoryImpl.buscarAsignaturas();
         return lista_de_asignaturas;
     }
 
@@ -77,14 +93,5 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         return null;
     }
 
-    @Override
-    public Asignatura borrarAsignaturaporDni(int dni) {
-        // primero salgo a buscarlo.
-        Asignatura asignatura_Existente = asignaturaDaoMemoryImpl.borrarAsignaturaDni(dni);
-        if (asignatura_Existente != null)
-        {
-            asignaturaDaoMemoryImpl.borrarAsignaturaDni(dni);
-        }
-        return asignatura_Existente;
-    }
+
 }

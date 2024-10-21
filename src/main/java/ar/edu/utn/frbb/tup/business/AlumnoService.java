@@ -14,12 +14,9 @@ public interface AlumnoService {
 
     Alumno borraralumnoId(long id);
 
-    Alumno borraralumnoDni(int dni);
-
 
     Alumno buscarAlumnoId(long id);
 
-    Alumno buscarAlumnoDni(int dni);
 
     Alumno modificarAlumno(long id, AlumnoDto alumno);
 

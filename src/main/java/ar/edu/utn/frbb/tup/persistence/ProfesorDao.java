@@ -9,18 +9,16 @@ import java.util.List;
 public interface ProfesorDao {
     public void guardarProfesor(Profesor profesor);
 
-    public List<Profesor> buscarProfesor();
+    public List<Profesor> buscarProfesores();
 
     public Profesor buscarProfesorporid(long id);
 
-    public Profesor buscarProfesorDni(int Dni);
 
     public Profesor borrarProfesorporid(long id);
 
-    public Profesor borrarProfesordni(int Dni);
 
     public Profesor modificarProfesor(Profesor profesor);
 
-
+    public int obtenerUltimoId();
 
 }

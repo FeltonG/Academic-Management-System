@@ -5,17 +5,19 @@ import ar.edu.utn.frbb.tup.model.Materia;
 
 import ar.edu.utn.frbb.tup.model.Profesor;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
-@Service
-public  abstract class MateriaDaoMemoryImpl implements MateriaDao {
+@Repository
+public  class MateriaDaoMemoryImpl implements MateriaDao {
 
 
-    private static final String CSV_FILE_PATH = "ar/edu/utn/frbb/tup/persistence/dataCSV/materiaDATA.csv";
+    private static final String CSV_FILE_PATH = "C:/Users/Felipe/IdeaProjects/LABORATORIO3/src/main/java/ar/edu/utn/frbb/tup/persistence/dataCSV/materiaDATA.csv";
 
     public void guardarMateria(Materia materia) {
         FileWriter fileWriter = null;
@@ -26,17 +28,23 @@ public  abstract class MateriaDaoMemoryImpl implements MateriaDao {
             fileWriter = new FileWriter(CSV_FILE_PATH, true);
             printWriter = new PrintWriter(fileWriter);
 
-            // Escribir los atributos del alumno en formato CSV
-            printWriter.println(
-                    materia.getNombre() + "," +
-                            materia.getAnio() + "," +
-                            materia.getCuatrimestre() + ","
-
-
-
+            // Convertir la lista de correlatividades en un string con formato "7-4-5"
+            String correlatividadesFormato = String.join("'",
+                    materia.getCorrelatividades().stream()
+                            .map(String::valueOf)  // Convertir cada correlatividad a String
+                            .toArray(String[]::new) // Convertir el stream a un array de Strings
             );
 
-            System.out.println("materia guardada correctamente en el archivo CSV.");
+            // Escribir los atributos de la materia en formato CSV
+            printWriter.println(
+                    materia.getId() + "," +
+                            materia.getNombre() + "," +
+                            materia.getAnio() + "," +
+                            materia.getCuatrimestre() + "," +
+                            correlatividadesFormato // Guardar en formato "7-4-5"
+            );
+
+            System.out.println("Materia guardada correctamente en el archivo CSV.");
         } catch (IOException e) {
             System.err.println("Error al escribir en el archivo CSV: " + e.getMessage());
         } finally {
@@ -54,10 +62,8 @@ public  abstract class MateriaDaoMemoryImpl implements MateriaDao {
         }
     }
 
-
-
     @Override
-    public List<Materia> buscarMateria() {
+    public List<Materia> buscarMaterias() {
         List<Materia> materias = new ArrayList<>();
         BufferedReader bufferedReader = null;
 
@@ -74,16 +80,24 @@ public  abstract class MateriaDaoMemoryImpl implements MateriaDao {
                 }
 
                 try {
+                    Long id = Long.parseLong(datos[0].trim());
                     String nombre = String.valueOf(datos[1].trim());
-                    int cuatrimestre =Integer.parseInt(datos[3].trim());
                     int anio = Integer.parseInt(datos[2].trim());
-                    long idprofesor = Long.parseLong(datos[3].trim());
+                    int cuatrimestre = Integer.parseInt(datos[3].trim());
+                    long idProfesor = Long.parseLong(datos[3].trim());
 
-                    Materia materia = new Materia(nombre,anio,cuatrimestre,idprofesor);
-                    materias.add(materia);
+                    // Convertir las correlatividades en una lista de Long
+                    List<Long> correlatividades = Arrays.stream(datos[4].trim().split("'")) // Dividir por el guion
+                            .map(Long::parseLong) // Convertir cada elemento a Long
+                            .collect(Collectors.toList()); // Recoger en una lista de Long
+
+                    // Crear una nueva instancia de Materia con las correlatividades
+                    Materia materia = new Materia(id,nombre, anio, cuatrimestre, idProfesor, correlatividades);
+                    materias.add(materia); // Agregar la materia a la lista
+
                 } catch (NumberFormatException e) {
                     System.err.println("Error al parsear números en la línea: " + linea);
-                    // Puedes decidir si continuar o lanzar una excepción
+                    // Dependiendo de tu lógica, puedes continuar o lanzar una excepción
                 }
             }
         } catch (IOException e) {
@@ -103,6 +117,62 @@ public  abstract class MateriaDaoMemoryImpl implements MateriaDao {
     }
 
     @Override
+    public List<Materia> buscarMateriasPorProfesorId(long idProfesor)
+        {
+            List<Materia> materias = new ArrayList<>();
+            BufferedReader bufferedReader = null;
+
+            try {
+                bufferedReader = new BufferedReader(new FileReader(CSV_FILE_PATH));
+                String linea;
+
+                while ((linea = bufferedReader.readLine()) != null) {
+                    String[] datos = linea.split(",");
+
+                    if (datos.length < 5) {
+                        System.err.println("Línea con formato incorrecto: " + linea);
+                        continue; // Saltar líneas con formato incorrecto
+                    }
+
+                    try {
+                        Long id = Long.parseLong(datos[0].trim());
+                        String nombre = String.valueOf(datos[1].trim());
+                        int anio = Integer.parseInt(datos[2].trim());
+                        int cuatrimestre = Integer.parseInt(datos[3].trim());
+                        long idProf = Long.parseLong(datos[3].trim());
+
+                        // Convertir las correlatividades en una lista de Long
+                        List<Long> correlatividades = Arrays.stream(datos[4].trim().split("'")) // Dividir por el guion
+                                .map(Long::parseLong) // Convertir cada elemento a Long
+                                .collect(Collectors.toList()); // Recoger en una lista de Long
+
+                        // Crear una nueva instancia de Materia con las correlatividades
+                        Materia materia = new Materia(id,nombre, anio, cuatrimestre, idProfesor, correlatividades);
+                        if(idProf == idProfesor) {
+                            materias.add(materia); // Agregar la materia a la lista
+                        }
+
+                    } catch (NumberFormatException e) {
+                        System.err.println("Error al parsear números en la línea: " + linea);
+                        // Dependiendo de tu lógica, puedes continuar o lanzar una excepción
+                    }
+                }
+            } catch (IOException e) {
+                System.err.println("Error al leer el archivo CSV: " + e.getMessage());
+                // Dependiendo de tu lógica, podrías lanzar una excepción aquí
+            } finally {
+                if (bufferedReader != null) {
+                    try {
+                        bufferedReader.close();
+                    } catch (IOException e) {
+                        System.err.println("Error al cerrar el archivo: " + e.getMessage());
+                    }
+                }
+            }
+
+            return materias;
+        }
+    @Override
     public Materia buscarMateriaId(long id) {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(CSV_FILE_PATH))) {
             String linea;
@@ -118,10 +188,15 @@ public  abstract class MateriaDaoMemoryImpl implements MateriaDao {
                     int anio=Integer.parseInt(datos[2]);
                     int cuatrimestre=Integer.parseInt(datos[3]);
                     long idprofesor = Long.parseLong(datos[4].trim());
+                    // Convertir las correlatividades en una lista de Long
+                    List<Long> correlatividades = Arrays.stream(datos[5].trim().split("'")) // Dividir por el guion
+                            .map(Long::parseLong) // Convertir cada elemento a Long
+                            .collect(Collectors.toList()); // Recoger en una lista de Long
 
 
                     if (Id==id) {
-                        return new Materia(nombre,anio,cuatrimestre,idprofesor);
+
+                        return new Materia(nombre,anio,cuatrimestre,idprofesor, correlatividades);
                     }
                 } catch (NumberFormatException e) {
                     System.err.println("Error al parsear número: " + e.getMessage());
@@ -133,95 +208,6 @@ public  abstract class MateriaDaoMemoryImpl implements MateriaDao {
         return null;
     }
 
-    @Override
-    public Materia buscarMateriaDni(int Dni) {
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(CSV_FILE_PATH))) {
-            String linea;
-            while ((linea = bufferedReader.readLine()) != null) {
-                String[] datos = linea.split(","); //
-                if (datos.length < 5) {
-                    System.err.println("Línea con formato incorrecto: " + linea);
-                    continue; // Salta la línea con formato incorrecto
-                }
-                try {
-                    int dni = Integer.parseInt(datos[0].trim());
-                    String nombre= String.valueOf(datos[1]);
-                    int anio=Integer.parseInt(datos[2]);
-                    int cuatrimestre=Integer.parseInt(datos[3]);
-                    int dniprofesor = Integer.parseInt(datos[4].trim());
-
-
-                    if (dni==Dni) {
-                        return new Materia(nombre,anio,cuatrimestre,dniprofesor);
-                    }
-                } catch (NumberFormatException e) {
-                    System.err.println("Error al parsear número: " + e.getMessage());
-                }
-            }
-        } catch (IOException e) {
-            System.err.println("Error al leer el archivo CSV: " + e.getMessage());
-        }
-        return null;
-    }
-
-    @Override
-    public Materia borrarmateriaDni(int Dni) {
-        File inputFile = new File(CSV_FILE_PATH);
-        BufferedReader bufferedReader = null;
-        File tempFile = new File("tempFile.csv");
-        PrintWriter printWriter = null;
-        Materia materiaEliminada = null;
-
-        try {
-            bufferedReader = new BufferedReader(new FileReader(inputFile));
-            printWriter = new PrintWriter(new FileWriter(tempFile));
-            String linea;
-
-            while ((linea = bufferedReader.readLine()) != null) {
-                String[] datos = linea.split(",");
-                String nombre = datos[0].trim();
-                int anio = Integer.parseInt(datos[1].trim());
-                int cuatrimestre = Integer.parseInt(datos[2].trim());
-                long idProfesorActual = Long.parseLong(datos[3].trim());
-
-
-                // Si el id de la materia no coincide, escribir la línea en el archivo temporal
-                if (idProfesorActual != Dni) {
-                    printWriter.println(linea);
-                } else {
-                    // Si coincide, guardar la materia eliminada
-                    materiaEliminada = new Materia( nombre, anio, cuatrimestre, idProfesorActual);
-                }
-            }
-
-        } catch (IOException e) {
-            System.err.println("Error al leer el archivo CSV: " + e.getMessage());
-        } finally {
-            try {
-                if (bufferedReader != null) bufferedReader.close();
-                if (printWriter != null) printWriter.close();
-            } catch (IOException e) {
-                System.err.println("Error al cerrar los recursos: " + e.getMessage());
-            }
-        }
-
-        if (materiaEliminada != null) {
-            if (!inputFile.delete()) {
-                System.out.println("No se pudo eliminar el archivo original");
-                return null;
-            }
-            if (!tempFile.renameTo(inputFile)) {
-                System.out.println("No se pudo renombrar el archivo temporal");
-                return null;
-            }
-            System.out.println("Asignatura eliminada exitosamente!");
-
-            return materiaEliminada;
-        } else {
-            System.out.println("No existe asignatura con el id proporcionado: " +Dni);
-            return null;
-        }
-    }
 
     @Override
     public Materia borrarmateriaporid(long id) {
@@ -242,14 +228,17 @@ public  abstract class MateriaDaoMemoryImpl implements MateriaDao {
                 int anio = Integer.parseInt(datos[1].trim());
                 int cuatrimestre = Integer.parseInt(datos[2].trim());
                 long idProfesorActual = Long.parseLong(datos[3].trim());
-
+                // Convertir las correlatividades en una lista de Long
+                List<Long> correlatividades = Arrays.stream(datos[4].trim().split("'")) // Dividir por el guion
+                        .map(Long::parseLong) // Convertir cada elemento a Long
+                        .collect(Collectors.toList()); // Recoger en una lista de Long
 
                 // Si el id de la materia no coincide, escribir la línea en el archivo temporal
                 if (idProfesorActual != id) {
                     printWriter.println(linea);
                 } else {
                     // Si coincide, guardar la materia eliminada
-                    materiaEliminada = new Materia( nombre, anio, cuatrimestre, idProfesorActual);
+                     materiaEliminada = new Materia( nombre, anio, cuatrimestre, idProfesorActual, correlatividades);
                 }
             }
 
@@ -305,7 +294,6 @@ public  abstract class MateriaDaoMemoryImpl implements MateriaDao {
                 String nombre = datos[0];
                 int anio = Integer.parseInt(datos[1]);
                 int cuatrimestre = Integer.parseInt(datos[2]);
-                long profesorId = Long.parseLong(datos[3]);
 
                 // Comparar con los datos de la materia a modificar
                 if (nombre.equals(materia.getNombre()) && anio == materia.getAnio() && cuatrimestre == materia.getCuatrimestre()) {
@@ -356,5 +344,44 @@ public  abstract class MateriaDaoMemoryImpl implements MateriaDao {
         }
 
 
+    }
+
+    @Override
+    public int obtenerUltimoId() {
+        BufferedReader bufferedReader = null;
+        int ultimoId = 0;
+
+        try {
+            bufferedReader = new BufferedReader(new FileReader(CSV_FILE_PATH));
+            String linea;
+
+            while ((linea = bufferedReader.readLine()) != null) {
+                String[] datos = linea.split(",");
+
+                if (datos.length > 0) {
+                    try {
+                        int idActual = Integer.parseInt(datos[0].trim());
+                        // Guardar el ID más alto encontrado
+                        if (idActual > ultimoId) {
+                            ultimoId = idActual;
+                        }
+                    } catch (NumberFormatException e) {
+                        System.err.println("Error al parsear el ID en la línea: " + linea);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo CSV: " + e.getMessage());
+        } finally {
+            if (bufferedReader != null) {
+                try {
+                    bufferedReader.close();
+                } catch (IOException e) {
+                    System.err.println("Error al cerrar el archivo: " + e.getMessage());
+                }
+            }
+        }
+
+        return ultimoId;
     }
 }

@@ -58,22 +58,11 @@ public class ProfesorServiceImpl implements ProfesorService {
         return null;
     }
 
-    @Override
-    public Profesor borrarProfesorporDni(int dni) {
-        Profesor profesorExistente = profesorDaoMemoryimpl.buscarProfesorDni(dni);
 
-        if (profesorExistente != null) {
-            profesorDaoMemoryimpl.borrarProfesordni(dni);
-            return profesorExistente; // Retornar el profesor eliminado.
-        }
-
-        // Si el profesor no existe, puedes lanzar una excepción o retornar null.
-        return null;
-    }
 
     @Override
-    public List<Profesor> buscarProfesor() {
-        List<Profesor> lista_de_profesor = profesorDaoMemoryimpl.buscarProfesor();
+    public List<Profesor> buscarProfesores() {
+        List<Profesor> lista_de_profesor = profesorDaoMemoryimpl.buscarProfesores();
         return lista_de_profesor;
     }
 
@@ -83,33 +72,28 @@ public class ProfesorServiceImpl implements ProfesorService {
         return profesordni;
     }
 
-    @Override
-    public Profesor buscarProfesorporDni(int dni) {
-        Profesor profesorId=profesorDaoMemoryimpl.buscarProfesorDni(dni);
-        return  profesorId;
-    }
 
     @Override
     public Profesor modificarProfesor(long id, ProfesorDto profesor) {
 
 
-        // Buscar si existe el alumno a través del id
+        // Buscar si existe el profesor  a través del id
         Profesor profesorExistente= profesorDaoMemoryimpl.buscarProfesorporid(id);
 
         if (profesorExistente != null) {
-            // Actualizar los datos del alumno existente con los nuevos datos del DTO
+            // Actualizar los datos del profesor existente con los nuevos datos del DTO
             profesorExistente.getTitulo();
             profesorExistente.getApellido();
             profesorExistente.getApellido();
-            // Aquí puedes seguir actualizando otros campos que tengas en AlumnoDto
+            // Aquí puedes seguir actualizando otros campos que tengas en ProfesorDto
 
             // Guardar los cambios
             profesorDaoMemoryimpl.modificarProfesor(profesorExistente);
 
-            // Retornar el alumno modificado
+            // Retornar el profesor modificado
             return profesorExistente;
         } else {
-            // Si no se encuentra el alumno, retornar null o lanzar una excepción
+            // Si no se encuentra el profesor, retornar null o lanzar una excepción
             System.out.println("No se encontró un profesor con el id proporcionado");
             return null;
         }

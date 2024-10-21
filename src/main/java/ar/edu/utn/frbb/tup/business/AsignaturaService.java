@@ -12,14 +12,11 @@ public interface AsignaturaService {
 
     Asignatura buscarAsignaturaId(long id);
 
-    Asignatura buscarAsignaturaDni(int Dni);
-
-    List<Asignatura> buscarAsignatura();
+    List<Asignatura> buscarAsignaturas();
 
     Asignatura modificarAsignatura(long id, AsignaturaDto asignatura);
 
     Asignatura borrarAsignaturaporid(long id);
 
-    Asignatura borrarAsignaturaporDni(int dni);
 
 }

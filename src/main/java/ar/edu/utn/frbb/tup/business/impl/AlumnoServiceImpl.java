@@ -13,10 +13,12 @@ import ar.edu.utn.frbb.tup.persistence.AlumnoDao;
 import ar.edu.utn.frbb.tup.persistence.AlumnoDaoMemoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Random;
 
+@Service
 @Component
 public class AlumnoServiceImpl implements AlumnoService {
 
@@ -45,16 +47,7 @@ public class AlumnoServiceImpl implements AlumnoService {
         return alumnoExistente;
     }
 
-    @Override
-    public Alumno borraralumnoDni(int dni) {
-        // primero salgo a buscarlo.
-        Alumno alumnoExistente = alumnoDaoMemoryImpl.borrarAlumnoDNI(dni);
-        if (alumnoExistente != null)
-        {
-            alumnoDaoMemoryImpl.borrarAlumnoDNI(dni);
-        }
-        return alumnoExistente;
-    }
+
     /*@Override
     public void aprobarAsignatura(int materiaId, int nota, long dni) throws EstadoIncorrectoException, CorrelatividadesNoAprobadasException {
 

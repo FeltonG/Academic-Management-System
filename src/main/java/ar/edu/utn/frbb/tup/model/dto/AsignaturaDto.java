@@ -8,12 +8,15 @@ public class AsignaturaDto {
     private long idmateria;
     private long idalumno;
 
-    public AsignaturaDto(Integer nota, EstadoAsignatura estado, long idmateria, long idalumno) {
+
+
+
+    /*public AsignaturaDto(Integer nota, EstadoAsignatura estado, long idmateria, long idalumno) {
         this.nota = nota;
         this.estado = estado;
         this.idmateria = idmateria;
         this.idalumno = idalumno;
-    }
+    }*/
 
     public EstadoAsignatura getEstado() {
         return estado;

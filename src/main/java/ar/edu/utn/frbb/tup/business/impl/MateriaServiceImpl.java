@@ -26,23 +26,18 @@ public class MateriaServiceImpl implements MateriaService {
     {
         // el servicio ademas de crear la informacion y retornarla la almacena en DAO
         // tambien lo que hace es VERIFICAR que todo este BIEN antes de el guardado.
-        Materia materia = new Materia(materiadto.getNombre(),materiadto.getAnio(), materiadto.getCuatrimestre(),materiadto.getProfesorId());
+        Materia materia = new Materia(materiadto.getNombre(),materiadto.getAnio(), materiadto.getCuatrimestre(),materiadto.getProfesorId(),materiadto.getCorrelatividades());
         materiaDaoMemoryimp.guardarMateria(materia);
         return materia; // lo retorno
     }
 
     @Override
     public List<Materia> buscarMateria() {
-        List<Materia> lista_de_materias = materiaDaoMemoryimp.buscarMateria();
+        List<Materia> lista_de_materias = materiaDaoMemoryimp.buscarMaterias();
         return lista_de_materias;
     }
 
-    @Override
-    public Materia buscarmateriaDni(int Dni) {
-        Materia materiaDni=materiaDaoMemoryimp.buscarMateriaDni(Dni);
-        return materiaDni;
 
-    }
 
     @Override
     public Materia buscarmateriaId(long id) {
@@ -61,6 +56,7 @@ public class MateriaServiceImpl implements MateriaService {
             materiaExistente.getNombre();
             materiaExistente.getCuatrimestre();
             materiaExistente.getAnio();
+
 
             // Aquí puedes seguir actualizando otros campos que tengas en AlumnoDto
 
@@ -87,13 +83,5 @@ public class MateriaServiceImpl implements MateriaService {
         return materia_Existente;
     }
 
-    @Override
-    public Materia borrarmateriaDni(int dni) {
-        Materia materia_Existente = materiaDaoMemoryimp.borrarmateriaDni(dni);
-        if (materia_Existente != null)
-        {
-            materiaDaoMemoryimp.borrarmateriaDni(dni);
-        }
-        return materia_Existente;
-    }
+
 }

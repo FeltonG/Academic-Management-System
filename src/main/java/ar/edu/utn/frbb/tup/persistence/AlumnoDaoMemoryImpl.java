@@ -1,18 +1,19 @@
 package ar.edu.utn.frbb.tup.persistence;
 
 import ar.edu.utn.frbb.tup.model.Alumno;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.*;
 import java.util.*;
 
+@Repository
+public class AlumnoDaoMemoryImpl implements AlumnoDao {
 
-@Service
-public abstract class AlumnoDaoMemoryImpl implements AlumnoDao {
-
-    private static final String CSV_FILE_PATH = "ar/edu/utn/frbb/tup/persistence/dataCSV/alumnoDATA.csv";
+    private static final String CSV_FILE_PATH = "C:/Users/Felipe/IdeaProjects/LABORATORIO3/src/main/java/ar/edu/utn/frbb/tup/persistence/dataCSV/alumnoDATA.csv";
 
     public void guardarAlumno(Alumno alumno) {
         FileWriter fileWriter = null;
@@ -25,10 +26,11 @@ public abstract class AlumnoDaoMemoryImpl implements AlumnoDao {
 
             // Escribir los atributos del alumno en formato CSV
             printWriter.println(
-                    alumno.getId() + "," +
+                            alumno.getId() + "," +
                             alumno.getNombre() + "," +
                             alumno.getApellido() + "," +
                             alumno.getDni()
+
 
             );
 
@@ -355,6 +357,47 @@ public abstract class AlumnoDaoMemoryImpl implements AlumnoDao {
 
         return alumnos;
     }
+
+    @Override
+    public int obtenerUltimoId() {
+        BufferedReader bufferedReader = null;
+        int ultimoId = 0;
+
+        try {
+            bufferedReader = new BufferedReader(new FileReader(CSV_FILE_PATH));
+            String linea;
+
+            while ((linea = bufferedReader.readLine()) != null) {
+                String[] datos = linea.split(",");
+
+                if (datos.length > 0) {
+                    try {
+                        int idActual = Integer.parseInt(datos[0].trim());
+                        // Guardar el ID más alto encontrado
+                        if (idActual > ultimoId) {
+                            ultimoId = idActual;
+                        }
+                    } catch (NumberFormatException e) {
+                        System.err.println("Error al parsear el ID en la línea: " + linea);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo CSV: " + e.getMessage());
+        } finally {
+            if (bufferedReader != null) {
+                try {
+                    bufferedReader.close();
+                } catch (IOException e) {
+                    System.err.println("Error al cerrar el archivo: " + e.getMessage());
+                }
+            }
+        }
+
+        return ultimoId;
+    }
+
+
 
 
 }

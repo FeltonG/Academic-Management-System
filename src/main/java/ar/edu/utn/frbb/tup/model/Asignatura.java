@@ -1,12 +1,13 @@
 package ar.edu.utn.frbb.tup.model;
 
 import ar.edu.utn.frbb.tup.model.exception.EstadoIncorrectoException;
+import ar.edu.utn.frbb.tup.persistence.AlumnoDaoMemoryImpl;
+import ar.edu.utn.frbb.tup.persistence.AsignaturaDaoMemoryImpl;
 
 import java.util.Optional;
 
 public class Asignatura {
 
-    private static long contador=0;
 
     private long id;
     private EstadoAsignatura estado;
@@ -16,13 +17,20 @@ public class Asignatura {
 
     public Asignatura() {
     }
-    public Asignatura(Integer nota,long idalumno,long idmateria) {
-        incrementarId();
-        this.id = contador;
-        this.estado = EstadoAsignatura.NO_CURSADA;
+    public Asignatura(EstadoAsignatura estado,Integer nota,long idalumno,long idmateria) {
+        this.id = incrementarId();
+        this.estado = estado;
         this.nota=nota;
         this.idalumno=idalumno;
         this.idmateria=idmateria;
+    }
+
+    public Asignatura(long id, EstadoAsignatura estado, Integer nota, long idalumno, long idmateria) {
+        this.id = id;
+        this.estado = estado;
+        this.nota = nota;
+        this.idmateria = idmateria;
+        this.idalumno = idalumno;
     }
 
     public long getIdalumno() {
@@ -53,16 +61,27 @@ public class Asignatura {
         this.id = id;
     }
 
-    public Optional<Integer> getNota() {
-        return Optional.ofNullable(nota);
+    public int getNota() {
+        return nota;
+    }
+
+    @Override
+    public String toString() {
+        return "Asignatura{" +
+                "id=" + id +
+                ", estado=" + estado +
+                ", nota=" + nota +
+                ", idmateria=" + idmateria +
+                ", idalumno=" + idalumno +
+                '}';
     }
 
     public void setNota(int nota) {
         this.nota = nota;
     }
 
-    public EstadoAsignatura getEstado() {
-        return estado;
+    public String getEstado() {
+        return estado.name();
     }
 
     public void setEstado(EstadoAsignatura estado) {
@@ -85,9 +104,12 @@ public class Asignatura {
         }
     }
 
-    private void incrementarId()
+    private int incrementarId()
     {
-        this.contador++;
+        AsignaturaDaoMemoryImpl admi = new AsignaturaDaoMemoryImpl();
+        int ultimoId = admi.obtenerUltimoId();
+        ultimoId++;
+        return ultimoId;
 
     }
 

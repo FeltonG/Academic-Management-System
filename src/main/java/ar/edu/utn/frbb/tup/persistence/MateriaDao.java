@@ -9,18 +9,17 @@ import java.util.List;
 public interface MateriaDao {
     public void guardarMateria(Materia materia);
 
-    public List<Materia> buscarMateria();
+    public List<Materia> buscarMaterias();
+
+    public List<Materia> buscarMateriasPorProfesorId(long idProfesor);
 
     public Materia buscarMateriaId(long id);
-
-    public Materia buscarMateriaDni(int Dni);
-
-    public Materia borrarmateriaDni(int Dni);
 
     public Materia borrarmateriaporid(long id);
 
     public Materia modificarMateria(Materia materia);
 
+    public int obtenerUltimoId();
 
 
 }

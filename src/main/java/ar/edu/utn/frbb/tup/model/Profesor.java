@@ -1,11 +1,14 @@
 package ar.edu.utn.frbb.tup.model;
 
+import ar.edu.utn.frbb.tup.persistence.MateriaDaoMemoryImpl;
+import ar.edu.utn.frbb.tup.persistence.ProfesorDaoMemoryImpl;
+
 import java.util.List;
 import java.util.Random;
 
 public class Profesor {
 
-    private static long contador=0;
+
 
     private long id;
     private String nombre;
@@ -13,11 +16,18 @@ public class Profesor {
     private String titulo;
 
 
-    public Profesor(String nombre, String apellido, String titulom) {
+    public Profesor(String nombre, String apellido, String titulo) {
         this.apellido = apellido;
         this.nombre = nombre;
         this.titulo = titulo;
-        this.id=contador;
+        this.id=incrementarId();
+    }
+
+    public Profesor(long id, String nombre, String apellido, String titulo) {
+        this.apellido = apellido;
+        this.nombre = nombre;
+        this.titulo = titulo;
+        this.id=id;
     }
 
     public String getNombre() {
@@ -29,10 +39,16 @@ public class Profesor {
     public String getTitulo() {
         return titulo;
     }
+    public long getId(){
+        return id;
+    }
 
-    private void incrementarId()
+    private int incrementarId()
     {
-        this.contador++;
+        ProfesorDaoMemoryImpl admi = new ProfesorDaoMemoryImpl();
+        int ultimoId = admi.obtenerUltimoId();
+        ultimoId++;
+        return ultimoId;
 
     }
 

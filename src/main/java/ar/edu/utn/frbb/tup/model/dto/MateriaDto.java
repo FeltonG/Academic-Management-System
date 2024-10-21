@@ -10,6 +10,7 @@ public class MateriaDto {
     private int anio;
     private int cuatrimestre;
     private long profesorId;
+    private List<Long> correlatividades;
 
     public long getProfesorId() {
         return profesorId;
@@ -43,4 +44,11 @@ public class MateriaDto {
         this.cuatrimestre = cuatrimestre;
     }
 
+    public List<Long> getCorrelatividades() {
+        return correlatividades;
+    }
+
+    public void setCorrelatividades(List<Long> correlatividades) {
+        this.correlatividades = correlatividades;
+    }
 }

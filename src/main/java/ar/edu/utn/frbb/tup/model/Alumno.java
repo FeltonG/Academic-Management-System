@@ -1,9 +1,10 @@
 package ar.edu.utn.frbb.tup.model;
 
 
+import ar.edu.utn.frbb.tup.persistence.AlumnoDaoMemoryImpl;
+
 public class Alumno {
 
-    private static long idContador = 0;
     private long id;
     private String nombre;
     private String apellido;
@@ -14,8 +15,8 @@ public class Alumno {
 
     public Alumno(String nombre, String apellido, long dni) {
 
-        incrementarId();
-        this.id = idContador;
+
+        this.id = incrementarId();
         this.nombre = nombre;
         this.apellido = apellido;
         this.dni = dni;
@@ -67,9 +68,22 @@ public class Alumno {
         this.id = id;
     }
 
-    private void incrementarId()
+    private int incrementarId()
     {
-        this.idContador++;
+        AlumnoDaoMemoryImpl admi = new AlumnoDaoMemoryImpl();
+        int ultimoId = admi.obtenerUltimoId();
+        ultimoId++;
+        return ultimoId;
 
+    }
+
+    @Override
+    public String toString() {
+        return "Alumno{" +
+                "id=" + id +
+                ", nombre='" + nombre + '\'' +
+                ", apellido='" + apellido + '\'' +
+                ", dni=" + dni +
+                '}';
     }
 }
