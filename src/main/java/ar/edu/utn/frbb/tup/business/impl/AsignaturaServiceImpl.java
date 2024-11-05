@@ -8,6 +8,7 @@ import ar.edu.utn.frbb.tup.model.dto.AlumnoDto;
 import ar.edu.utn.frbb.tup.model.dto.AsignaturaDto;
 import ar.edu.utn.frbb.tup.persistence.AsignaturaDaoMemoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -77,9 +78,10 @@ public class AsignaturaServiceImpl implements AsignaturaService {
 
         if (asignaturaExistente != null) {
             // Actualizar los datos de la asignatura existente con los nuevos datos del DTO
+            asignaturaExistente.setEstado(asignaturaDto.getEstado());
             asignaturaExistente.setNota(asignaturaDto.getNota());
+            asignaturaExistente.setIdmateria(asignaturaDto.getIdmateria());
             asignaturaExistente.setIdalumno(asignaturaDto.getIdalumno());
-            asignaturaExistente.setIdmateria(asignaturaDto.getIdmateria()); // Corregido el error de sintaxis
 
             // Guardar los cambios
             asignaturaDaoMemoryImpl.modificarAsignatura(asignaturaExistente);
@@ -93,5 +95,36 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         return null;
     }
 
+
+    @Override
+    public Asignatura modificarEstadoAsignatura(long idAlumno, long idAsignatura)
+    {
+        // Buscar si existe la asignatura a través del id
+        Asignatura asignaturaExistente = asignaturaDaoMemoryImpl.buscarAsignaturaporIdAsignaturaIdAlumno(idAsignatura, idAlumno);
+
+
+        if (asignaturaExistente != null) {
+            // Actualizar los datos de la asignatura existente con los nuevos datos del DTO
+            EstadoAsignatura estadoActual = asignaturaExistente.getEstado();
+            int numeroPosicion = estadoActual.ordinal();
+            if (numeroPosicion < 1) {
+                numeroPosicion++;
+            } else if (numeroPosicion == 1 && asignaturaExistente.getNota() >= 4)
+            {
+                numeroPosicion++;
+            }
+            if(asignaturaExistente.getNota()<4 && numeroPosicion == 1)
+            {
+                System.out.println("No cambia a aprobado, porque no aprueba");
+            }
+            asignaturaExistente.setEstado(EstadoAsignatura.values()[numeroPosicion]); // quiero el ordinal de numeroPosicion
+            asignaturaDaoMemoryImpl.modificarAsignatura(asignaturaExistente);
+            return asignaturaExistente;
+        }
+
+            // Guardar los cambios
+        System.out.println("No se encontro una asignatura para este alumno");
+        return null;
+    }
 
 }

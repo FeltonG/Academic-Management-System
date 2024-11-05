@@ -30,6 +30,22 @@ public class Profesor {
         this.id=id;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public void setApellido(String apellido) {
+        this.apellido = apellido;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
     public String getNombre() {
         return nombre;
     }
@@ -52,4 +68,13 @@ public class Profesor {
 
     }
 
+    @Override
+    public String toString() {
+        return "Profesor{" +
+                "id=" + id +
+                ", nombre='" + nombre + '\'' +
+                ", apellido='" + apellido + '\'' +
+                ", titulo='" + titulo + '\'' +
+                '}';
+    }
 }

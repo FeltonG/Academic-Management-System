@@ -14,7 +14,6 @@ public interface MateriaService {
     Materia buscarmateriaId(long id);
 
 
-
     List<Materia> buscarMateria();
 
     Materia modificarMateria(long id, MateriaDto materia);

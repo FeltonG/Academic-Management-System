@@ -19,4 +19,8 @@ public interface ProfesorService {
     Profesor crearProfesor(ProfesorDto profesor);
 
     Profesor modificarProfesor( long id, ProfesorDto profesor);
+
+    public List<Materia> buscarMateriasPorProfesorId(long id);
+
+
 }

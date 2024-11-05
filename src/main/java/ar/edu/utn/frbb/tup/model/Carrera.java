@@ -1,22 +1,27 @@
 package ar.edu.utn.frbb.tup.model;
 
 import ar.edu.utn.frbb.tup.persistence.AsignaturaDaoMemoryImpl;
+import ar.edu.utn.frbb.tup.persistence.CarreraDaoMemoryImpl;
 
 import java.util.List;
 
 public class Carrera {
-
-    private String nombre;
     private long id;
+    private String nombre;
+
 
     public Carrera(String nombre) {
         this.id = incrementarId();
         this.nombre = nombre;
     }
 
-    public Carrera(String nombre, long id) {
-        this.nombre = nombre;
+    public Carrera() {
+    }
+
+    public Carrera(long id,String nombre) {
         this.id = id;
+        this.nombre = nombre;
+
     }
 
     public long getId() {
@@ -38,14 +43,14 @@ public class Carrera {
     @Override
     public String toString() {
         return "Carrera{" +
-                "nombre='" + nombre + '\'' +
                 ", id=" + id +
+                "nombre='" + nombre +
                 '}';
     }
 
     private int incrementarId()
     {
-        AsignaturaDaoMemoryImpl admi = new AsignaturaDaoMemoryImpl();
+        CarreraDaoMemoryImpl admi = new CarreraDaoMemoryImpl();
         int ultimoId = admi.obtenerUltimoId();
         ultimoId++;
         return ultimoId;

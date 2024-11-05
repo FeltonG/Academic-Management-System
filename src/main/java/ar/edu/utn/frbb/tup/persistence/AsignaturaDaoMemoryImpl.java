@@ -72,6 +72,8 @@ public class AsignaturaDaoMemoryImpl implements AsignaturaDao {
                     continue; // Saltar líneas con formato incorrecto
                 }
 
+
+
                 try {
                     long id= Long.parseLong(datos[0].trim());
                     long idalumno = Long.parseLong(datos[1].trim());
@@ -120,6 +122,9 @@ public class AsignaturaDaoMemoryImpl implements AsignaturaDao {
                     continue; // Salta la línea con formato incorrecto
                 }
                 try {
+
+
+
                     long idasignatura = Long.parseLong(datos[0].trim());
                     long idalumno = Long.parseLong(datos[1].trim());
                     long idmateria = Long.parseLong(datos[2].trim());
@@ -130,7 +135,7 @@ public class AsignaturaDaoMemoryImpl implements AsignaturaDao {
 
 
                     if (idasignatura ==id) {
-                        return new Asignatura(estado,nota,idalumno,idmateria);
+                        return new Asignatura(id,estado,nota,idalumno,idmateria);
                     }
                 } catch (NumberFormatException e) {
                     System.err.println("Error al parsear número: " + e.getMessage());
@@ -144,12 +149,54 @@ public class AsignaturaDaoMemoryImpl implements AsignaturaDao {
     }
 
     @Override
+    public Asignatura buscarAsignaturaporIdAsignaturaIdAlumno(long idAsignatura, long idAlumno)
+    {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(CSV_FILE_PATH))) {
+            String linea;
+            while ((linea = bufferedReader.readLine()) != null) {
+                String[] datos = linea.split(","); //
+                if (datos.length < 5) {
+                    System.err.println("Línea con formato incorrecto: " + linea);
+                    continue; // Salta la línea con formato incorrecto
+                }
+                try {
+
+
+
+                    long idasignatura = Long.parseLong(datos[0].trim());
+                    long idalumno = Long.parseLong(datos[1].trim());
+                    long idmateria = Long.parseLong(datos[2].trim());
+                    int nota = Integer.parseInt(datos[3].trim());
+
+                    // Convertir el String del archivo CSV a EstadoAsignatura usando valueOf
+                    EstadoAsignatura estado = EstadoAsignatura.valueOf(datos[4].trim());
+
+                    System.out.println("idasignatura = "+idasignatura);
+                    System.out.println("idAsignatura = "+idAsignatura);
+                    System.out.println("idAlumno = "+idAlumno);
+                    System.out.println("idalumno = "+idalumno);
+
+                    if (idasignatura ==idAsignatura && idalumno == idAlumno) {
+
+                        return new Asignatura(idAsignatura, estado,nota,idalumno,idmateria);
+                    }
+                } catch (NumberFormatException e) {
+                    System.err.println("Error al parsear número: " + e.getMessage());
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo CSV: " + e.getMessage());
+        }
+        return null;
+
+    }
+    @Override
     public Asignatura modificarAsignatura(Asignatura asignatura) {
         File inputFile = new File(CSV_FILE_PATH);
         File tempFile = new File("tempFile.csv");
         BufferedReader bufferedReader = null;
         PrintWriter printWriter = null;
-        Asignatura asignaturamodificado = null;
+        Asignatura asignaturaModificada = null;
 
         try {
             bufferedReader = new BufferedReader(new FileReader(inputFile));
@@ -157,28 +204,32 @@ public class AsignaturaDaoMemoryImpl implements AsignaturaDao {
             String linea;
 
             while ((linea = bufferedReader.readLine()) != null) {
+                System.out.println("Procesando la línea: " + linea);
                 String[] datos = linea.split(",");
+
                 if (datos.length < 5) {
-                    // Si la línea no tiene el formato correcto, la copiamos tal cual
+                    // Línea con formato incorrecto
+                    System.err.println("Línea con formato incorrecto: " + linea);
                     printWriter.println(linea);
                     continue;
                 }
 
-                long id= Long.parseLong(datos[0]);
+                long id = Long.parseLong(datos[0].trim());
+                System.out.println("ID actual en la línea: " + id + ", ID buscado: " + asignatura.getId());
 
                 if (id == asignatura.getId()) {
-                    // Reemplazamos la línea con los datos actualizados del alumno
+
+
                     printWriter.println(
                             asignatura.getId() + "," +
                                     asignatura.getIdalumno() + "," +
                                     asignatura.getIdmateria() + "," +
                                     asignatura.getNota()+ "," +
                                     asignatura.getEstado()
-
                     );
-                    asignaturamodificado = asignatura;
+                    asignaturaModificada = asignatura;
                 } else {
-                    // Escribimos la línea existente sin modificaciones
+                    // Escribir línea sin modificaciones
                     printWriter.println(linea);
                 }
             }
@@ -194,7 +245,7 @@ public class AsignaturaDaoMemoryImpl implements AsignaturaDao {
             }
         }
 
-        // Reemplazamos el archivo original con el temporal
+        // Reemplazar el archivo original
         if (inputFile.delete()) {
             if (!tempFile.renameTo(inputFile)) {
                 System.err.println("No se pudo renombrar el archivo temporal.");
@@ -205,12 +256,13 @@ public class AsignaturaDaoMemoryImpl implements AsignaturaDao {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al eliminar el archivo original.");
         }
 
-        if (asignaturamodificado != null) {
-            System.out.println("asignatura modificado exitosamente.");
-            return asignaturamodificado;
+        // Verificar si se encontró y modificó la asignatura
+        if (asignaturaModificada != null) {
+            System.out.println("Asignatura modificada exitosamente.");
+            return asignaturaModificada;
         } else {
-            System.out.println("No se encontró un asignatura con el ID proporcionado.");
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "asignatura no encontrado.");
+            System.out.println("No se encontró una asignatura con el ID proporcionado.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Asignatura no encontrada.");
         }
     }
 

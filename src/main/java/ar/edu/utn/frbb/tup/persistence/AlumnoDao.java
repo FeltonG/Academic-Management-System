@@ -14,10 +14,6 @@ public interface AlumnoDao {
 
      public Alumno buscarAlumnoporid(long id);
 
-     public Alumno buscarAlumnoporDni(int Dni);
-
-     public Alumno borrarAlumnoDNI(int Dni);
-
      public Alumno borrarAlumnoporid(long id);
 
      public Alumno modificarAlumno(Alumno alumno);

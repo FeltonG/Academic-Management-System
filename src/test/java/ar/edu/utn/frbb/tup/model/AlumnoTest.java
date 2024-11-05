@@ -1,153 +1,90 @@
 package ar.edu.utn.frbb.tup.model;
 
-import ar.edu.utn.frbb.tup.model.exception.EstadoIncorrectoException;
-import ar.edu.utn.frbb.tup.model.exception.CorrelatividadesNoAprobadasException;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import ar.edu.utn.frbb.tup.model.Alumno;
+import ar.edu.utn.frbb.tup.persistence.AlumnoDaoMemoryImpl;
+import org.junit.jupiter.api.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.io.*;
+import java.util.List;
 
-public class AlumnoTest {
+import static org.junit.jupiter.api.Assertions.*;
 
-    private static Alumno alumno;
-    private static Materia m1;
-    private static Materia m2;
-    private static Materia m3;
-    private static Materia m4;
-    private static Profesor profesor1;
-    private static Asignatura a1;
-    private static Asignatura a2;
-    private static Asignatura a3;
-    private static Asignatura a4;
+class AlumnoTest {
+    private AlumnoDaoMemoryImpl alumnoDao;
+    private final String tempCsvPath = "tempAlumnoDATA.csv";
+    @BeforeEach
+    void setUp() {
+        alumnoDao = new AlumnoDaoMemoryImpl();
 
 
-    @BeforeAll
-    public static void setUp() {
-
-        profesor1 = new Profesor("Luciano", "Salotto", "Lic.");
-        m1 = new Materia("Laboratorio 1", 1, 1, profesor1);
-        m2 = new Materia("Laboratorio 2", 1, 2, profesor1);
-        m3 = new Materia("Laboratorio 3", 2, 1, profesor1);
-        m4 = new Materia("Laboratorio 4", 2, 2, profesor1);
-        m2.agregarCorrelatividad(m1);
-        m3.agregarCorrelatividad(m1);
-        m3.agregarCorrelatividad(m2);
-        m4.agregarCorrelatividad(m1);
-        m4.agregarCorrelatividad(m2);
-        m4.agregarCorrelatividad(m3);
-        a1 = new Asignatura(m1);
-        a2 = new Asignatura(m2);
-        a3 = new Asignatura(m3);
-        a4 = new Asignatura(m4);
-
-    }
-
-    @Test
-    public void testNewAlumno() {
-        alumno = new Alumno("Stefano", "D'Annunzio", 42431228);
-        assertEquals("Stefano", alumno.getNombre());
-        assertEquals("D'Annunzio", alumno.getApellido());
-        assertEquals(42431228, alumno.getDni());
-
-    }
-
-    @Test
-    public void testNewAlumnoConAsignaturas() {
-        alumno = new Alumno("Stefano", "D'Annunzio", 42431228);
-        alumno.agregarAsignatura(a1);
-        alumno.agregarAsignatura(a2);
-        alumno.agregarAsignatura(a3);
-        alumno.agregarAsignatura(a4);
-        assertEquals(4, alumno.obtenerListaAsignaturas().size());
-        assertEquals("Laboratorio 1", alumno.obtenerListaAsignaturas().get(0).getNombreAsignatura());
-        assertEquals("Laboratorio 2", alumno.obtenerListaAsignaturas().get(1).getNombreAsignatura());
-        assertEquals("Laboratorio 3", alumno.obtenerListaAsignaturas().get(2).getNombreAsignatura());
-        assertEquals("Laboratorio 4", alumno.obtenerListaAsignaturas().get(3).getNombreAsignatura());
-
-    }
-
-    @Test
-    public void testNewAlumnoCursandoAsignaturas(){
-        alumno = new Alumno("Stefano", "D'Annunzio", 42431228);
-        alumno.agregarAsignatura(a1);
-        alumno.agregarAsignatura(a2);
-        alumno.agregarAsignatura(a3);
-        alumno.agregarAsignatura(a4);
-        alumno.obtenerListaAsignaturas().get(0).cursarAsignatura();
-        alumno.obtenerListaAsignaturas().get(1).cursarAsignatura();
-        alumno.obtenerListaAsignaturas().get(2).cursarAsignatura();
-        alumno.obtenerListaAsignaturas().get(3).cursarAsignatura();
-        assertEquals(EstadoAsignatura.CURSADA, alumno.obtenerListaAsignaturas().get(0).getEstado());
-        assertEquals(EstadoAsignatura.CURSADA, alumno.obtenerListaAsignaturas().get(1).getEstado());
-        assertEquals(EstadoAsignatura.CURSADA, alumno.obtenerListaAsignaturas().get(2).getEstado());
-        assertEquals(EstadoAsignatura.CURSADA, alumno.obtenerListaAsignaturas().get(3).getEstado());
-
-
-    }
-
-    @Test
-    public void testNewAlumnoAprobandoAsignaturas() throws EstadoIncorrectoException {
-        alumno = new Alumno("Stefano", "D'Annunzio", 42431228);
-        alumno.agregarAsignatura(a1);
-        alumno.agregarAsignatura(a2);
-        alumno.agregarAsignatura(a3);
-        alumno.agregarAsignatura(a4);
-        alumno.obtenerListaAsignaturas().get(0).cursarAsignatura();
-        alumno.obtenerListaAsignaturas().get(1).cursarAsignatura();
-        alumno.obtenerListaAsignaturas().get(2).cursarAsignatura();
-        alumno.obtenerListaAsignaturas().get(3).cursarAsignatura();
-        if(alumno.puedeAprobar(alumno.obtenerListaAsignaturas().get(1))) {
-            alumno.obtenerListaAsignaturas().get(1).aprobarAsignatura(8);
+        try (PrintWriter writer = new PrintWriter(new FileWriter(tempCsvPath))) {
+            writer.println("1,John,Doe,12345678");
+            writer.println("2,Jane,Smith,87654321");
+        } catch (IOException e) {
+            fail("Error al preparar archivo de prueba: " + e.getMessage());
         }
-        if(alumno.puedeAprobar(alumno.obtenerListaAsignaturas().get(2))) {
-            alumno.obtenerListaAsignaturas().get(2).aprobarAsignatura(8);
-        }
-        if(alumno.puedeAprobar(alumno.obtenerListaAsignaturas().get(3))) {
-            alumno.obtenerListaAsignaturas().get(3).aprobarAsignatura(8);
-        }
-        //assertEquals(EstadoAsignatura.APROBADA, alumno.obtenerListaAsignaturas().get(0).getEstado());
-        assertEquals(EstadoAsignatura.APROBADA, alumno.obtenerListaAsignaturas().get(1).getEstado());
-        assertEquals(EstadoAsignatura.APROBADA, alumno.obtenerListaAsignaturas().get(2).getEstado());
-        assertEquals(EstadoAsignatura.APROBADA, alumno.obtenerListaAsignaturas().get(3).getEstado());
     }
 
-//    @Test(expected = CorrelatividadesNoAprobadasException.class)
-//    public void testAlumnoAprobandoSinCumplirCorrelativas() throws CorrelatividadesNoAprobadasException {
-//        alumno = new Alumno("Stefano", "D'Annunzio", 42431228);
-//        alumno.agregarAsignatura(a1);
-//        alumno.agregarAsignatura(a2);
-//        alumno.agregarAsignatura(a3);
-//        alumno.agregarAsignatura(a4);
-//
-//        Materia m5 = new Materia("Programacion 3", 2, 1, profesor1);
-//        m5.agregarCorrelatividad(m1);
-//        m5.agregarCorrelatividad(m2);
-//        m4.agregarCorrelatividad(m5);
-//        Asignatura a5 = new Asignatura(m5);
-//        alumno.agregarAsignatura(a5);
-//
-//        alumno.obtenerListaAsignaturas().get(0).cursarAsignatura();
-//        alumno.obtenerListaAsignaturas().get(1).cursarAsignatura();
-//        alumno.obtenerListaAsignaturas().get(2).cursarAsignatura();
-//        alumno.obtenerListaAsignaturas().get(3).cursarAsignatura();
-//        alumno.obtenerListaAsignaturas().get(4).cursarAsignatura();
-//        try {
-//            if(alumno.puedeAprobar(alumno.obtenerListaAsignaturas().get(0))) {
-//                alumno.obtenerListaAsignaturas().get(0).aprobarAsignatura(8);
-//            }
-//            if(alumno.puedeAprobar(alumno.obtenerListaAsignaturas().get(1))) {
-//                alumno.obtenerListaAsignaturas().get(1).aprobarAsignatura(8);
-//            }
-//            if(alumno.puedeAprobar(alumno.obtenerListaAsignaturas().get(2))) {
-//                alumno.obtenerListaAsignaturas().get(2).aprobarAsignatura(8);
-//            }
-//            if(alumno.puedeAprobar(alumno.obtenerListaAsignaturas().get(3))) {
-//                alumno.obtenerListaAsignaturas().get(3).aprobarAsignatura(8);
-//            }
-//        }
-//         catch (EstadoIncorrectoException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//    }
+    @AfterEach
+    void tearDown() {
+        new File(tempCsvPath).delete();
+    }
+
+    @Test
+    void testGuardarAlumno() {
+        Alumno nuevoAlumno = new Alumno(3, "Alice", "Brown", 11223344);
+        alumnoDao.guardarAlumno(nuevoAlumno);
+
+        Alumno resultado = alumnoDao.buscarAlumnoporid(3);
+        assertNotNull(resultado);
+        assertEquals("Alice", resultado.getNombre());
+    }
+
+    @Test
+    void testBuscarAlumnoporid() {
+        Alumno alumno = alumnoDao.buscarAlumnoporid(1);
+        assertNotNull(alumno);
+        assertEquals("John", alumno.getNombre());
+
+        Alumno noExistente = alumnoDao.buscarAlumnoporid(99);
+        assertNull(noExistente);
+    }
+
+    @Test
+    void testBorrarAlumnoporid() {
+        Alumno alumnoEliminado = alumnoDao.borrarAlumnoporid(2);
+        assertNotNull(alumnoEliminado);
+        assertEquals("Jane", alumnoEliminado.getNombre());
+
+        Alumno alumnoNoEncontrado = alumnoDao.borrarAlumnoporid(99);
+        assertNull(alumnoNoEncontrado);
+    }
+
+    @Test
+    void testModificarAlumno() {
+        Alumno alumnoModificado = new Alumno(1, "John", "Updated", 12345678);
+        Alumno resultado = alumnoDao.modificarAlumno(alumnoModificado);
+        assertNotNull(resultado);
+        assertEquals("Updated", resultado.getApellido());
+
+        Alumno noExistente = new Alumno(99, "Non", "Existent", 99999999);
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
+            alumnoDao.modificarAlumno(noExistente);
+        });
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+    }
+
+    @Test
+    void testBuscarAlumnos() {
+        List<Alumno> alumnos = alumnoDao.buscarAlumnos();
+        assertEquals(2, alumnos.size());
+    }
+
+    @Test
+    void testObtenerUltimoId() {
+        int ultimoId = alumnoDao.obtenerUltimoId();
+        assertEquals(2, ultimoId);
+    }
 }

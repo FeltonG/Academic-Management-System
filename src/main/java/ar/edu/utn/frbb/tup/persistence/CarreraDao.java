@@ -11,10 +11,12 @@ public interface CarreraDao {
 
     public List<Carrera> buscarCarrera();
 
-    public Asignatura buscarCarreraporId(long id);
+    public Carrera buscarCarreraporId(long id);
 
-    public Asignatura borrarCarreraporid(long id);
+    public Carrera borrarCarreraporid(long id);
 
-    public Asignatura modificarCarrera(Carrera carrera);
+    public Carrera modificarCarrera(Carrera carrera);
+
+    public int obtenerUltimoId();
 
 }

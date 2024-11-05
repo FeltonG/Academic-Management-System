@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Materia {
+public class Materia implements Comparable<Materia> {
 
 
     private long id;
@@ -50,7 +50,9 @@ public class Materia {
         return correlatividades;
     }
 
-    public Materia(){}
+    public Materia(){
+
+    }
 
 
     public Materia(Long id, String nombre, int anio, int cuatrimestre, long idprofesor,  List<Long> correlatividades) {
@@ -72,7 +74,14 @@ public class Materia {
         this.idprofesor = idprofesor;
         this.correlatividades = correlatividades;
     }
-/*
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setCorrelatividades(List<Long> correlatividades) {
+        this.correlatividades = correlatividades;
+    }
 
     public Materia(String nombre, int anio, int cuatrimestre, long idprofesor) {
 
@@ -84,7 +93,7 @@ public class Materia {
         this.idprofesor = idprofesor;
         correlatividades = new ArrayList<>();
     }
-*/
+
 
     @Override
     public String toString() {
@@ -105,6 +114,9 @@ public class Materia {
         this.id = materiaId;
     }
 
+    public void setIdprofesor(long idprofesor) {
+        this.idprofesor = idprofesor;
+    }
 
     @Override
     public int hashCode() {
@@ -119,5 +131,10 @@ public class Materia {
         ultimoId++;
         return ultimoId;
 
+    }
+
+    @Override
+    public int compareTo(Materia otraMateria) {
+        return this.getNombre().compareTo(otraMateria.getNombre());
     }
 }

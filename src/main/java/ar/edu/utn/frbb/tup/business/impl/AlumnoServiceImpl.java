@@ -23,8 +23,6 @@ import java.util.Random;
 public class AlumnoServiceImpl implements AlumnoService {
 
     @Autowired
-    // el objetivo de este objeto debajo es usar las herramientas de Dao sin ser por ejemplo
-    // un alumno existente
     private  AlumnoDaoMemoryImpl alumnoDaoMemoryImpl;
 
     @Override
@@ -38,7 +36,6 @@ public class AlumnoServiceImpl implements AlumnoService {
 
     @Override
     public Alumno borraralumnoId(long id) {
-        // primero salgo a buscarlo.
         Alumno alumnoExistente = alumnoDaoMemoryImpl.buscarAlumnoporid(id);
         if (alumnoExistente != null)
         {
@@ -59,13 +56,6 @@ public class AlumnoServiceImpl implements AlumnoService {
         Alumno alumno = alumnoDaoMemoryImpl.buscarAlumnoporid(id);
         return alumno;
     }
-
-    // buscar alumno dni
-    public Alumno buscarAlumnoDni(int dni) {
-        Alumno alumno = alumnoDaoMemoryImpl.buscarAlumnoporDni(dni);
-        return alumno;
-    }
-
 
     @Override
     public Alumno modificarAlumno(long id, AlumnoDto alumnoModificado) {

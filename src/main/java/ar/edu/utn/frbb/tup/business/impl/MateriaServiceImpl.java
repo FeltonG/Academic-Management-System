@@ -27,6 +27,8 @@ public class MateriaServiceImpl implements MateriaService {
         // el servicio ademas de crear la informacion y retornarla la almacena en DAO
         // tambien lo que hace es VERIFICAR que todo este BIEN antes de el guardado.
         Materia materia = new Materia(materiadto.getNombre(),materiadto.getAnio(), materiadto.getCuatrimestre(),materiadto.getProfesorId(),materiadto.getCorrelatividades());
+        System.out.println("El id profesor de la materia es: " + materiadto.getProfesorId());
+        System.out.println("ID del profesor en Materia: " + materia.getIdprofesor());
         materiaDaoMemoryimp.guardarMateria(materia);
         return materia; // lo retorno
     }
@@ -46,16 +48,19 @@ public class MateriaServiceImpl implements MateriaService {
     }
 
     @Override
-    public Materia modificarMateria(long id, MateriaDto materia) {
+    public Materia modificarMateria(long id, MateriaDto materiaModificada) {
 
         // Buscar si existe el alumno a través del id
         Materia materiaExistente= materiaDaoMemoryimp.buscarMateriaId(id);
 
         if (materiaExistente != null) {
             // Actualizar los datos del alumno existente con los nuevos datos del DTO
-            materiaExistente.getNombre();
-            materiaExistente.getCuatrimestre();
-            materiaExistente.getAnio();
+            System.out.println("Materia modificada correlatividades: "+materiaModificada.getCorrelatividades().toString());
+            materiaExistente.setNombre(materiaModificada.getNombre());
+            materiaExistente.setAnio(materiaModificada.getAnio());
+            materiaExistente.setCuatrimestre(materiaModificada.getCuatrimestre());
+            materiaExistente.setIdprofesor(materiaModificada.getProfesorId());
+            materiaExistente.setCorrelatividades(materiaModificada.getCorrelatividades());
 
 
             // Aquí puedes seguir actualizando otros campos que tengas en AlumnoDto

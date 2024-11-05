@@ -80,8 +80,8 @@ public class Asignatura {
         this.nota = nota;
     }
 
-    public String getEstado() {
-        return estado.name();
+    public EstadoAsignatura getEstado() {
+        return this.estado;
     }
 
     public void setEstado(EstadoAsignatura estado) {

@@ -19,26 +19,27 @@ public class MateriaController {
     @Autowired
     private MateriaService materiaService;
 
-
+    // Crear una nueva materia
     @PostMapping
     public Materia crearMateria(@RequestBody MateriaDto materiaDto) {
         return materiaService.crearMateria(materiaDto);
     }
 
+    // Obtener una materia por su ID
     @GetMapping("/{idMateria}")
-    public Materia buscarmateriaId(@PathVariable Integer idMateria)  {
+    public Materia buscarMateriaId(@PathVariable("idMateria") Integer idMateria) {
         return materiaService.buscarmateriaId(idMateria);
     }
 
-    // Modificar un alumno existente
+    // Modificar una materia existente
     @PutMapping("/{idMateria}")
-    public Materia modificarMateria(@PathVariable("idmateria") Integer idmateria, @RequestBody MateriaDto materiaDto) {
-        return materiaService.modificarMateria(idmateria, materiaDto);
+    public Materia modificarMateria(@PathVariable("idMateria") Integer idMateria, @RequestBody MateriaDto materiaDto) {
+        return materiaService.modificarMateria(idMateria, materiaDto);
     }
 
-    // Eliminar un alumno
+    // Eliminar una materia
     @DeleteMapping("/{idMateria}")
-    public Materia eliminarAlumno(@PathVariable("idMateria") Integer idmateria) {
-        return materiaService.borrarmateriaId(idmateria);
+    public Materia eliminarMateria(@PathVariable("idMateria") Integer idMateria) {
+        return materiaService.borrarmateriaId(idMateria);
     }
 }

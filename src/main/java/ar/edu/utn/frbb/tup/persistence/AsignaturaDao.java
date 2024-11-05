@@ -21,6 +21,7 @@ public interface AsignaturaDao {
 
     public int obtenerUltimoId();
 
+    public Asignatura buscarAsignaturaporIdAsignaturaIdAlumno(long idAsignatura, long idAlumno);
 
 
 

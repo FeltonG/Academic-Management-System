@@ -31,8 +31,8 @@ public   class ProfesorDaoMemoryImpl implements ProfesorDao{
 
             // Escribir los atributos del alumno en formato CSV
             printWriter.println(
-                    profesor.getId()+ "," +
-                      profesor.getNombre() + "," +
+                            profesor.getId()+ "," +
+                            profesor.getNombre() + "," +
                             profesor.getApellido() + "," +
                             profesor.getTitulo() + ","
 
@@ -58,77 +58,78 @@ public   class ProfesorDaoMemoryImpl implements ProfesorDao{
             }
         }
     }
-    public Profesor buscarProfesorporid(long id)
-    {
+    public Profesor buscarProfesorporid(long id) {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(CSV_FILE_PATH))) {
+            String linea;  // id, nombre, apellido, titulo
 
-        BufferedReader bufferedReader = null;
-        try {
-            bufferedReader = new BufferedReader(new FileReader(CSV_FILE_PATH));
-            String linea;  // id, nombre, apellido, dni
-            while ((linea = bufferedReader.readLine()) != null)
-            {
+            while ((linea = bufferedReader.readLine()) != null) {
                 String[] datos = linea.split(",");
-                int profesorId = Integer.parseInt(datos[0]);
-                String profesorTitulo = datos[1];
-                String profesornombre = datos[2];
-                String profesorapellido= datos[3];
-                if (profesorId == id) {
-                    // Crear un objeto Profesor con id, título y dni
-                    Profesor profesor = new Profesor(profesorTitulo,profesornombre,profesorapellido );
-                    return profesor;
-                }
-            }
 
-        }
-        catch (IOException e) {
-            System.err.println("Error al leer el archivo CSV: " + e.getMessage());
-        }finally {
-            if (bufferedReader != null) {
+                // Verificar que la línea tenga suficientes datos
+                if (datos.length < 4) {
+                    System.err.println("Línea con formato incorrecto: " + linea);
+                    continue;
+                }
+
                 try {
-                    bufferedReader.close();
-                } catch (IOException e) {
-                    System.err.println("Error al cerrar el archivo: " + e.getMessage());
+                    long profesorId = Long.parseLong(datos[0]);
+                    String profesornombre = datos[1];
+                    String profesorapellido = datos[2];
+                    String profesorTitulo = datos[3];
+
+                    if (profesorId == id) {
+                        return new Profesor(profesorId, profesornombre, profesorapellido, profesorTitulo);
+                    }
+                } catch (NumberFormatException e) {
+                    System.err.println("Error de formato en ID en la línea: " + linea);
                 }
             }
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo CSV: " + e.getMessage());
         }
         return null;
-
     }
 
-    public Profesor borrarProfesorporid(long id)
-    {
+    public Profesor borrarProfesorporid(long id) {
         File inputFile = new File(CSV_FILE_PATH);
-        BufferedReader bufferedReader = null;
         File tempFile = new File("tempFile.csv");
+        BufferedReader bufferedReader = null;
         PrintWriter printWriter = null;
-        Profesor profesoreliminado = null;
+        Profesor profesorEliminado = null;
+
         try {
             bufferedReader = new BufferedReader(new FileReader(inputFile));
             printWriter = new PrintWriter(new FileWriter(tempFile));
             String linea;
 
+            // Leer cada línea del archivo original
             while ((linea = bufferedReader.readLine()) != null) {
                 String[] datos = linea.split(",");
-                int profesorId = Integer.parseInt(datos[0]);
-                if (profesorId != id) {
-                    printWriter.println(linea);
-                }else
-                {
-                    profesoreliminado = new Profesor(
-                                           // ID
-                            datos[1],                  // Nombre
-                            datos[2],                  // Apellido
-                            datos[3]                   // titulo
-                    );
 
+                // Verificar que los datos contengan al menos 4 campos antes de parsear
+                if (datos.length < 4) {
+                    System.err.println("Línea con formato incorrecto: " + linea);
+                    continue;
+                }
+
+                int profesorId = Integer.parseInt(datos[0]);
+
+                if (profesorId != id) {
+                    printWriter.println(linea); // Escribir líneas no coincidentes en el archivo temporal
+                } else {
+                    // Crear instancia de Profesor eliminado
+                    profesorEliminado = new Profesor(
+                            profesorId,               // ID
+                            datos[1],                 // Nombre
+                            datos[2],                 // Apellido
+                            datos[3]                  // Título
+                    );
                 }
             }
 
-        }catch (IOException e) {
+        } catch (IOException e) {
             System.err.println("Error al leer el archivo CSV: " + e.getMessage());
-        }
-        finally
-        {
+        } finally {
             try {
                 if (bufferedReader != null) bufferedReader.close();
                 if (printWriter != null) printWriter.close();
@@ -137,42 +138,37 @@ public   class ProfesorDaoMemoryImpl implements ProfesorDao{
             }
         }
 
-        if(profesoreliminado != null)
-        {
-            if(!inputFile.delete())
-            {
+        // Eliminar el archivo original y renombrar el archivo temporal
+        if (profesorEliminado != null) {
+            if (!inputFile.delete()) {
                 System.out.println("No se pudo eliminar el archivo original");
                 return null;
             }
-            if(!tempFile.renameTo(inputFile))
-            {
+            if (!tempFile.renameTo(inputFile)) {
                 System.out.println("No se pudo renombrar el archivo temporal");
                 return null;
             }
-            System.out.println("Profesor eliminado exitosamente! ");
-            return profesoreliminado;
-        }
-        else
-        {
+            System.out.println("Profesor eliminado exitosamente!");
+            return profesorEliminado;
+        } else {
+            // Si el profesor no fue encontrado
             System.out.println("No existe profesor con ese id");
             return null;
         }
-
     }
+
 
     @Override
     public List<Profesor> buscarProfesores() {
-        List<Profesor> profesor = new ArrayList<>();
-        BufferedReader bufferedReader = null;
+        List<Profesor> profesores = new ArrayList<>();
 
-        try {
-            bufferedReader = new BufferedReader(new FileReader(CSV_FILE_PATH));
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(CSV_FILE_PATH))) {
             String linea;
 
             while ((linea = bufferedReader.readLine()) != null) {
                 String[] datos = linea.split(",");
 
-                if (datos.length < 5) {
+                if (datos.length < 4) { // Suponiendo que cada línea debe tener al menos 4 campos
                     System.err.println("Línea con formato incorrecto: " + linea);
                     continue; // Saltar líneas con formato incorrecto
                 }
@@ -180,32 +176,22 @@ public   class ProfesorDaoMemoryImpl implements ProfesorDao{
                 try {
                     Long id = Long.parseLong(datos[0].trim());
                     String nombre = String.valueOf(datos[1].trim());
-                    String apellido =String.valueOf(datos[2].trim());
-                    String titulo=String.valueOf(datos[3].trim());
+                    String apellido = String.valueOf(datos[2].trim());
+                    String titulo = String.valueOf(datos[3].trim());
 
-
-                    Profesor profesor1 = new Profesor(id,nombre,apellido,titulo);
-                    profesor.add(profesor1);
+                    Profesor profesor = new Profesor(id, nombre, apellido, titulo);
+                    profesores.add(profesor);
                 } catch (NumberFormatException e) {
                     System.err.println("Error al parsear números en la línea: " + linea);
-                    // Puedes decidir si continuar o lanzar una excepción
                 }
             }
         } catch (IOException e) {
             System.err.println("Error al leer el archivo CSV: " + e.getMessage());
-            // Dependiendo de tu lógica, podrías lanzar una excepción aquí
-        } finally {
-            if (bufferedReader != null) {
-                try {
-                    bufferedReader.close();
-                } catch (IOException e) {
-                    System.err.println("Error al cerrar el archivo: " + e.getMessage());
-                }
-            }
         }
 
-        return profesor;
+        return profesores;
     }
+
 
 
 
@@ -228,17 +214,16 @@ public   class ProfesorDaoMemoryImpl implements ProfesorDao{
                     printWriter.println(linea); // Copia la línea sin modificar
                     continue;
                 }
-
-                String profesorNombre = datos[1]; // Suponiendo que el nombre está en la posición 1
-                String profesorApellido = datos[2]; // Suponiendo que el apellido está en la posición 2
-
+                long Id = Long.parseLong(datos[0].trim());
                 // Verifica si el nombre y apellido coinciden
-                if (profesorNombre.equals(profesor.getNombre()) && profesorApellido.equals(profesor.getApellido())) {
+                if (Id== profesor.getId()) {
                     // Reemplazamos la línea con los datos actualizados del profesor
                     printWriter.println(
-                            profesor.getTitulo() + "," +
-                                    profesor.getNombre() + "," +
-                                    profesor.getApellido() // Solo escribimos los datos disponibles
+                            profesor.getId()+ "," +
+                            profesor.getNombre() + "," +
+                            profesor.getApellido()+ "," +
+                            profesor.getTitulo()
+                                     // Solo escribimos los datos disponibles
                     );
                     profesorModificado = profesor; // Almacenamos el profesor modificado
                 } else {
@@ -261,9 +246,11 @@ public   class ProfesorDaoMemoryImpl implements ProfesorDao{
         if (inputFile.delete()) {
             if (!tempFile.renameTo(inputFile)) {
                 System.err.println("No se pudo renombrar el archivo temporal.");
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al renombrar el archivo temporal.");
             }
         } else {
             System.err.println("No se pudo eliminar el archivo original.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al eliminar el archivo original.");
         }
 
         if (profesorModificado != null) {
@@ -271,8 +258,10 @@ public   class ProfesorDaoMemoryImpl implements ProfesorDao{
             return profesorModificado;
         } else {
             System.out.println("No se encontró un profesor con el nombre y apellido proporcionados.");
-            return null; // Retornamos null si no se encontró
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "profesor no encontrado.");
         }
+
+
     }
 
     @Override

@@ -17,12 +17,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
 public class ProfesorServiceImpl implements ProfesorService {
     @Autowired
     private ProfesorDaoMemoryImpl profesorDaoMemoryimpl;
+    @Autowired
+    private MateriaDaoMemoryImpl materiaDaoMemoryimpl = new MateriaDaoMemoryImpl();
 
     public Profesor crearProfesor(ProfesorDto profesordto)
     {
@@ -68,8 +72,8 @@ public class ProfesorServiceImpl implements ProfesorService {
 
     @Override
     public Profesor buscaProfesorporid(long id) {
-        Profesor profesordni=profesorDaoMemoryimpl.buscarProfesorporid(id);
-        return profesordni;
+        Profesor profesorid=profesorDaoMemoryimpl.buscarProfesorporid(id);
+        return profesorid;
     }
 
 
@@ -82,9 +86,10 @@ public class ProfesorServiceImpl implements ProfesorService {
 
         if (profesorExistente != null) {
             // Actualizar los datos del profesor existente con los nuevos datos del DTO
-            profesorExistente.getTitulo();
-            profesorExistente.getApellido();
-            profesorExistente.getApellido();
+            profesorExistente.setNombre(profesor.getNombre());
+            profesorExistente.setApellido(profesor.getApellido());
+            profesorExistente.setTitulo(profesor.getTitulo());
+
             // Aquí puedes seguir actualizando otros campos que tengas en ProfesorDto
 
             // Guardar los cambios
@@ -98,4 +103,13 @@ public class ProfesorServiceImpl implements ProfesorService {
             return null;
         }
     }
+
+    public List<Materia> buscarMateriasPorProfesorId(long idProfesor){
+        List<Materia> materiasEncontradas = new ArrayList<>();
+
+        materiasEncontradas= materiaDaoMemoryimpl.buscarMateriasPorProfesorId(idProfesor);
+        Collections.sort(materiasEncontradas);
+        return  materiasEncontradas;
+    }
+
 }

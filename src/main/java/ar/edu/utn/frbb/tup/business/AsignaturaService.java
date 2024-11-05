@@ -18,5 +18,5 @@ public interface AsignaturaService {
 
     Asignatura borrarAsignaturaporid(long id);
 
-
+    Asignatura modificarEstadoAsignatura(long idAlumno, long idAsignatura);
 }
