@@ -92,28 +92,3 @@ public class AlumnoServiceImpl implements AlumnoService {
 }
 
 
-
-/*
-    @Override
-    public void aprobarAsignatura(int materiaId, int nota, long dni) throws EstadoIncorrectoException, CorrelatividadesNoAprobadasException {
-        Asignatura a = asignaturaService.getAsignatura(materiaId, dni);
-        for (Materia m:
-             a.getMateria().getCorrelatividades()) {
-            Asignatura correlativa = asignaturaService.getAsignatura(m.getMateriaId(), dni);
-            if (!EstadoAsignatura.APROBADA.equals(correlativa.getEstado())) {
-                throw new CorrelatividadesNoAprobadasException("La materia " + m.getNombre() + " debe estar aprobada para aprobar " + a.getNombreAsignatura());
-            }
-        }
-        a.aprobarAsignatura(nota);
-        asignaturaService.actualizarAsignatura(a);
-        Alumno alumno = alumnoDao.loadAlumno(dni);
-        alumno.actualizarAsignatura(a);
-        alumnoDao.saveAlumno(alumno);
-    }
-
- */
-
-/*@Override
-    public Alumno buscarAlumno(String apellido) {
-        return alumnoDao.findAlumno(apellido);
-    }*/

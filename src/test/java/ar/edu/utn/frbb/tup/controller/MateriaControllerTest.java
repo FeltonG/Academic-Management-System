@@ -1,88 +1,99 @@
 package ar.edu.utn.frbb.tup.controller;
 
-import ar.edu.utn.frbb.tup.App;
 import ar.edu.utn.frbb.tup.business.MateriaService;
 import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
+import org.mockito.MockitoAnnotations;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.util.Arrays;
+import java.util.List;
 
-@ExtendWith(SpringExtension.class)
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
 public class MateriaControllerTest {
 
     @InjectMocks
-    MateriaController materiaController;
+    private MateriaController materiaController;
 
     @Mock
-    MateriaService materiaService;
+    private MateriaService materiaService;
 
-    MockMvc mockMvc;
+    private MateriaDto materiaDto;
+    private Materia materia;
+    private List<Materia> materias;
 
-    private static ObjectMapper mapper = new ObjectMapper();
-
-    @BeforeEach
+    @Before
     public void setUp() {
-        this.mockMvc = MockMvcBuilders.standaloneSetup(materiaController).build();
+
+        MockitoAnnotations.initMocks(this);
+
+
+        materiaDto = new MateriaDto();
+        materiaDto.setNombre("Matemáticas");
+
+
+        materia = new Materia();
+        materia.setId(1);
+        materia.setNombre("Matemáticas");
+
+
+        materias = Arrays.asList(new Materia(), new Materia());
     }
 
     @Test
-    public void crearMateriaTest() throws Exception {
+    public void testCrearMateria() {
 
-        Mockito.when(materiaService.crearMateria(any(MateriaDto.class))).thenReturn(new Materia());
-        MateriaDto materiaDto = new MateriaDto();
-        materiaDto.setAnio(1);
-        materiaDto.setCuatrimestre(2);
-        materiaDto.setNombre("Laboratorio II");
-        materiaDto.setProfesorId(345);
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/materia")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(materiaDto))
-                .accept(MediaType.APPLICATION_JSON)).andExpect(status().is2xxSuccessful())
-                .andReturn();
+        when(materiaService.crearMateria(materiaDto)).thenReturn(materia);
 
 
+        Materia response = materiaController.crearMateria(materiaDto);
 
-        Assertions.assertEquals(new Materia(), mapper.readValue(result.getResponse().getContentAsString(), Materia.class));
+
+        assertNotNull(response);
+        assertEquals("Matemáticas", response.getNombre());
     }
 
     @Test
-    public void testCrearMateriaBadRequest() throws Exception {
+    public void testBuscarMateriaId() {
 
-        Mockito.when(materiaService.crearMateria(any(MateriaDto.class))).thenReturn(new Materia());
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/materia")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\n" +
-                                "    \"nombre\" : \"Laboratorio II\",\n" +
-                                "    \"anio\" : \"segundo\", \n" +
-                                "    \"cuatrimestre\" : 1,\n" +
-                                "    \"profesorId\" : 2 \n"+
-                                "}")
-                        .accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest())
-                .andReturn();
+        when(materiaService.buscarmateriaId(1)).thenReturn(materia);
 
+
+        Materia response = materiaController.buscarMateriaId(1);
+
+
+        assertNotNull(response);
+        assertEquals("Matemáticas", response.getNombre());
     }
 
+    @Test
+    public void testModificarMateria() {
 
+        when(materiaService.modificarMateria(1, materiaDto)).thenReturn(materia);
+
+
+        Materia response = materiaController.modificarMateria(1, materiaDto);
+
+        assertNotNull(response);
+        assertEquals("Matemáticas", response.getNombre());
+    }
+
+    @Test
+    public void testEliminarMateria() {
+
+        when(materiaService.borrarmateriaId(1)).thenReturn(materia);
+
+
+        Materia response = materiaController.eliminarMateria(1);
+
+
+        assertNotNull(response);
+        assertEquals("Matemáticas", response.getNombre());
+
+    }
 }

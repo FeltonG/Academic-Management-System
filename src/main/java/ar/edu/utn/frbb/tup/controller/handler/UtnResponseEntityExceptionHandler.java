@@ -1,7 +1,8 @@
-/*
+
 package ar.edu.utn.frbb.tup.controller.handler;
 
 
+import ar.edu.utn.frbb.tup.model.exception.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,28 +11,28 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-/*
+
 @ControllerAdvice
 public class UtnResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value
-            = {MateriaNotFoundException.class})
+            = {AlumnoAlreadyExistsException.class, ProfesorAlreadyExistsException.class, IllegalArgumentException.class, CarreraAlreadyExistsException.class})
     protected ResponseEntity<Object> handleMateriaNotFound(
-            MateriaNotFoundException ex, WebRequest request) {
+            MateriaNoEncontradaException ex, WebRequest request) {
         String exceptionMessage = ex.getMessage();
         CustomApiError error = new CustomApiError();
         error.setErrorMessage(exceptionMessage);
         return handleExceptionInternal(ex, error,
-                new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+                new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(value
-            = { IllegalArgumentException.class, IllegalStateException.class })
-    protected ResponseEntity<Object> handleConflict(
-            RuntimeException ex, WebRequest request) {
+            = {AlumnoNoEncontradoException.class, ProfesorNoEncontradoException.class, MateriaNoEncontradaException.class, CarreraNoEncontradaException.class})
+    protected ResponseEntity<Object> handleMateriaNotFound(
+            Exception ex, WebRequest request) {
         String exceptionMessage = ex.getMessage();
         CustomApiError error = new CustomApiError();
-        error.setErrorCode(1234);
+        error.setErrorCode(404);
         error.setErrorMessage(exceptionMessage);
         return handleExceptionInternal(ex, error,
                 new HttpHeaders(), HttpStatus.CONFLICT, request);
@@ -52,4 +53,3 @@ public class UtnResponseEntityExceptionHandler extends ResponseEntityExceptionHa
 
 
 }
-*/
