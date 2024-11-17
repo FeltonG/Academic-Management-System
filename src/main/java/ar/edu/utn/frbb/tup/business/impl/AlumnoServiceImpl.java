@@ -19,9 +19,6 @@ public class AlumnoServiceImpl implements AlumnoService {
 
     @Override
     public Alumno crearAlumno(AlumnoDto alumnodto) throws AlumnoYaExisteException{
-        // el servicio ademas de crear la informacion y retornarla la almacena en DAO
-        // tambien lo que hace es VERIFICAR que todo este BIEN antes de el guardado.
-        //
         if (alumnoDaoMemoryImpl.buscarAlumnopordni(alumnodto.getDni()) != null)
         {
             throw new AlumnoYaExisteException("Este alumno ya existe, no puede crear un alumno con el mismo dni");
@@ -63,9 +60,7 @@ public class AlumnoServiceImpl implements AlumnoService {
             alumnoExistente.setDni(alumnoModificado.getDni());
             alumnoExistente.setApellido(alumnoModificado.getApellido());
             alumnoExistente.setNombre(alumnoModificado.getNombre());
-            // Aquí puedes seguir actualizando otros campos que tengas en AlumnoDto
 
-            // Guardar los cambios
             alumnoDaoMemoryImpl.modificarAlumno(alumnoExistente);
 
             // Retornar el alumno modificado

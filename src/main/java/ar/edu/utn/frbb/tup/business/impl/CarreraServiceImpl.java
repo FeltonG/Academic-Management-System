@@ -16,13 +16,9 @@ public class CarreraServiceImpl implements CarreraService {
     @Override
     public Carrera crearCarrera(CarreraDto carreraDto)
     {
-
-
         if (carreraDto.getNombre() == null || carreraDto.getNombre().trim().isEmpty()) {
             throw new IllegalArgumentException("El nombre de la carrera no puede estar vacío.");
         }
-
-
         // Crear una nueva Asignatura a partir del DTO
         Carrera carrera1 = new Carrera(carreraDto.getNombre());
 

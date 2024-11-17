@@ -5,12 +5,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
+
 import org.mockito.MockitoAnnotations;
 
 import java.io.*;
-import java.util.List;
-
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
@@ -40,46 +38,45 @@ public class AlumnoDaoMemoryImplTest {
 
     @Test
     public void testGuardarAlumno() throws IOException {
+        // Limpiar el archivo CSV antes de la prueba
+        FileWriter writer = new FileWriter(CSV_FILE_PATH);
+        writer.close(); // Cierra el archivo vacío
+
+        // Arrange: Crear el alumno a guardar
         Alumno alumno = new Alumno(1L, "Juan", "Perez", 12345678);
 
-        // Simulamos la creación de un PrintWriter y FileWriter
-        FileWriter mockFileWriter = mock(FileWriter.class);
-        PrintWriter mockPrintWriter = mock(PrintWriter.class);
-        when(mockFileWriter.append(anyString())).thenReturn(mockFileWriter);
-        //when(mockPrintWriter.println(anyString())).thenReturn(null);
-
-        // Simulamos que se pase el PrintWriter correctamente a la clase
-        when(fileWriter).thenReturn(mockFileWriter);
-        when(printWriter).thenReturn(mockPrintWriter);
-
+        // Act: Llamar al método para guardar el alumno
         alumnoDaoMemoryImpl.guardarAlumno(alumno);
 
-        // Verificar que el método printWriter.println() se llama correctamente
-        verify(mockPrintWriter).println("1,Juan,Perez,12345678");
+        // Assert: Verificar que el archivo contiene la línea con los datos del alumno
+        BufferedReader reader = new BufferedReader(new FileReader(CSV_FILE_PATH));
+        String line = reader.readLine();
+        reader.close();
+
+        // Verificar que la línea leída contiene los datos esperados
+        assertEquals("1,Juan,Perez,12345678", line);
     }
 
+
     @Test
-    public void testBuscarAlumnoporid() throws IOException {
-        // Crear un alumno para retornar
-        Alumno expectedAlumno = new Alumno(1L, "Juan", "Perez", 12345678);
+    public void testBuscarAlumnoPorId() throws IOException {
+        // Simular que el BufferedReader devuelve una línea de datos
+        when(bufferedReader.readLine())
+                .thenReturn("1,Juan,Perez,87654321") // Línea CSV que representa un alumno
+                .thenReturn(null); // Indica el final del archivo
 
-        // Simulamos el comportamiento del BufferedReader
-        FileReader mockFileReader = mock(FileReader.class);
-        when(mockFileReader.read()).thenReturn(1);  // Simulamos que el archivo existe
-        when(new BufferedReader(mockFileReader)).thenReturn(bufferedReader);
-
-        // Simulamos la lectura de una línea con el alumno
-        when(bufferedReader.readLine()).thenReturn("1,Juan,Perez,12345678").thenReturn(null);  // Retorna la línea con el alumno
-
+        // Llamar al método a probar
         Alumno alumno = alumnoDaoMemoryImpl.buscarAlumnoporid(1L);
 
-        // Verificar que el alumno encontrado es el esperado
+        // Verificar que el alumno encontrado tiene los valores correctos
         assertNotNull(alumno);
-        assertEquals(expectedAlumno.getId(), alumno.getId());
-        assertEquals(expectedAlumno.getNombre(), alumno.getNombre());
+        assertEquals(1L, alumno.getId()); // Comprobar el ID
+        assertEquals("Juan", alumno.getNombre()); // Comprobar el nombre
+        assertEquals("Perez", alumno.getApellido()); // Comprobar el apellido
+        assertEquals("87654321", alumno.getDni()); // Comprobar el DNI como String
     }
 
-    @Test
+        @Test
     public void testBorrarAlumnoPorId() {
         Alumno alumno = new Alumno(2, "Martin", "Gimenez", 33345678);
         alumnoDaoMemoryImpl.guardarAlumno(alumno);  // Guardamos el alumno en el repositorio
@@ -93,14 +90,14 @@ public class AlumnoDaoMemoryImplTest {
         assertEquals(33345678, deletedAlumno.getDni());
 
         // Verificamos que el alumno ya no existe en el repositorio
-        assertNull(alumnoDaoMemoryImpl.buscarAlumnoporid(2L));
+        assertNull(alumnoDaoMemoryImpl.buscarAlumnoporid(2));
     }
 
     @Test
     public void testModificarAlumno() throws IOException {
         // Preparar el alumno y el archivo de datos
         Alumno alumnoOriginal = new Alumno(3, "Kevin", "Martinez", 12345678);
-        Alumno alumnoModificado = new Alumno(3, "Kevin", "Martinez", 87654321);
+        Alumno alumnoModificado = new Alumno(3, "Felipe", "Garcia", 45501907);
 
         // Guardar el alumno original en el archivo
         alumnoDaoMemoryImpl.guardarAlumno(alumnoOriginal);
@@ -113,8 +110,8 @@ public class AlumnoDaoMemoryImplTest {
 
         // Verificar que el alumno ha sido modificado correctamente
         assertNotNull(alumnoRecuperado);
-        assertEquals("Juan", alumnoRecuperado.getNombre());
-        assertEquals("Gonzalez", alumnoRecuperado.getApellido());
-        assertEquals(87654321, alumnoRecuperado.getDni());
+        assertEquals("Felipe", alumnoRecuperado.getNombre());
+        assertEquals("Garcia", alumnoRecuperado.getApellido());
+        assertEquals(45501907, alumnoRecuperado.getDni());
     }
 }
