@@ -1,12 +1,8 @@
 package ar.edu.utn.frbb.tup.persistence;
-
-import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.Carrera;
-import ar.edu.utn.frbb.tup.model.EstadoAsignatura;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -140,14 +136,28 @@ public class  CarreraDaoMemoryImpl implements  CarreraDao {
             String linea;
 
             while ((linea = bufferedReader.readLine()) != null) {
-                String[] datos = linea.split(",");
-                long Idcarrera = Long.parseLong(datos[0].trim());
+                // Ignorar líneas vacías
+                if (linea.trim().isEmpty()) {
+                    continue;
+                }
 
-                if (Idcarrera != id) {
-                    printWriter.println(linea);
-                } else {
-                    // Guardar la carrera eliminada
-                    carreraEliminada = new Carrera(id, datos[1].trim());
+                String[] datos = linea.split(",");
+                if (datos.length < 2) { // Verificar que la línea tenga al menos dos campos
+                    System.err.println("Formato incorrecto en la línea: " + linea);
+                    continue;
+                }
+
+                try {
+                    long Idcarrera = Long.parseLong(datos[0].trim());
+
+                    if (Idcarrera != id) {
+                        printWriter.println(linea);
+                    } else {
+                        // Guardar la carrera eliminada
+                        carreraEliminada = new Carrera(Idcarrera, datos[1].trim());
+                    }
+                } catch (NumberFormatException e) {
+                    System.err.println("Error al parsear número en la línea: " + linea);
                 }
             }
         } catch (IOException e) {

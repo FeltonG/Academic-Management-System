@@ -1,7 +1,6 @@
 package ar.edu.utn.frbb.tup.controller;
-
 import ar.edu.utn.frbb.tup.business.AsignaturaService;
-import ar.edu.utn.frbb.tup.business.MateriaService;
+import ar.edu.utn.frbb.tup.controller.validator.AsignaturaValidator;
 import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.dto.AsignaturaDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +14,15 @@ import org.springframework.web.bind.annotation.*;
 public class AsignaturaController {
     @Autowired
     private AsignaturaService asignaturaService;
+    @Autowired
+    private AsignaturaValidator asignaturaValidator;
 
-    // Crear una nueva asignatura
+
     @PostMapping
     public ResponseEntity<Asignatura> crearAsignatura(@RequestBody AsignaturaDto asignaturaDto) {
+
+
+        asignaturaValidator.validarAsignatura(asignaturaDto);
         Asignatura nuevaAsignatura = asignaturaService.crearAsignatura(asignaturaDto);
         return new ResponseEntity<>(nuevaAsignatura, HttpStatus.CREATED);
     }

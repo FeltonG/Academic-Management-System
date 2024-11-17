@@ -1,9 +1,5 @@
 package ar.edu.utn.frbb.tup.persistence;
-
-import ar.edu.utn.frbb.tup.model.Alumno;
-import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.Profesor;
-
 import java.util.List;
 
 public interface ProfesorDao {

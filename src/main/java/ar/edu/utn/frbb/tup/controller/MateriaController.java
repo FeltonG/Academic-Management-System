@@ -1,16 +1,10 @@
 package ar.edu.utn.frbb.tup.controller;
-
 import ar.edu.utn.frbb.tup.business.MateriaService;
-import ar.edu.utn.frbb.tup.model.Alumno;
+import ar.edu.utn.frbb.tup.controller.validator.materiaValidator;
 import ar.edu.utn.frbb.tup.model.Materia;
-import ar.edu.utn.frbb.tup.model.Profesor;
-import ar.edu.utn.frbb.tup.model.dto.AlumnoDto;
 import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Arrays;
-import java.util.List;
 
 @RestController
 @RequestMapping("materia")
@@ -18,10 +12,14 @@ public class MateriaController {
 
     @Autowired
     private MateriaService materiaService;
+    @Autowired
+    private materiaValidator mateValidator;
+
 
     // Crear una nueva materia
     @PostMapping
     public Materia crearMateria(@RequestBody MateriaDto materiaDto) {
+        mateValidator.materiaValidation(materiaDto);
         return materiaService.crearMateria(materiaDto);
     }
 

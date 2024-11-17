@@ -1,8 +1,5 @@
 package ar.edu.utn.frbb.tup.model;
-
-import ar.edu.utn.frbb.tup.persistence.AsignaturaDaoMemoryImpl;
 import ar.edu.utn.frbb.tup.persistence.MateriaDaoMemoryImpl;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

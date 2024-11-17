@@ -7,6 +7,7 @@ import ar.edu.utn.frbb.tup.model.Alumno;
 import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.dto.AlumnoDto;
 import ar.edu.utn.frbb.tup.model.dto.AsignaturaDto;
+import ar.edu.utn.frbb.tup.model.exception.AlumnoYaExisteException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -36,7 +37,7 @@ public class AlumnoControllerTest {
     }
 
     @Test
-    public void testCrearAlumno() {
+    public void testCrearAlumno() throws AlumnoYaExisteException {
         AlumnoDto alumnoDto = new AlumnoDto();
         Alumno alumno = new Alumno();
 

@@ -1,5 +1,4 @@
 package ar.edu.utn.frbb.tup.model.dto;
-
 import ar.edu.utn.frbb.tup.model.EstadoAsignatura;
 
 public class AsignaturaDto {

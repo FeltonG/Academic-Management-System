@@ -1,15 +1,8 @@
 package ar.edu.utn.frbb.tup.persistence;
-
-import ar.edu.utn.frbb.tup.model.Alumno;
-import ar.edu.utn.frbb.tup.model.Asignatura;
-import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.Profesor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;

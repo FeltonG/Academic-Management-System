@@ -1,8 +1,5 @@
 package ar.edu.utn.frbb.tup.persistence;
-
-import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.Carrera;
-
 import java.util.List;
 
 public interface CarreraDao {

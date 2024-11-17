@@ -1,21 +1,17 @@
 package ar.edu.utn.frbb.tup.controller.validator;
-
-import ar.edu.utn.frbb.tup.model.dto.AlumnoDto;
 import ar.edu.utn.frbb.tup.model.dto.ProfesorDto;
+import org.springframework.stereotype.Component;
 
+@Component
 public class profesorValidator {
 
-    public void validarprofesor (ProfesorDto profesorDto){
-
-
-        // Validación del DNI
-
+    public void profesorValidation(ProfesorDto profesorDto) {
         // Validación del nombre
         if (profesorDto.getNombre() == null || profesorDto.getNombre().isEmpty()) {
             throw new IllegalArgumentException("Debe ingresar un nombre");
         }
 
-        if (!profesorDto.getNombre().matches("^[A-Za-záéíóúÁÉÍÓÚÑñ ]+$")) {
+        if (!profesorDto.getNombre().matches("^[\\p{L} ]+$")) {
             throw new IllegalArgumentException("Utilice caracteres correctos para el nombre");
         }
 
@@ -32,7 +28,7 @@ public class profesorValidator {
             throw new IllegalArgumentException("Debe ingresar un apellido");
         }
 
-        if (!profesorDto.getApellido().matches("^[A-Za-záéíóúÁÉÍÓÚÑñ ]+$")) {
+        if (!profesorDto.getApellido().matches("^[\\p{L} ]+$")) {
             throw new IllegalArgumentException("Utilice caracteres correctos para el apellido");
         }
 
@@ -43,22 +39,24 @@ public class profesorValidator {
         if (profesorDto.getApellido().length() > 12) {
             throw new IllegalArgumentException("El apellido no puede ser tan largo");
         }
-        if(profesorDto.getTitulo().length()>12){
-            throw new IllegalArgumentException("el titulo no puede ser tan largo");
 
-        }
-        if(profesorDto.getTitulo().length()>3){
-            throw new IllegalArgumentException("el titulo no puede ser tan corto");
-
-        }
-        if (profesorDto.getTitulo() == null ) {
-            throw new IllegalArgumentException("Debe ingresar un apellido");
-        }
-        if (!profesorDto.getTitulo().matches("^[A-Za-záéíóúÁÉÍÓÚÑñ ]+$")) {
-            throw new IllegalArgumentException("Utilice caracteres correctos para el titulo");
+        // Validación del título
+        if (profesorDto.getTitulo() == null || profesorDto.getTitulo().isEmpty()) {
+            throw new IllegalArgumentException("Debe ingresar un título");
         }
 
+        if (!profesorDto.getTitulo().matches("^[\\p{L} ]+$")) {
+            throw new IllegalArgumentException("Utilice caracteres correctos para el título");
+        }
 
+        if (profesorDto.getTitulo().length() <= 3) {
+            throw new IllegalArgumentException("El título no puede ser tan corto");
+        }
+
+        if (profesorDto.getTitulo().length() > 12) {
+            throw new IllegalArgumentException("El título no puede ser tan largo");
+        }
     }
+
 
 }

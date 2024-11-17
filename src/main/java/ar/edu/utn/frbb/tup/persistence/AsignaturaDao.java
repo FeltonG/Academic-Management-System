@@ -1,9 +1,5 @@
 package ar.edu.utn.frbb.tup.persistence;
-
-import ar.edu.utn.frbb.tup.model.Alumno;
 import ar.edu.utn.frbb.tup.model.Asignatura;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 
 

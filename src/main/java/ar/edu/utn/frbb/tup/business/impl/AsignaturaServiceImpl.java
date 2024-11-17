@@ -1,14 +1,10 @@
 package ar.edu.utn.frbb.tup.business.impl;
-
 import ar.edu.utn.frbb.tup.business.AsignaturaService;
-import ar.edu.utn.frbb.tup.model.Alumno;
 import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.EstadoAsignatura;
-import ar.edu.utn.frbb.tup.model.dto.AlumnoDto;
 import ar.edu.utn.frbb.tup.model.dto.AsignaturaDto;
 import ar.edu.utn.frbb.tup.persistence.AsignaturaDaoMemoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

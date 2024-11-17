@@ -1,8 +1,7 @@
 package ar.edu.utn.frbb.tup.controller;
-
 import ar.edu.utn.frbb.tup.business.CarreraService;
 import ar.edu.utn.frbb.tup.business.ProfesorService;
-import ar.edu.utn.frbb.tup.model.Alumno;
+import ar.edu.utn.frbb.tup.controller.validator.carreraValidator;
 import ar.edu.utn.frbb.tup.model.Carrera;
 import ar.edu.utn.frbb.tup.model.Profesor;
 import ar.edu.utn.frbb.tup.model.dto.CarreraDto;
@@ -20,10 +19,14 @@ public class CarreraController {
     private ProfesorService profesorService;
     @Autowired
     private CarreraService carreraService;
+    @Autowired
+    private carreraValidator carreValidator;
+
 
     // Crear una nueva carrera
     @PostMapping
     public ResponseEntity<Carrera> crearCarrera(@RequestBody CarreraDto carreraDto) {
+        carreValidator.carreraValidation(carreraDto);
         Carrera nuevaCarrera = carreraService.crearCarrera(carreraDto);
         return new ResponseEntity<>(nuevaCarrera, HttpStatus.CREATED);
     }
@@ -53,7 +56,7 @@ public class CarreraController {
 
 
 
-/*
+    /*
     @DeleteMapping("/{idcarrera}")
     public ResponseEntity<?> eliminarCarrera(@PathVariable("id") long id) { // usa ("id") para mayor claridad
         Carrera carreraEliminada = carreraService.borrarCarreraporid(id);

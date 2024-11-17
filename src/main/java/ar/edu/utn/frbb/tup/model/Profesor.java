@@ -1,10 +1,5 @@
 package ar.edu.utn.frbb.tup.model;
-
-import ar.edu.utn.frbb.tup.persistence.MateriaDaoMemoryImpl;
 import ar.edu.utn.frbb.tup.persistence.ProfesorDaoMemoryImpl;
-
-import java.util.List;
-import java.util.Random;
 
 public class Profesor {
 

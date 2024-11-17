@@ -1,22 +1,14 @@
 package ar.edu.utn.frbb.tup.business.impl;
-
 import ar.edu.utn.frbb.tup.business.AlumnoService;
-import ar.edu.utn.frbb.tup.business.AsignaturaService;
 import ar.edu.utn.frbb.tup.model.Alumno;
-import ar.edu.utn.frbb.tup.model.Asignatura;
-import ar.edu.utn.frbb.tup.model.EstadoAsignatura;
-import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.dto.AlumnoDto;
-import ar.edu.utn.frbb.tup.model.exception.CorrelatividadesNoAprobadasException;
-import ar.edu.utn.frbb.tup.model.exception.EstadoIncorrectoException;
-import ar.edu.utn.frbb.tup.persistence.AlumnoDao;
+import ar.edu.utn.frbb.tup.model.exception.AlumnoYaExisteException;
 import ar.edu.utn.frbb.tup.persistence.AlumnoDaoMemoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.Random;
+
 
 @Service
 @Component
@@ -26,9 +18,14 @@ public class AlumnoServiceImpl implements AlumnoService {
     private  AlumnoDaoMemoryImpl alumnoDaoMemoryImpl;
 
     @Override
-    public Alumno crearAlumno(AlumnoDto alumnodto) {
+    public Alumno crearAlumno(AlumnoDto alumnodto) throws AlumnoYaExisteException{
         // el servicio ademas de crear la informacion y retornarla la almacena en DAO
         // tambien lo que hace es VERIFICAR que todo este BIEN antes de el guardado.
+        //
+        if (alumnoDaoMemoryImpl.buscarAlumnopordni(alumnodto.getDni()) != null)
+        {
+            throw new AlumnoYaExisteException("Este alumno ya existe, no puede crear un alumno con el mismo dni");
+        }
         Alumno alumno = new Alumno(alumnodto.getNombre(), alumnodto.getApellido(),alumnodto.getDni());
         alumnoDaoMemoryImpl.guardarAlumno(alumno);
         return alumno; // lo retorno
@@ -45,10 +42,6 @@ public class AlumnoServiceImpl implements AlumnoService {
     }
 
 
-    /*@Override
-    public void aprobarAsignatura(int materiaId, int nota, long dni) throws EstadoIncorrectoException, CorrelatividadesNoAprobadasException {
-
-    }*/
 
 
     @Override
@@ -56,6 +49,8 @@ public class AlumnoServiceImpl implements AlumnoService {
         Alumno alumno = alumnoDaoMemoryImpl.buscarAlumnoporid(id);
         return alumno;
     }
+
+
 
     @Override
     public Alumno modificarAlumno(long id, AlumnoDto alumnoModificado) {

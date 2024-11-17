@@ -1,9 +1,6 @@
 package ar.edu.utn.frbb.tup.model;
-
-import ar.edu.utn.frbb.tup.persistence.AsignaturaDaoMemoryImpl;
 import ar.edu.utn.frbb.tup.persistence.CarreraDaoMemoryImpl;
 
-import java.util.List;
 
 public class Carrera {
     private long id;

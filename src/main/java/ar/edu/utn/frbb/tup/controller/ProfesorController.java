@@ -1,9 +1,6 @@
 package ar.edu.utn.frbb.tup.controller;
-
-import ar.edu.utn.frbb.tup.business.AsignaturaService;
 import ar.edu.utn.frbb.tup.business.ProfesorService;
-import ar.edu.utn.frbb.tup.model.Alumno;
-import ar.edu.utn.frbb.tup.model.Carrera;
+import ar.edu.utn.frbb.tup.controller.validator.profesorValidator;
 import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.Profesor;
 import ar.edu.utn.frbb.tup.model.dto.ProfesorDto;
@@ -20,24 +17,18 @@ public class ProfesorController {
 
     @Autowired
     private ProfesorService profesorService;
+    @Autowired
+    private profesorValidator profesorValidator;
 
-    /*public ProfesorController(ProfesorService profesorService) {
-        this.profesorService = profesorService;
-    }*/
 
     // Crear un nuevo profesor
     @PostMapping
     public ResponseEntity<Profesor> crearProfesor(@RequestBody ProfesorDto profesorDto) {
+
+        profesorValidator.profesorValidation(profesorDto);
         Profesor nuevoProfesor = profesorService.crearProfesor(profesorDto);
         return new ResponseEntity<>(nuevoProfesor, HttpStatus.CREATED);
     }
-
-    // Obtener un profesor por su ID
-   /* @GetMapping("/{idProfesor}")
-    public ResponseEntity<Profesor> obtenerProfesorPorId(@PathVariable("idProfesor") Integer idProfesor) {
-        return profesorService.buscaProfesorporid(idProfesor);
-
-    }*/
 
 
     @GetMapping("/{idProfesor}")

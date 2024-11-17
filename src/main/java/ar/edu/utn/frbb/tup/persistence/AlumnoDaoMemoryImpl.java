@@ -1,5 +1,4 @@
 package ar.edu.utn.frbb.tup.persistence;
-
 import ar.edu.utn.frbb.tup.model.Alumno;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
@@ -47,6 +46,41 @@ public class AlumnoDaoMemoryImpl implements AlumnoDao {
                 }
             }
         }
+    }
+
+    @Override
+    public Alumno buscarAlumnopordni(long dni)
+    {
+
+        BufferedReader bufferedReader = null;
+        try {
+            bufferedReader = new BufferedReader(new FileReader(CSV_FILE_PATH));
+            String linea;  // id, nombre, apellido, dni
+            while ((linea = bufferedReader.readLine()) != null)
+            {
+                String[] datos = linea.split(","); // datos = [id, nombre, apellido, dni]
+                int alumnoId = Integer.parseInt(datos[0]);
+                int alumnoDni = Integer.parseInt(datos[3]);
+                if (alumnoDni == dni) {
+                    Alumno alumno = new Alumno(alumnoId, datos[1], datos[2],alumnoDni);
+                    return alumno;
+                }
+            }
+
+        }
+        catch (IOException e) {
+            System.err.println("Error al leer el archivo CSV: " + e.getMessage());
+        }finally {
+            if (bufferedReader != null) {
+                try {
+                    bufferedReader.close();
+                } catch (IOException e) {
+                    System.err.println("Error al cerrar el archivo: " + e.getMessage());
+                }
+            }
+        }
+        return null;
+
     }
 @Override
     public Alumno buscarAlumnoporid(long id)

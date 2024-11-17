@@ -1,7 +1,4 @@
-
 package ar.edu.utn.frbb.tup.controller.handler;
-
-
 import ar.edu.utn.frbb.tup.model.exception.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,7 +13,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class UtnResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value
-            = {AlumnoAlreadyExistsException.class, ProfesorAlreadyExistsException.class, IllegalArgumentException.class, CarreraAlreadyExistsException.class})
+            = {AlumnoYaExisteException.class, ProfesorYaExisteException.class, IllegalArgumentException.class, CarreraYaExisteEstaException.class})
     protected ResponseEntity<Object> handleMateriaNotFound(
             MateriaNoEncontradaException ex, WebRequest request) {
         String exceptionMessage = ex.getMessage();

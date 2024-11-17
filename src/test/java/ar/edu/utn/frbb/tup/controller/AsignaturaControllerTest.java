@@ -32,7 +32,7 @@ public class AsignaturaControllerTest {
 
     @Test
     public void testCrearAsignatura() {
-        // Datos de entrada
+
         AsignaturaDto asignaturaDto = new AsignaturaDto();
         asignaturaDto.setNota(7);
         asignaturaDto.setIdalumno(1);

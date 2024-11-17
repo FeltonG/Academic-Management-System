@@ -3,6 +3,7 @@ package ar.edu.utn.frbb.tup.service;
 import ar.edu.utn.frbb.tup.business.impl.AlumnoServiceImpl;
 import ar.edu.utn.frbb.tup.model.Alumno;
 import ar.edu.utn.frbb.tup.model.dto.AlumnoDto;
+import ar.edu.utn.frbb.tup.model.exception.AlumnoYaExisteException;
 import ar.edu.utn.frbb.tup.persistence.AlumnoDaoMemoryImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,14 +32,13 @@ public class AlumnoServiceImplTest {
     }
 
     @Test
-    public void testCrearAlumno() {
+    public void testCrearAlumno() throws AlumnoYaExisteException {
         AlumnoDto alumnoDto = new AlumnoDto();
         alumnoDto.setNombre("Juan");
         alumnoDto.setApellido("Perez");
         alumnoDto.setDni(12345678);
         Alumno alumno = new Alumno("Juan", "Perez", 12345678);
 
-         //when(alumnoDaoMemoryImpl.guardarAlumno(any(Alumno.class))).thenReturn(alumno);
 
         Alumno result = alumnoService.crearAlumno(alumnoDto);
 
@@ -54,9 +54,9 @@ public class AlumnoServiceImplTest {
         long id = 4L;
         Alumno alumno = new Alumno("Juan", "Perez", 12345678);
 
-        System.out.println("b1");
+
         when(alumnoDaoMemoryImpl.buscarAlumnoporid(id)).thenReturn(alumno);
-        System.out.println("b2");
+
         /*
         * rg.mockito.exceptions.base.MockitoException:
 Only void methods can doNothing()!
@@ -70,7 +70,7 @@ someVoidMethod() does nothing the 1st time but throws an exception the 2nd time 
 	at ar.edu.utn.frbb.tup.service.AlumnoServiceImplTest.testBorrarAlumnoId(AlumnoServiceImplTest.java:60)
         * */
         doNothing().when(alumnoDaoMemoryImpl).borrarAlumnoporid(id);
-        System.out.println("b3");
+
 
         Alumno result = alumnoService.borraralumnoId(id);
 
@@ -129,5 +129,6 @@ someVoidMethod() does nothing the 1st time but throws an exception the 2nd time 
         assertNotNull(result);
         assertEquals(2, result.size());
         verify(alumnoDaoMemoryImpl, times(1)).buscarAlumnos();
+        System.out.println(alumnos);
     }
 }

@@ -1,7 +1,8 @@
 package ar.edu.utn.frbb.tup.controller.validator;
-
 import ar.edu.utn.frbb.tup.model.dto.AlumnoDto;
+import org.springframework.stereotype.Component;
 
+@Component
 public class alumnoValidator {
 
     // UN UNICO METODO QUE VALIDA TODA LA INFO DE UN ALUMNO DTO
@@ -25,11 +26,11 @@ public class alumnoValidator {
             throw new IllegalArgumentException("El dni tiene que ser positivo");
         }
 
-        if( alumnoDto.getNombre() != null && alumnoDto.getApellido() !=null )
+        if( alumnoDto.getNombre() == null && alumnoDto.getApellido() ==null )
         {
             throw new IllegalArgumentException("Debe ingresar nombre y apellido");
         }
-        if (alumnoDto.getNombre() !=null){
+        if (alumnoDto.getNombre() ==null){
 
             throw new IllegalArgumentException("Debe ingresar nombre ");
 
@@ -37,7 +38,7 @@ public class alumnoValidator {
 
 
 
-        if(!alumnoDto.getNombre().matches("^[A-Za-záéíóúÁÉÍÓÚÑñ ]+$"))
+        if (!alumnoDto.getNombre().matches("^[a-z ]+$"))
         {
             throw new IllegalArgumentException(" Utilice caracteres correctos.");
         }
@@ -52,13 +53,13 @@ public class alumnoValidator {
             throw new IllegalArgumentException(" No se permiten nombre tan largo  ");
         }
 
-        //apellido (faltan los dos que hizimos con el nombre)
 
-        if(alumnoDto.getApellido() !=null){
+
+        if(alumnoDto.getApellido() == null){
 
             throw new IllegalArgumentException("Debe ingresar apellido ");
         }
-        if(!alumnoDto.getApellido().matches("^[A-Za-záéíóúÁÉÍÓÚÑñ ]+$"))
+        if (!alumnoDto.getApellido().matches("^[a-z ]+$"))
         {
             throw new IllegalArgumentException(" Utilice caracteres correctos.");
         }

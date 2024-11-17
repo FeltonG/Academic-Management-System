@@ -1,14 +1,8 @@
 package ar.edu.utn.frbb.tup.persistence;
-
-import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.Materia;
-
-import ar.edu.utn.frbb.tup.model.Profesor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -87,7 +81,7 @@ public  class MateriaDaoMemoryImpl implements MateriaDao {
 
                 if (datos.length < 5) {
                     System.err.println("Línea con formato incorrecto: " + linea);
-                    continue; // Saltar líneas con formato incorrecto
+                    continue;
                 }
 
                 try {
@@ -240,25 +234,40 @@ public  class MateriaDaoMemoryImpl implements MateriaDao {
             String linea;
 
             while ((linea = bufferedReader.readLine()) != null) {
+
+                if (linea.trim().isEmpty()) continue;
+
+                // Manejar posibles problemas con los datos
                 String[] datos = linea.split(",");
+                if (datos.length < 5) {
+                    System.err.println("Línea malformada: " + linea);
+                    continue;
+                }
 
-                long IdMateria = Long.parseLong(datos[0].trim());
-                String nombre= String.valueOf(datos[1]);
-                int anio=Integer.parseInt(datos[2]);
-                int cuatrimestre=Integer.parseInt(datos[3]);
-                long idprofesor = Long.parseLong(datos[4].trim());
-                // Convertir las correlatividades en una lista de Long
-                // Convertir las correlatividades en una lista de Long
-                List<Long> correlatividades = Arrays.stream(datos[4].trim().split("'")) // Dividir por el guion
-                        .map(Long::parseLong) // Convertir cada elemento a Long
-                        .collect(Collectors.toList()); // Recoger en una lista de Long
+                try {
+                    long IdMateria = Long.parseLong(datos[0].trim());
+                    String nombre = datos[1].trim();
+                    int anio = Integer.parseInt(datos[2].trim());
+                    int cuatrimestre = Integer.parseInt(datos[3].trim());
+                    long idprofesor = Long.parseLong(datos[4].trim());
 
-                // Si el id de la materia no coincide, escribir la línea en el archivo temporal
-                if (IdMateria != id) {
-                    printWriter.println(linea);
-                } else {
-                    // Si coincide, guardar la materia eliminada
-                     materiaEliminada = new Materia( nombre, anio, cuatrimestre, idprofesor, correlatividades);
+                    List<Long> correlatividades = new ArrayList<>();
+                    if (datos.length > 5) { // Validar que existe la columna de correlatividades
+                        correlatividades = Arrays.stream(datos[5].trim().split("'")) // Dividir por comillas simples
+                                .map(String::trim) // Eliminar espacios en blanco
+                                .filter(s -> !s.isEmpty()) // Filtrar elementos vacíos
+                                .map(Long::parseLong) // Convertir a Long
+                                .collect(Collectors.toList());
+                    }
+
+
+                    if (IdMateria != id) {
+                        printWriter.println(linea);
+                    } else {
+                        materiaEliminada = new Materia(IdMateria, nombre, anio, cuatrimestre, idprofesor, correlatividades);
+                    }
+                } catch (NumberFormatException e) {
+                    System.err.println("Error al parsear datos numéricos en la línea: " + linea);
                 }
             }
 
@@ -283,13 +292,13 @@ public  class MateriaDaoMemoryImpl implements MateriaDao {
                 return null;
             }
             System.out.println("Asignatura eliminada exitosamente!");
-
             return materiaEliminada;
         } else {
             System.out.println("No existe asignatura con el id proporcionado: " + id);
             return null;
         }
     }
+
 
     @Override
     public Materia modificarMateria(Materia materia) {
@@ -311,25 +320,9 @@ public  class MateriaDaoMemoryImpl implements MateriaDao {
                     printWriter.println(linea);  // Si la línea no tiene el formato correcto, la copiamos tal cual
                     continue;
                 }
-
                 long Id = Long.parseLong(datos[0].trim());
 
-                /*String nombre= String.valueOf(datos[1]);
-                int anio=Integer.parseInt(datos[2]);
-                int cuatrimestre=Integer.parseInt(datos[3]);
-                long idprofesor = Long.parseLong(datos[4].trim());
-                // Convertir las correlatividades en una lista de Long
-                List<Long> correlatividades= new ArrayList<>();
-                try {
-                    correlatividades = Arrays.stream(datos[5].trim().split("'")) // Dividir por el guion
-                            .map(Long::parseLong) // Convertir cada elemento a Long
-                            .collect(Collectors.toList()); // Recoger en una lista de Long
-                } catch (Exception e)
-                {
-                    System.err.println("Si, el error esta aca: " + e.getMessage());
-                }*/
 
-                // Comparar con los datos de la materia a modificar
                 if (Id==materia.getId()) {
                     String correlatividadesFormato = String.join("'",
                             materia.getCorrelatividades().stream()
@@ -344,12 +337,12 @@ public  class MateriaDaoMemoryImpl implements MateriaDao {
                                     materia.getCuatrimestre() + "," +
                                     materia.getIdprofesor() + "," +
 
-                                    correlatividadesFormato // Guardar en formato "7-4-5"
+                                    correlatividadesFormato
                     );
 
-                    materiaModificada = materia;  // Guardar la referencia de la materia modificada
+                    materiaModificada = materia;
                 } else {
-                    // Escribir la línea existente sin modificaciones
+
                     printWriter.println(linea);
                 }
             }
@@ -364,8 +357,6 @@ public  class MateriaDaoMemoryImpl implements MateriaDao {
                 System.err.println("Error al cerrar los recursos: " + e.getMessage());
             }
         }
-
-// Reemplazar el archivo original con el archivo temporal
         if (inputFile.delete()) {
             if (!tempFile.renameTo(inputFile)) {
                 System.err.println("No se pudo renombrar el archivo temporal.");
@@ -375,15 +366,6 @@ public  class MateriaDaoMemoryImpl implements MateriaDao {
             System.err.println("No se pudo eliminar el archivo original.");
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al eliminar el archivo original.");
         }
-
-// Devolver la materia modificada si se realizó el cambio
-        /*if (materiaModificada != null) {
-            System.out.println("Asignatura modificada exitosamente.");
-            return materiaModificada;
-        } else {
-            System.out.println("No se encontró una asignatura con los datos proporcionados.");
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Asignatura no encontrada.");
-        }*/
 
         return materiaModificada;
     }
@@ -403,7 +385,7 @@ public  class MateriaDaoMemoryImpl implements MateriaDao {
                 if (datos.length > 0) {
                     try {
                         int idActual = Integer.parseInt(datos[0].trim());
-                        // Guardar el ID más alto encontrado
+
                         if (idActual > ultimoId) {
                             ultimoId = idActual;
                         }

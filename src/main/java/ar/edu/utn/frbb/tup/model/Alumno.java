@@ -1,6 +1,4 @@
 package ar.edu.utn.frbb.tup.model;
-
-
 import ar.edu.utn.frbb.tup.persistence.AlumnoDaoMemoryImpl;
 
 public class Alumno {

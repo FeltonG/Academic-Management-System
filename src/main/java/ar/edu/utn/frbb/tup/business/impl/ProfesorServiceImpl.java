@@ -1,22 +1,12 @@
 package ar.edu.utn.frbb.tup.business.impl;
-
 import ar.edu.utn.frbb.tup.business.ProfesorService;
-import ar.edu.utn.frbb.tup.model.Alumno;
-import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.Profesor;
-import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
 import ar.edu.utn.frbb.tup.model.dto.ProfesorDto;
-import ar.edu.utn.frbb.tup.persistence.MateriaDao;
 import ar.edu.utn.frbb.tup.persistence.MateriaDaoMemoryImpl;
-import ar.edu.utn.frbb.tup.persistence.ProfesorDao;
 import ar.edu.utn.frbb.tup.persistence.ProfesorDaoMemoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
