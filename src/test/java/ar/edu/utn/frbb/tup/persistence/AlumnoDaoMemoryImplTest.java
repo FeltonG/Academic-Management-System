@@ -37,43 +37,38 @@ public class AlumnoDaoMemoryImplTest {
     }
 
     @Test
-    public void testGuardarAlumno() throws IOException {
-        // Limpiar el archivo CSV antes de la prueba
-        FileWriter writer = new FileWriter(CSV_FILE_PATH);
-        writer.close(); // Cierra el archivo vacío
-
-        // Arrange: Crear el alumno a guardar
+    public void testGuardarAlumno() {
         Alumno alumno = new Alumno(1L, "Juan", "Perez", 12345678);
-
-        // Act: Llamar al método para guardar el alumno
         alumnoDaoMemoryImpl.guardarAlumno(alumno);
-
-        // Assert: Verificar que el archivo contiene la línea con los datos del alumno
-        BufferedReader reader = new BufferedReader(new FileReader(CSV_FILE_PATH));
-        String line = reader.readLine();
-        reader.close();
-
-        // Verificar que la línea leída contiene los datos esperados
-        assertEquals("1,Juan,Perez,12345678", line);
+        Alumno alumnoGuardado = alumnoDaoMemoryImpl.buscarAlumnoporid(1L);
+        assertNotNull(alumnoGuardado);
+        assertEquals("Juan", alumnoGuardado.getNombre());
+        assertEquals("Perez", alumnoGuardado.getApellido());
+        assertEquals(12345678, alumnoGuardado.getDni());
     }
 
 
+
     @Test
-    public void testBuscarAlumnoPorId() throws IOException {
-        // Simular que el BufferedReader devuelve una línea de datos
-        when(bufferedReader.readLine())
-                .thenReturn("1,Juan,Perez,87654321") // Línea CSV que representa un alumno
-                .thenReturn(null); // Indica el final del archivo
+    public void testBuscarAlumnoPorDni() {
+        // Crear un nuevo alumno con un DNI específico
+        Alumno alumno = new Alumno(2L, "Ana", "González", 87654321);
 
-        // Llamar al método a probar
-        Alumno alumno = alumnoDaoMemoryImpl.buscarAlumnoporid(1L);
+        // Guardar el alumno en el repositorio (suponiendo que el método guarda correctamente)
+        alumnoDaoMemoryImpl.guardarAlumno(alumno);
 
-        // Verificar que el alumno encontrado tiene los valores correctos
-        assertNotNull(alumno);
-        assertEquals(1L, alumno.getId()); // Comprobar el ID
-        assertEquals("Juan", alumno.getNombre()); // Comprobar el nombre
-        assertEquals("Perez", alumno.getApellido()); // Comprobar el apellido
-        assertEquals("87654321", alumno.getDni()); // Comprobar el DNI como String
+        // Buscar el alumno por el DNI
+        Alumno alumnoEncontrado = alumnoDaoMemoryImpl.buscarAlumnopordni(87654321);
+
+        // Verificar que el alumno encontrado no sea nulo
+        assertNotNull(alumnoEncontrado);
+
+        // Verificar que el nombre y apellido del alumno encontrado sean correctos
+        assertEquals("Ana", alumnoEncontrado.getNombre());
+        assertEquals("González", alumnoEncontrado.getApellido());
+
+        // Verificar que el DNI del alumno encontrado sea el correcto
+        assertEquals(87654321, alumnoEncontrado.getDni());
     }
 
         @Test
@@ -94,24 +89,24 @@ public class AlumnoDaoMemoryImplTest {
     }
 
     @Test
-    public void testModificarAlumno() throws IOException {
-        // Preparar el alumno y el archivo de datos
-        Alumno alumnoOriginal = new Alumno(3, "Kevin", "Martinez", 12345678);
-        Alumno alumnoModificado = new Alumno(3, "Felipe", "Garcia", 45501907);
-
-        // Guardar el alumno original en el archivo
-        alumnoDaoMemoryImpl.guardarAlumno(alumnoOriginal);
-
-        // Modificar el alumno
+    public void testModificarAlumno() {
+        Alumno alumno = new Alumno(3L, "Carlos", "Rodríguez", 11223344);
+        alumnoDaoMemoryImpl.guardarAlumno(alumno);
+        Alumno alumnoModificado = new Alumno(3L, "Carlos", "Rodríguez", 99887766);
         alumnoDaoMemoryImpl.modificarAlumno(alumnoModificado);
 
-        // Buscar el alumno modificado
-        Alumno alumnoRecuperado = alumnoDaoMemoryImpl.modificarAlumno(alumnoModificado);
+        Alumno alumnoBuscado = alumnoDaoMemoryImpl.buscarAlumnoporid(3L);
+        assertNotNull(alumnoBuscado);
+        assertEquals(99887766, alumnoBuscado.getDni());
+    }
+    @Test
+    public void testObtenerUltimoId() {
+        Alumno alumno1 = new Alumno(7L, "Sofía", "García", 22334455);
+        Alumno alumno2 = new Alumno(8L, "Pedro", "Martín", 66778899);
+        alumnoDaoMemoryImpl.guardarAlumno(alumno1);
+        alumnoDaoMemoryImpl.guardarAlumno(alumno2);
 
-        // Verificar que el alumno ha sido modificado correctamente
-        assertNotNull(alumnoRecuperado);
-        assertEquals("Felipe", alumnoRecuperado.getNombre());
-        assertEquals("Garcia", alumnoRecuperado.getApellido());
-        assertEquals(45501907, alumnoRecuperado.getDni());
+        int ultimoId = alumnoDaoMemoryImpl.obtenerUltimoId();
+        assertEquals(8, ultimoId); // Verifica que el último ID guardado es 8
     }
 }

@@ -1,6 +1,7 @@
 package ar.edu.utn.frbb.tup.controller;
 
 import ar.edu.utn.frbb.tup.business.ProfesorService;
+import ar.edu.utn.frbb.tup.controller.validator.profesorValidator;
 import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.Profesor;
 import ar.edu.utn.frbb.tup.model.dto.ProfesorDto;
@@ -25,6 +26,8 @@ public class ProfesorControllerTest {
 
     @Mock
     private ProfesorService profesorService;
+    @Mock
+    private profesorValidator profesorValidator;
 
     private ProfesorDto profesorDto;
     private Profesor profesor;
@@ -41,11 +44,11 @@ public class ProfesorControllerTest {
         profesorDto.setApellido("Perez");
 
 
-        profesor = new Profesor("Felipe","Garcia","Licencado");
+        profesor = new Profesor("Felipe","Garcia","Licenciado");
         profesor.setId(1);
         profesor.setNombre("Felipe");
         profesor.setApellido("Garcia");
-        profesor.setTitulo("Licencado");
+        profesor.setTitulo("Licenciado");
 
 
         materias = Arrays.asList(new Materia(), new Materia());
@@ -53,18 +56,23 @@ public class ProfesorControllerTest {
 
     @Test
     public void testCrearProfesor() {
+        // Configurar el comportamiento del validador
+        doNothing().when(profesorValidator).profesorValidation(profesorDto);
 
+        // Configurar el comportamiento del servicio
         when(profesorService.crearProfesor(profesorDto)).thenReturn(profesor);
 
-
+        // Ejecutar el método del controlador
         ResponseEntity<Profesor> response = profesorController.crearProfesor(profesorDto);
 
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        // Verificaciones
+        assertNotNull(response);  // Verificar que la respuesta no sea nula
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());  // Verificar que el código de estado sea 201
+        assertEquals(profesor, response.getBody());  // Verificar que el profesor creado sea el mismo que el esperado
 
-
-        assertNotNull(response.getBody());
-        assertEquals("Felipe", response.getBody().getNombre());
-        assertEquals("Garcia", response.getBody().getApellido());
+        // Verificar interacciones con el validador y el servicio
+        verify(profesorValidator, times(1)).profesorValidation(profesorDto);  // Verificar que el validador fue invocado una vez
+        verify(profesorService, times(1)).crearProfesor(profesorDto);  // Verificar que el servicio fue invocado una vez
     }
 
     @Test

@@ -77,37 +77,48 @@ public  class MateriaDaoMemoryImpl implements MateriaDao {
             String linea;
 
             while ((linea = bufferedReader.readLine()) != null) {
+                // Dividir la línea en partes
                 String[] datos = linea.split(",");
 
+                // Verificar que la línea tiene al menos 5 elementos
                 if (datos.length < 5) {
                     System.err.println("Línea con formato incorrecto: " + linea);
-                    continue;
+                    continue; // Saltar esta línea si no tiene suficientes datos
                 }
 
                 try {
+                    // Parsear los datos de la línea
                     Long id = Long.parseLong(datos[0].trim());
-                    String nombre = String.valueOf(datos[1].trim());
+                    String nombre = datos[1].trim();
                     int anio = Integer.parseInt(datos[2].trim());
                     int cuatrimestre = Integer.parseInt(datos[3].trim());
                     long idProfesor = Long.parseLong(datos[4].trim());
 
-                    // Convertir las correlatividades en una lista de Long
-                    List<Long> correlatividades = Arrays.stream(datos[5].trim().split("'")) // Dividir por el guion
-                            .map(Long::parseLong) // Convertir cada elemento a Long
-                            .collect(Collectors.toList()); // Recoger en una lista de Long
+                    // Inicializar la lista de correlatividades
+                    List<Long> correlatividades = new ArrayList<>();
 
-                    // Crear una nueva instancia de Materia con las correlatividades
-                    Materia materia = new Materia(id,nombre, anio, cuatrimestre, idProfesor, correlatividades);
-                    materias.add(materia); // Agregar la materia a la lista
+                    // Verificar si hay correlatividades (más de 5 elementos en la línea)
+                    if (datos.length > 5) {
+                        // Convertir las correlatividades en una lista de Long
+                        correlatividades = Arrays.stream(datos[5].trim().split("'")) // Dividir por comillas simples
+                                .map(String::trim) // Eliminar espacios adicionales
+                                .filter(c -> !c.isEmpty()) // Filtrar elementos vacíos
+                                .map(Long::parseLong) // Convertir cada elemento a Long
+                                .collect(Collectors.toList()); // Recoger en una lista de Long
+                    }
+
+                    // Crear el objeto Materia y agregarlo a la lista
+                    Materia materia = new Materia(id, nombre, anio, cuatrimestre, idProfesor, correlatividades);
+                    materias.add(materia);
 
                 } catch (NumberFormatException e) {
-                    System.err.println("Error al parsear números en la línea: " + linea);
-                    // Dependiendo de tu lógica, puedes continuar o lanzar una excepción
+                    // Manejar el error de parseo si alguno de los campos no se puede convertir
+                    System.err.println("Error al parsear datos en la línea: " + linea);
                 }
             }
+
         } catch (IOException e) {
             System.err.println("Error al leer el archivo CSV: " + e.getMessage());
-            // Dependiendo de tu lógica, podrías lanzar una excepción aquí
         } finally {
             if (bufferedReader != null) {
                 try {

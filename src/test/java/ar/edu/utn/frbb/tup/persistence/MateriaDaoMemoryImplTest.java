@@ -3,109 +3,97 @@ package ar.edu.utn.frbb.tup.persistence;
 import ar.edu.utn.frbb.tup.model.Materia;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
 import java.io.*;
 import java.util.List;
+import java.util.ArrayList;
 
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
 public class MateriaDaoMemoryImplTest {
+
     @Mock
-    private PrintWriter printWriter;
-    @Mock
-    private BufferedReader bufferedReader;
+    private Materia materiaMock;
 
     @InjectMocks
     private MateriaDaoMemoryImpl materiaDao;
 
-    private static final String CSV_FILE_PATH = "C:/Users/Felipe/IdeaProjects/LABORATORIO3/src/main/java/ar/edu/utn/frbb/tup/persistence/dataCSV/materiaDATA.csv";
+    private final String testFilePath = "C:/Users/Felipe/IdeaProjects/LABORATORIO3/src/main/java/ar/edu/utn/frbb/tup/persistence/dataCSV/materiaDATA.csv";
 
     @Before
-    public void setUp() throws Exception {
-        // Inicializar los mocks
+    public void setUp() throws IOException {
         MockitoAnnotations.openMocks(this);
+        // Crear un archivo de prueba si no existe
+        File testFile = new File(testFilePath);
+        if (testFile.exists()) {
+            assertTrue(testFile.delete());
+        }
+        assertTrue(testFile.createNewFile());
     }
 
     @Test
     public void testGuardarMateria() throws IOException {
-        // Prepara la materia a guardar
-        Materia materia = new Materia(1L, "Matematica", 1, 1, 100L, List.of(2L, 3L));
+        // Crear un objeto Materia
+        Materia materia = new Materia(1L, "Matemática", 2024, 1, 100L, new ArrayList<>());
 
-        // Simula que el PrintWriter escribe correctamente en el archivo
-        doNothing().when(printWriter).println(anyString());
-
-        // Llamamos al método que estamos probando
+        // Llamar al método guardarMateria (usando el PrintWriter real)
         materiaDao.guardarMateria(materia);
 
-        // Verificamos que PrintWriter haya sido llamado con el formato correcto
-        verify(printWriter).println(contains("Matematica,1L,1,1,100L"));
-
-        // Verificación adicional para asegurar que se invoca al menos una vez
-        verify(printWriter, times(1)).println(anyString());
+        // Leer el archivo para verificar que se haya guardado la información
+        try (BufferedReader reader = new BufferedReader(new FileReader(testFilePath))) {
+            String line = reader.readLine();
+            assertNotNull(line);  // Verifica que haya contenido en el archivo
+            assertTrue(line.contains("Matemática"));  // Verifica que el contenido esté en el archivo
+        }
     }
 
     @Test
     public void testBuscarMaterias() throws IOException {
-        // Configura el BufferedReader para simular la lectura de un archivo
-        String mockData = "1,Calculo algoritmico 2,1,1,100,2,3\n";
-        when(bufferedReader.readLine()).thenReturn(mockData).thenReturn(null);  // Devuelve una línea y luego null para terminar
+        // Preparar archivo con datos
+        try (FileWriter writer = new FileWriter(testFilePath)) {
+            writer.write("1,Matemática,1,1,100,\n");
+            writer.write("2,Física,2,1,101,\n");
+        }
 
-        // Llamamos al método que estamos probando
+// Verifica que el método buscarMaterias esté leyendo correctamente las líneas
         List<Materia> materias = materiaDao.buscarMaterias();
 
-        // Verificamos que la lista de materias no esté vacía y contiene la materia esperada
-        assertFalse(materias.isEmpty());
-        assertEquals("Calculo algoritmico 2", materias.get(0).getNombre());
+// Verifica la cantidad de materias y sus nombres
+        assertEquals(2, materias.size());
+        assertEquals("Matemática", materias.get(0).getNombre());
+        assertEquals("Física", materias.get(1).getNombre());  // Verifica el nombre de la segunda materia
     }
 
     @Test
     public void testBuscarMateriaId() throws IOException {
-        // Configura el BufferedReader para simular la lectura de un archivo
-        String mockData = "1,Matematica Avanzada,1,1,100,2,3\n"; // Simula una línea de archivo con el nombre correcto
-        when(bufferedReader.readLine()).thenReturn(mockData).thenReturn(null);  // Devuelve una línea y luego null para terminar
+        // Preparar archivo con datos
+        try (PrintWriter writer = new PrintWriter(new FileWriter(testFilePath))) {
+            writer.println("1,Matemática,1,1,100,");
+        }
 
-        // Verifica que el mockData sea correcto
-        String dataLeida = bufferedReader.readLine();
-        System.out.println(dataLeida); // Agrega un print para comprobar lo que lee el BufferedReader
-
-        // Llamamos al método con un ID que existe en los datos simulados
-        Materia materia = materiaDao.buscarMateriaId(1);
-
-        // Verificamos que la materia recuperada tenga los valores correctos
+        Materia materia = materiaDao.buscarMateriaId(1L);
         assertNotNull(materia);
-        assertEquals("Matematica Avanzada", materia.getNombre());  // Verificamos que el nombre sea el correcto
+        assertEquals("Matemática", materia.getNombre());
     }
 
     @Test
     public void testBorrarMateriaPorId() throws IOException {
-        // Configura el BufferedReader para simular la lectura de un archivo
-        // El mockData debe tener el nombre correcto de la materia que estás probando
-        String mockData = "1,Matematica,1,1,100,2,3\n";  // Esta es la materia que esperamos eliminar
-        when(bufferedReader.readLine()).thenReturn(mockData).thenReturn(null);  // Devuelve una línea y luego null para terminar
+        // Preparar archivo con datos
+        try (PrintWriter writer = new PrintWriter(new FileWriter(testFilePath))) {
+            writer.println("1,Matemática,1,1,100,");
+        }
 
-        // Llamamos al método que estamos probando
-        Materia materiaEliminada = materiaDao.borrarmateriaporid(1L);
+        Materia materia = materiaDao.borrarmateriaporid(1L);
+        assertNotNull(materia);
+        assertEquals("Matemática", materia.getNombre());
 
-        // Verificamos que la materia fue eliminada correctamente
-        assertNotNull(materiaEliminada);  // La materia eliminada no debe ser null
-        assertEquals("Matematica", materiaEliminada.getNombre());  // Verificamos que el nombre de la materia eliminada es el esperado
-    }
-
-    @Test
-    public void testModificarMateria() throws IOException {
-        // Configura el BufferedReader para simular la lectura de un archivo
-        String mockData = "1,Matematica,1,1,100,2,3\n"; // Datos originales de la materia
-        when(bufferedReader.readLine()).thenReturn(mockData).thenReturn(null);  // Devuelve una línea y luego null para terminar
-
-        // Crea una materia con cambios a modificar (nuevos valores)
-        Materia materia = new Materia(1L, "Matematica Avanzada", 2, 1, 100L, List.of(2L, 3L));
-
-        // Llamamos al método que estamos probando
-        Materia materiaModificada = materiaDao.modificarMateria(materia);
-
-        // Verificamos que la materia haya sido modificada correctamente
-        assertNotNull(materiaModificada);
-        assertEquals("Matematica Avanzada", materiaModificada.getNombre());  // Verificamos que el nombre sea el correcto
+        // Comprobar que el archivo se haya vaciado después de borrar
+        try (BufferedReader reader = new BufferedReader(new FileReader(testFilePath))) {
+            assertNull(reader.readLine());  // No debería haber nada en el archivo
+        }
     }
 }

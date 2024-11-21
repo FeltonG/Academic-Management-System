@@ -3,6 +3,7 @@ package ar.edu.utn.frbb.tup.controller;
 import ar.edu.utn.frbb.tup.business.AlumnoService;
 import ar.edu.utn.frbb.tup.business.AsignaturaService;
 import ar.edu.utn.frbb.tup.controller.AlumnoController;
+import ar.edu.utn.frbb.tup.controller.validator.alumnoValidator;
 import ar.edu.utn.frbb.tup.model.Alumno;
 import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.dto.AlumnoDto;
@@ -13,23 +14,26 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
 
 public class AlumnoControllerTest {
+    @InjectMocks
+    private AlumnoController alumnoController;
 
     @Mock
     private AlumnoService alumnoService;
 
     @Mock
+    private alumnoValidator alumValidator;
+    @Mock
     private AsignaturaService asignaturaService;
-
-    @InjectMocks
-    private AlumnoController alumnoController;
 
     @Before
     public void setUp() {
@@ -38,18 +42,40 @@ public class AlumnoControllerTest {
 
     @Test
     public void testCrearAlumno() throws AlumnoYaExisteException {
+        // Configurar datos de prueba
         AlumnoDto alumnoDto = new AlumnoDto();
-        Alumno alumno = new Alumno();
+        alumnoDto.setNombre("Juan Perez");
+        alumnoDto.setDni(12345678);
 
+        Alumno alumno = new Alumno();
+        alumno.setNombre("Juan Perez");
+        alumno.setApellido("Garcia");
+        alumno.setDni(12345678);
+
+        // Configurar comportamiento del validador
+        doNothing().when(alumValidator).validarAlumno(alumnoDto);
+
+        // Configurar comportamiento del servicio
         when(alumnoService.crearAlumno(alumnoDto)).thenReturn(alumno);
 
+        // Ejecutar el método del controlador
         ResponseEntity<Alumno> response = alumnoController.crearAlumno(alumnoDto);
 
+        // Verificaciones
         assertNotNull(response);
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(alumno, response.getBody());
+        assertEquals(ResponseEntity.status(201).build().getStatusCode(), response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("Juan Perez", response.getBody().getNombre());
+        assertEquals(12345678, response.getBody().getDni());
+
+        // Verificar interacciones con el validador y el servicio
+        verify(alumValidator, times(1)).validarAlumno(alumnoDto);
         verify(alumnoService, times(1)).crearAlumno(alumnoDto);
+
+        System.out.println(alumno);
     }
+
+
 
     @Test
     public void testBuscarAlumnoId() {

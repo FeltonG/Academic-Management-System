@@ -20,7 +20,7 @@ public class AlumnoController {
     @Autowired
     private AlumnoService alumnoService;
     @Autowired
-    private AsignaturaService asignaturaService; //= new Asignatura();
+    private AsignaturaService asignaturaService;
     @Autowired
     private  alumnoValidator alumValidator;
 

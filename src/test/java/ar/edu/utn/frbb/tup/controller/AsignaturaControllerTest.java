@@ -1,6 +1,8 @@
 package ar.edu.utn.frbb.tup.controller;
 
 import ar.edu.utn.frbb.tup.business.AsignaturaService;
+import ar.edu.utn.frbb.tup.controller.validator.AsignaturaValidator;
+import ar.edu.utn.frbb.tup.controller.validator.alumnoValidator;
 import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.EstadoAsignatura;
 import ar.edu.utn.frbb.tup.model.dto.AsignaturaDto;
@@ -18,12 +20,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
 
 public class AsignaturaControllerTest {
+    @InjectMocks
+    private AsignaturaController asignaturaController;
 
     @Mock
     private AsignaturaService asignaturaService;
 
-    @InjectMocks
-    private AsignaturaController asignaturaController;
+    @Mock
+    private AsignaturaValidator asignaturaValidator;
+
 
     @Before
     public void setUp() {
@@ -32,23 +37,41 @@ public class AsignaturaControllerTest {
 
     @Test
     public void testCrearAsignatura() {
-
+        // Configurar datos de prueba
         AsignaturaDto asignaturaDto = new AsignaturaDto();
-        asignaturaDto.setNota(7);
-        asignaturaDto.setIdalumno(1);
         asignaturaDto.setIdmateria(1);
+        asignaturaDto.setIdalumno(1);
+        asignaturaDto.setNota(8);
+        asignaturaDto.setEstado(EstadoAsignatura.APROBADA);
+
+        // Crear la asignatura de dominio (entidad)
         Asignatura asignatura = new Asignatura();
-        asignatura.setNota(7);
+        asignatura.setIdmateria(1);
+        asignatura.setIdalumno(1);
+        asignatura.setNota(8);
+        asignatura.setEstado(EstadoAsignatura.APROBADA);
 
+        // Configurar comportamiento del validador (mocking)
+        doNothing().when(asignaturaValidator).validarAsignatura(asignaturaDto);
 
+        // Configurar comportamiento del servicio (mocking)
         when(asignaturaService.crearAsignatura(asignaturaDto)).thenReturn(asignatura);
 
-
+        // Ejecutar el método del controlador
         ResponseEntity<Asignatura> response = asignaturaController.crearAsignatura(asignaturaDto);
+
+        // Verificaciones
         assertNotNull(response);
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(asignatura, response.getBody());
-        verify(asignaturaService, times(1)).crearAsignatura(asignaturaDto);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode()); // Verifica que el código de respuesta sea 201 Created
+        assertNotNull(response.getBody());
+        assertEquals(1, response.getBody().getIdmateria()); // Verifica que el idmateria sea 1
+        assertEquals(1, response.getBody().getIdalumno()); // Verifica que el idalumno sea 1
+        assertEquals(8, response.getBody().getNota()); // Verifica que la nota sea 8
+        assertEquals(EstadoAsignatura.APROBADA, response.getBody().getEstado()); // Verifica que el estado sea APROBADA
+
+        // Verificar interacciones con el validador y el servicio
+        verify(asignaturaValidator, times(1)).validarAsignatura(asignaturaDto); // Verifica que el validador se haya llamado una vez
+        verify(asignaturaService, times(1)).crearAsignatura(asignaturaDto); // Verifica que el servicio se haya llamado una vez
     }
 
     @Test

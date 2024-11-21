@@ -54,23 +54,10 @@ public class AlumnoServiceImplTest {
         long id = 4L;
         Alumno alumno = new Alumno("Juan", "Perez", 12345678);
 
-
         when(alumnoDaoMemoryImpl.buscarAlumnoporid(id)).thenReturn(alumno);
 
-        /*
-        * rg.mockito.exceptions.base.MockitoException:
-Only void methods can doNothing()!
-Example of correct use of doNothing():
-    doNothing().
-    doThrow(new RuntimeException())
-    .when(mock).someVoidMethod();
-Above means:
-someVoidMethod() does nothing the 1st time but throws an exception the 2nd time is called
-
-	at ar.edu.utn.frbb.tup.service.AlumnoServiceImplTest.testBorrarAlumnoId(AlumnoServiceImplTest.java:60)
-        * */
-        doNothing().when(alumnoDaoMemoryImpl).borrarAlumnoporid(id);
-
+        // Si borrarAlumnoporid retorna un valor, usamos thenReturn para simularlo
+        when(alumnoDaoMemoryImpl.borrarAlumnoporid(id)).thenReturn(alumno);
 
         Alumno result = alumnoService.borraralumnoId(id);
 
