@@ -32,7 +32,7 @@ public class AlumnoServiceImplTest {
     }
 
     @Test
-    public void testCrearAlumno() throws AlumnoYaExisteException {
+    public void     testCrearAlumno() throws AlumnoYaExisteException {
         AlumnoDto alumnoDto = new AlumnoDto();
         alumnoDto.setNombre("Juan");
         alumnoDto.setApellido("Perez");

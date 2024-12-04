@@ -22,7 +22,7 @@ public class MateriaDaoMemoryImplTest {
     @InjectMocks
     private MateriaDaoMemoryImpl materiaDao;
 
-    private final String testFilePath = "C:/Users/Felipe/IdeaProjects/LABORATORIO3/src/main/java/ar/edu/utn/frbb/tup/persistence/dataCSV/materiaDATA.csv";
+    private final String testFilePath = "C:/Users/Felipe/IdeaProjects/Academic-Management-System/src/main/java/ar/edu/utn/frbb/tup/persistence/materiaDATA.csv";
 
     @Before
     public void setUp() throws IOException {

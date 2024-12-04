@@ -29,7 +29,7 @@ public class AlumnoDaoMemoryImplTest {
     @Mock
     private FileWriter fileWriter;
 
-    private static final String CSV_FILE_PATH = "C:/Users/Felipe/IdeaProjects/LABORATORIO3/src/main/java/ar/edu/utn/frbb/tup/persistence/dataCSV/alumnoDATA.csv";
+    private static final String CSV_FILE_PATH = "C:/Users/Felipe/IdeaProjects/Academic-Management-System/src/main/java/ar/edu/utn/frbb/tup/persistence/alumnoDATA.csv";
 
     @Before
     public void setUp() {
@@ -38,13 +38,13 @@ public class AlumnoDaoMemoryImplTest {
 
     @Test
     public void testGuardarAlumno() {
-        Alumno alumno = new Alumno(1L, "Juan", "Perez", 12345678);
+        Alumno alumno = new Alumno(1L, "marcos", "bayon", 45740531);
         alumnoDaoMemoryImpl.guardarAlumno(alumno);
         Alumno alumnoGuardado = alumnoDaoMemoryImpl.buscarAlumnoporid(1L);
         assertNotNull(alumnoGuardado);
-        assertEquals("Juan", alumnoGuardado.getNombre());
-        assertEquals("Perez", alumnoGuardado.getApellido());
-        assertEquals(12345678, alumnoGuardado.getDni());
+        assertEquals("marcos", alumnoGuardado.getNombre().trim());
+        assertEquals("bayon", alumnoGuardado.getApellido().trim());
+        assertEquals(45740531, alumnoGuardado.getDni());
     }
 
 

@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public  class MateriaDaoMemoryImpl implements MateriaDao {
 
 
-    private static final String CSV_FILE_PATH = "C:/Users/Felipe/IdeaProjects/LABORATORIO3/src/main/java/ar/edu/utn/frbb/tup/persistence/dataCSV/materiaDATA.csv";
+    private static final String CSV_FILE_PATH = "C:/Users/Felipe/IdeaProjects/Academic-Management-System/src/main/java/ar/edu/utn/frbb/tup/persistence/materiaDATA.csv";
 
     public void guardarMateria(Materia materia) {
         FileWriter fileWriter = null;
@@ -35,34 +35,19 @@ public  class MateriaDaoMemoryImpl implements MateriaDao {
                             materia.getNombre() + "," +
                             materia.getAnio() + "," +
                             materia.getCuatrimestre() + "," +
-                            materia.getIdprofesor() + "," +
-
+                            materia.getIdprofesor() + "," +  // Asegurarse de que este campo sea el correcto
                             correlatividadesFormato // Guardar en formato "7-4-5"
             );
-            System.out.println(
-                    materia.getId() + "," +
-                            materia.getNombre() + "," +
-                            materia.getAnio() + "," +
-                            materia.getCuatrimestre() + "," +
-                            materia.getIdprofesor() + "," +
-
-                            correlatividadesFormato // Guardar en formato "7-4-5"
-            );
-
             System.out.println("Materia guardada correctamente en el archivo CSV.");
         } catch (IOException e) {
             System.err.println("Error al escribir en el archivo CSV: " + e.getMessage());
         } finally {
             // Cerrar los recursos
-            if (printWriter != null) {
-                printWriter.close();
-            }
-            if (fileWriter != null) {
-                try {
-                    fileWriter.close();
-                } catch (IOException e) {
-                    System.err.println("Error al cerrar el archivo: " + e.getMessage());
-                }
+            try {
+                if (printWriter != null) printWriter.close();
+                if (fileWriter != null) fileWriter.close();
+            } catch (IOException e) {
+                System.err.println("Error al cerrar el archivo: " + e.getMessage());
             }
         }
     }
@@ -99,12 +84,16 @@ public  class MateriaDaoMemoryImpl implements MateriaDao {
 
                     // Verificar si hay correlatividades (más de 5 elementos en la línea)
                     if (datos.length > 5) {
-                        // Convertir las correlatividades en una lista de Long
-                        correlatividades = Arrays.stream(datos[5].trim().split("'")) // Dividir por comillas simples
-                                .map(String::trim) // Eliminar espacios adicionales
-                                .filter(c -> !c.isEmpty()) // Filtrar elementos vacíos
-                                .map(Long::parseLong) // Convertir cada elemento a Long
-                                .collect(Collectors.toList()); // Recoger en una lista de Long
+                        // Verificar si el índice 5 tiene datos antes de procesarlos
+                        String correlatividadesString = datos[5].trim();
+                        if (!correlatividadesString.isEmpty()) {
+                            // Convertir las correlatividades en una lista de Long
+                            correlatividades = Arrays.stream(correlatividadesString.split("'")) // Dividir por comillas simples
+                                    .map(String::trim) // Eliminar espacios adicionales
+                                    .filter(c -> !c.isEmpty()) // Filtrar elementos vacíos
+                                    .map(Long::parseLong) // Convertir cada elemento a Long
+                                    .collect(Collectors.toList()); // Recoger en una lista de Long
+                        }
                     }
 
                     // Crear el objeto Materia y agregarlo a la lista
@@ -193,32 +182,30 @@ public  class MateriaDaoMemoryImpl implements MateriaDao {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(CSV_FILE_PATH))) {
             String linea;
             while ((linea = bufferedReader.readLine()) != null) {
-                String[] datos = linea.split(","); //
+                String[] datos = linea.split(",");
                 if (datos.length < 5) {
                     System.err.println("Línea con formato incorrecto: " + linea);
                     continue; // Salta la línea con formato incorrecto
                 }
                 try {
                     long Id = Long.parseLong(datos[0].trim());
-                    String nombre= String.valueOf(datos[1]);
-                    int anio=Integer.parseInt(datos[2]);
-                    int cuatrimestre=Integer.parseInt(datos[3]);
+                    String nombre = String.valueOf(datos[1].trim());
+                    int anio = Integer.parseInt(datos[2].trim());
+                    int cuatrimestre = Integer.parseInt(datos[3].trim());
                     long idprofesor = Long.parseLong(datos[4].trim());
+
                     // Convertir las correlatividades en una lista de Long
-                    List<Long> correlatividades= new ArrayList<>();
+                    List<Long> correlatividades = new ArrayList<>();
                     try {
-                         correlatividades = Arrays.stream(datos[5].trim().split("'")) // Dividir por el guion
+                        correlatividades = Arrays.stream(datos[5].trim().split("'")) // Dividir por el guion
                                 .map(Long::parseLong) // Convertir cada elemento a Long
                                 .collect(Collectors.toList()); // Recoger en una lista de Long
-                    } catch (Exception e)
-                    {
-                        System.err.println("Si, el error esta aca: " + e.getMessage());
+                    } catch (Exception e) {
+                        System.err.println("Error al procesar correlatividades: " + e.getMessage());
                     }
 
-
-                    if (Id==id) {
-
-                        return new Materia(Id,nombre,anio,cuatrimestre,idprofesor, correlatividades);
+                    if (Id == id) {
+                        return new Materia(Id, nombre, anio, cuatrimestre, idprofesor, correlatividades);
                     }
                 } catch (NumberFormatException e) {
                     System.err.println("Error al parsear número: " + e.getMessage());
