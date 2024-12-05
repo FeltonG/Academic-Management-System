@@ -18,7 +18,7 @@ public class CarreraDaoMemoryImplTest {
     @InjectMocks
     private CarreraDaoMemoryImpl carreraDao;
 
-    private static final String TEST_CSV_FILE_PATH = "C:/Users/Felipe/IdeaProjects/Academic-Management-System/src/main/java/ar/edu/utn/frbb/tup/persistence/carreraDATA.csv";
+    private static final String TEST_CSV_FILE_PATH = "C:/Users/Felipe/IdeaProjects/Academic-Management-System/src/main/java/ar/edu/utn/frbb/tup/persistence/dataCSV/carreraDATA.csv";
 
     @Before
     public void setUp() {

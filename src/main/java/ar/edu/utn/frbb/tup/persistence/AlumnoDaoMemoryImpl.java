@@ -9,7 +9,7 @@ import java.util.*;
 @Repository
 public class AlumnoDaoMemoryImpl implements AlumnoDao {
 
-    private static final String CSV_FILE_PATH = "C:/Users/Felipe/IdeaProjects/Academic-Management-System/src/main/java/ar/edu/utn/frbb/tup/persistence/alumnoDATA.csv";
+    private static final String CSV_FILE_PATH = "C:/Users/Felipe/IdeaProjects/Academic-Management-System/src/main/java/ar/edu/utn/frbb/tup/persistence/dataCSV/alumnoData.csv";
 
     public void guardarAlumno(Alumno alumno) {
         FileWriter fileWriter = null;

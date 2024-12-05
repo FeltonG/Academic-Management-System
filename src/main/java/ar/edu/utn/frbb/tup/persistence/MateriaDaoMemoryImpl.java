@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public  class MateriaDaoMemoryImpl implements MateriaDao {
 
 
-    private static final String CSV_FILE_PATH = "C:/Users/Felipe/IdeaProjects/Academic-Management-System/src/main/java/ar/edu/utn/frbb/tup/persistence/materiaDATA.csv";
+    private static final String CSV_FILE_PATH = "C:/Users/Felipe/IdeaProjects/Academic-Management-System/src/main/java/ar/edu/utn/frbb/tup/persistence/dataCSV/materiaDATA.csv";
 
     public void guardarMateria(Materia materia) {
         FileWriter fileWriter = null;
