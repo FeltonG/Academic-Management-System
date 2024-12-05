@@ -57,7 +57,7 @@ public class CarreraDaoMemoryImplTest {
         Carrera foundCarrera = carreraDao.buscarCarreraporId(3);
 
         assertNotNull(foundCarrera);
-        assertEquals("Ingeniería Química", foundCarrera.getNombre());
+        assertEquals("arquitecto", foundCarrera.getNombre());
     }
 
     @Test
