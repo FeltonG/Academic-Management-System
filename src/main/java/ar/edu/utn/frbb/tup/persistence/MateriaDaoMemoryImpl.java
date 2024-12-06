@@ -134,7 +134,7 @@ public  class MateriaDaoMemoryImpl implements MateriaDao {
                 while ((linea = bufferedReader.readLine()) != null) {
                     String[] datos = linea.split(",");
 
-                    if (datos.length < 5) {
+                    if (datos.length < 6) {
                         System.err.println("Línea con formato incorrecto: " + linea);
                         continue; // Saltar líneas con formato incorrecto
                     }
@@ -144,10 +144,10 @@ public  class MateriaDaoMemoryImpl implements MateriaDao {
                         String nombre = String.valueOf(datos[1].trim());
                         int anio = Integer.parseInt(datos[2].trim());
                         int cuatrimestre = Integer.parseInt(datos[3].trim());
-                        long idProf = Long.parseLong(datos[3].trim());
+                        long idProf = Long.parseLong(datos[4].trim());
 
                         // Convertir las correlatividades en una lista de Long
-                        List<Long> correlatividades = Arrays.stream(datos[4].trim().split("'")) // Dividir por el guion
+                        List<Long> correlatividades = Arrays.stream(datos[5].trim().split("'")) // Dividir por el guion
                                 .map(Long::parseLong) // Convertir cada elemento a Long
                                 .collect(Collectors.toList()); // Recoger en una lista de Long
 
