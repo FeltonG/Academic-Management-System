@@ -50,7 +50,7 @@ public class AlumnoController {
 
     // Eliminar un alumno
     @DeleteMapping("/{idAlumno}")
-    public Alumno eliminarAlumno(@PathVariable("idAlumno") Integer idAlumno) {
+    public Alumno eliminarAlumno(@PathVariable("idAlumnoz") Integer idAlumno) {
         return alumnoService.borraralumnoId(idAlumno);
     }
 

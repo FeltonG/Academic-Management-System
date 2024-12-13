@@ -29,9 +29,6 @@ public   class ProfesorDaoMemoryImpl implements ProfesorDao{
                             profesor.getApellido() + "," +
                             profesor.getTitulo() + ","
 
-
-
-
             );
 
             System.out.println("profesor  guardado correctamente en el archivo CSV.");

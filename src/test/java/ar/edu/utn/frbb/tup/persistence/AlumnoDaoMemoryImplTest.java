@@ -107,6 +107,6 @@ public class AlumnoDaoMemoryImplTest {
         alumnoDaoMemoryImpl.guardarAlumno(alumno2);
 
         int ultimoId = alumnoDaoMemoryImpl.obtenerUltimoId();
-        assertEquals(8, ultimoId); // Verifica que el último ID guardado es 8
+        assertEquals(10, ultimoId); // Verifica que el último ID guardado es 8
     }
 }

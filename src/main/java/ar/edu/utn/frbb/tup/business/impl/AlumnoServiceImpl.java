@@ -18,10 +18,12 @@ public class AlumnoServiceImpl implements AlumnoService {
     private  AlumnoDaoMemoryImpl alumnoDaoMemoryImpl;
 
     @Override
-    public Alumno crearAlumno(AlumnoDto alumnodto) throws AlumnoYaExisteException{
-        if (alumnoDaoMemoryImpl.buscarAlumnopordni(alumnodto.getDni()) != null)
-        {
-            throw new AlumnoYaExisteException("Este alumno ya existe, no puede crear un alumno con el mismo dni");
+    public Alumno crearAlumno(AlumnoDto alumnodto) throws AlumnoYaExisteException{//hacer asi
+        Alumno alumnoExistente = alumnoDaoMemoryImpl.buscarAlumnopordni(alumnodto.getDni());
+        if (alumnoExistente != null &&
+                alumnoExistente.getNombre().equals(alumnodto.getNombre()) &&
+                alumnoExistente.getApellido().equals(alumnodto.getApellido())) {
+            throw new AlumnoYaExisteException("Este alumno ya existe, no puede crear un alumno con el mismo nombre, apellido y DNI");
         }
         Alumno alumno = new Alumno(alumnodto.getNombre(), alumnodto.getApellido(),alumnodto.getDni());
         alumnoDaoMemoryImpl.guardarAlumno(alumno);

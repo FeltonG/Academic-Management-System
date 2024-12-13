@@ -4,6 +4,7 @@ import ar.edu.utn.frbb.tup.business.impl.AsignaturaServiceImpl;
 import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.EstadoAsignatura;
 import ar.edu.utn.frbb.tup.model.dto.AsignaturaDto;
+import ar.edu.utn.frbb.tup.model.exception.AsignaturaYaExisteException;
 import ar.edu.utn.frbb.tup.persistence.AsignaturaDaoMemoryImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +34,7 @@ public class AsignaturaServiceImplTest {
     }
 
     @Test
-    public void testCrearAsignaturaConDatosValidos() {
+    public void testCrearAsignaturaConDatosValidos() throws AsignaturaYaExisteException {
         AsignaturaDto asignaturaDto = new AsignaturaDto();
         asignaturaDto.setNota(7);
         asignaturaDto.setIdalumno(1);

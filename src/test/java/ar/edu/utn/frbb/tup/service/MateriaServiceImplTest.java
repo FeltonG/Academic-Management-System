@@ -2,6 +2,7 @@ package ar.edu.utn.frbb.tup.service;
 
 import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
+import ar.edu.utn.frbb.tup.model.exception.ProfesorNoEncontradoException;
 import ar.edu.utn.frbb.tup.persistence.MateriaDaoMemoryImpl;
 import ar.edu.utn.frbb.tup.business.impl.MateriaServiceImpl;
 import org.junit.Before;
@@ -33,7 +34,7 @@ public class MateriaServiceImplTest {
     }
 
     @Test
-    public void testCrearMateria() {
+    public void testCrearMateria() throws ProfesorNoEncontradoException {
         MateriaDto materiaDto = new MateriaDto();
         materiaDto.setNombre("Matemáticas");
         materiaDto.setAnio(1);

@@ -1,10 +1,12 @@
 package ar.edu.utn.frbb.tup.business;
 import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.dto.AsignaturaDto;
+import ar.edu.utn.frbb.tup.model.exception.AsignaturaYaExisteException;
+
 import java.util.List;
 
 public interface AsignaturaService {
-    Asignatura crearAsignatura(AsignaturaDto asignatura);
+    Asignatura crearAsignatura(AsignaturaDto asignatura)throws AsignaturaYaExisteException;
 
     Asignatura buscarAsignaturaId(long id);
 

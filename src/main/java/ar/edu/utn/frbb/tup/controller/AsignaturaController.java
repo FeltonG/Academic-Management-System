@@ -3,6 +3,7 @@ import ar.edu.utn.frbb.tup.business.AsignaturaService;
 import ar.edu.utn.frbb.tup.controller.validator.AsignaturaValidator;
 import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.dto.AsignaturaDto;
+import ar.edu.utn.frbb.tup.model.exception.AsignaturaYaExisteException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class AsignaturaController {
 
 
     @PostMapping
-    public ResponseEntity<Asignatura> crearAsignatura(@RequestBody AsignaturaDto asignaturaDto) {
+    public ResponseEntity<Asignatura> crearAsignatura(@RequestBody AsignaturaDto asignaturaDto) throws AsignaturaYaExisteException {
 
 
         asignaturaValidator.validarAsignatura(asignaturaDto);

@@ -1,8 +1,11 @@
 package ar.edu.utn.frbb.tup.business.impl;
 import ar.edu.utn.frbb.tup.business.AsignaturaService;
+import ar.edu.utn.frbb.tup.model.Alumno;
 import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.EstadoAsignatura;
 import ar.edu.utn.frbb.tup.model.dto.AsignaturaDto;
+import ar.edu.utn.frbb.tup.model.exception.AsignaturaYaExisteException;
+import ar.edu.utn.frbb.tup.persistence.AlumnoDaoMemoryImpl;
 import ar.edu.utn.frbb.tup.persistence.AsignaturaDaoMemoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,26 +16,44 @@ public class AsignaturaServiceImpl implements AsignaturaService {
 
     @Autowired
     private AsignaturaDaoMemoryImpl asignaturaDaoMemoryImpl;
+    @Autowired
+    private AlumnoDaoMemoryImpl alumnoDaoMemoryimpl;
+    @Autowired
+    private MateriaServiceImpl materiaServiceimpl;
 
     @Override
-    public Asignatura crearAsignatura(AsignaturaDto asignaturadto) {
+    public Asignatura crearAsignatura(AsignaturaDto asignaturadto) throws AsignaturaYaExisteException {
         // Verificar que los datos del DTO sean válidos
         if (asignaturadto.getNota() == null) { // Si 'Nota' es un objeto que puede ser null
             throw new IllegalArgumentException("La nota no puede ser nula");
         }
 
         // Verificar si 'idalumno' y 'idmateria' son 0 o valores inválidos
-        if (asignaturadto.getIdalumno() == 0) {
+        if (asignaturadto.getIdalumno() <= 0) {
             throw new IllegalArgumentException("El ID del alumno es inválido");
         }
 
-        if (asignaturadto.getIdmateria() == 0) {
+        if (asignaturadto.getIdmateria() <= 0) {
             throw new IllegalArgumentException("El ID de la materia es inválido");
         }
 
+        // Verificar si el alumno existe en el sistema
+        if (alumnoDaoMemoryimpl.buscarAlumnoporid(asignaturadto.getIdalumno()) == null) {
+            throw new IllegalStateException("El alumno con ID " + asignaturadto.getIdalumno() + " no existe");
+        }
+
+        // Verificar si la materia existe en el sistema
+        if (materiaServiceimpl.buscarmateriaId(asignaturadto.getIdmateria()) == null) {
+            throw new IllegalStateException("La materia con ID " + asignaturadto.getIdmateria() + " no existe");
+        }
 
         // Crear una nueva Asignatura a partir del DTO
-        Asignatura asignatura1 = new Asignatura(asignaturadto.getEstado(),asignaturadto.getNota(), asignaturadto.getIdalumno(), asignaturadto.getIdmateria());
+        Asignatura asignatura1 = new Asignatura(
+                asignaturadto.getEstado(),
+                asignaturadto.getNota(),
+                asignaturadto.getIdalumno(),
+                asignaturadto.getIdmateria()
+        );
 
         // Guardar la asignatura en el DAO
         asignaturaDaoMemoryImpl.guardarAsignatura(asignatura1);

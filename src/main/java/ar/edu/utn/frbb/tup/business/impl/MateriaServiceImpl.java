@@ -2,7 +2,10 @@ package ar.edu.utn.frbb.tup.business.impl;
 import ar.edu.utn.frbb.tup.business.MateriaService;
 import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
+import ar.edu.utn.frbb.tup.model.exception.AlumnoYaExisteException;
+import ar.edu.utn.frbb.tup.model.exception.ProfesorNoEncontradoException;
 import ar.edu.utn.frbb.tup.persistence.MateriaDaoMemoryImpl;
+import ar.edu.utn.frbb.tup.persistence.ProfesorDaoMemoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -12,17 +15,24 @@ import java.util.List;
 public class MateriaServiceImpl implements MateriaService {
     @Autowired
     private MateriaDaoMemoryImpl materiaDaoMemoryimp;
-
+    private ProfesorDaoMemoryImpl profesorDaoMem;
 
     @Override
-    public Materia crearMateria(MateriaDto materiadto)
+    public Materia crearMateria(MateriaDto materiadto) throws ProfesorNoEncontradoException
     {
-
-        Materia materia = new Materia(materiadto.getNombre(),materiadto.getAnio(), materiadto.getCuatrimestre(),materiadto.getProfesorId(),materiadto.getCorrelatividades());
-        System.out.println("El id profesor de la materia es: " + materiadto.getProfesorId());
-        System.out.println("ID del profesor en Materia: " + materia.getIdprofesor());
-        materiaDaoMemoryimp.guardarMateria(materia);
-        return materia; // lo retorno
+        profesorDaoMem = new ProfesorDaoMemoryImpl();
+        if(profesorDaoMem.buscarProfesorporid(materiadto.getProfesorId())!=null)
+        {
+            Materia materia = new Materia(materiadto.getNombre(),materiadto.getAnio(), materiadto.getCuatrimestre(),materiadto.getProfesorId(),materiadto.getCorrelatividades());
+            System.out.println("El id profesor de la materia es: " + materiadto.getProfesorId());
+            System.out.println("ID del profesor en Materia: " + materia.getIdprofesor());
+            materiaDaoMemoryimp.guardarMateria(materia);
+            return materia; // lo retorno
+        }
+        else
+        {
+            throw new ProfesorNoEncontradoException("El id del Profesor no se encuentra en la BASE DE DATOS");
+        }
     }
 
     @Override

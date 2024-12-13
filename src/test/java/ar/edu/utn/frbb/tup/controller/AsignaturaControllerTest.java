@@ -7,6 +7,7 @@ import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.EstadoAsignatura;
 import ar.edu.utn.frbb.tup.model.dto.AsignaturaDto;
 import ar.edu.utn.frbb.tup.controller.AsignaturaController;
+import ar.edu.utn.frbb.tup.model.exception.AsignaturaYaExisteException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -36,7 +37,7 @@ public class AsignaturaControllerTest {
     }
 
     @Test
-    public void testCrearAsignatura() {
+    public void testCrearAsignatura() throws AsignaturaYaExisteException {
         // Configurar datos de prueba
         AsignaturaDto asignaturaDto = new AsignaturaDto();
         asignaturaDto.setIdmateria(1);

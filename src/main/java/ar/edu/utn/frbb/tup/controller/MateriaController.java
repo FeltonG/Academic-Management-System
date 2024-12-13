@@ -3,6 +3,7 @@ import ar.edu.utn.frbb.tup.business.MateriaService;
 import ar.edu.utn.frbb.tup.controller.validator.materiaValidator;
 import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
+import ar.edu.utn.frbb.tup.model.exception.ProfesorNoEncontradoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,7 @@ public class MateriaController {
 
     // Crear una nueva materia
     @PostMapping
-    public Materia crearMateria(@RequestBody MateriaDto materiaDto) {
+    public Materia crearMateria(@RequestBody MateriaDto materiaDto) throws ProfesorNoEncontradoException {
         mateValidator.materiaValidation(materiaDto);
         return materiaService.crearMateria(materiaDto);
     }
