@@ -1,13 +1,14 @@
 package ar.edu.utn.frbb.tup.business;
 import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
+import ar.edu.utn.frbb.tup.model.exception.MateriaYaExisteException;
 import ar.edu.utn.frbb.tup.model.exception.ProfesorNoEncontradoException;
 
 
 import java.util.List;
 
 public interface MateriaService {
-    Materia crearMateria(MateriaDto materia) throws ProfesorNoEncontradoException;
+    Materia crearMateria(MateriaDto materia) throws ProfesorNoEncontradoException, MateriaYaExisteException;
 
     Materia buscarmateriaId(long id);
 

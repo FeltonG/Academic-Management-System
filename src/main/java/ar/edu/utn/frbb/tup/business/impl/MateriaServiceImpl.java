@@ -1,8 +1,10 @@
 package ar.edu.utn.frbb.tup.business.impl;
 import ar.edu.utn.frbb.tup.business.MateriaService;
 import ar.edu.utn.frbb.tup.model.Materia;
+import ar.edu.utn.frbb.tup.model.Profesor;
 import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
 import ar.edu.utn.frbb.tup.model.exception.AlumnoYaExisteException;
+import ar.edu.utn.frbb.tup.model.exception.MateriaYaExisteException;
 import ar.edu.utn.frbb.tup.model.exception.ProfesorNoEncontradoException;
 import ar.edu.utn.frbb.tup.persistence.MateriaDaoMemoryImpl;
 import ar.edu.utn.frbb.tup.persistence.ProfesorDaoMemoryImpl;
@@ -15,24 +17,54 @@ import java.util.List;
 public class MateriaServiceImpl implements MateriaService {
     @Autowired
     private MateriaDaoMemoryImpl materiaDaoMemoryimp;
+    @Autowired
     private ProfesorDaoMemoryImpl profesorDaoMem;
 
     @Override
-    public Materia crearMateria(MateriaDto materiadto) throws ProfesorNoEncontradoException
-    {
-        profesorDaoMem = new ProfesorDaoMemoryImpl();
-        if(profesorDaoMem.buscarProfesorporid(materiadto.getProfesorId())!=null)
-        {
-            Materia materia = new Materia(materiadto.getNombre(),materiadto.getAnio(), materiadto.getCuatrimestre(),materiadto.getProfesorId(),materiadto.getCorrelatividades());
-            System.out.println("El id profesor de la materia es: " + materiadto.getProfesorId());
-            System.out.println("ID del profesor en Materia: " + materia.getIdprofesor());
-            materiaDaoMemoryimp.guardarMateria(materia);
-            return materia; // lo retorno
+    public Materia crearMateria(MateriaDto materiadto) throws ProfesorNoEncontradoException, MateriaYaExisteException {
+        // Validaciones
+        if (materiadto.getNombre() == null || materiadto.getNombre().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre de la materia no puede estar vacío.");
         }
-        else
-        {
+
+        if (materiadto.getAnio() <= 0) {
+            throw new IllegalArgumentException("El año debe ser un número positivo.");
+        }
+
+        if (materiadto.getCuatrimestre() < 1 || materiadto.getCuatrimestre() > 4) {
+            throw new IllegalArgumentException("El cuatrimestre debe estar entre 1 y 4.");
+        }
+        // Validar que la lista de correlatividades no sea nula ni vacía
+        if (materiadto.getCorrelatividades() == null || materiadto.getCorrelatividades().isEmpty()) {
+            throw new IllegalArgumentException("La materia debe tener al menos una correlatividad.");
+        }
+
+        ProfesorDaoMemoryImpl profesorDaoMem = new ProfesorDaoMemoryImpl();
+        Profesor profesor = profesorDaoMem.buscarProfesorporid(materiadto.getProfesorId());
+        if (profesor == null) {
             throw new ProfesorNoEncontradoException("El id del Profesor no se encuentra en la BASE DE DATOS");
         }
+
+        // Verificar si ya existe una materia con el mismo nombre y cuatrimestre
+        List<Materia> todasLasMaterias = materiaDaoMemoryimp.buscarMaterias();
+        for (Materia materia : todasLasMaterias) {
+            if (materia.getNombre().equalsIgnoreCase(materiadto.getNombre()) &&
+                    materia.getCuatrimestre() == materiadto.getCuatrimestre()) {
+                throw new MateriaYaExisteException("Ya existe una materia con el mismo nombre y cuatrimestre.");
+            }
+        }
+
+        // Crear la nueva materia
+        Materia materia = new Materia(materiadto.getNombre(), materiadto.getAnio(), materiadto.getCuatrimestre(), materiadto.getProfesorId(), materiadto.getCorrelatividades());
+
+        System.out.println("El id profesor de la materia es: " + materiadto.getProfesorId());
+        System.out.println("ID del profesor en Materia: " + materia.getIdprofesor());
+
+        // Guardar la materia en el DAO
+        materiaDaoMemoryimp.guardarMateria(materia);
+
+        // Retornar la materia creada
+        return materia;
     }
 
     @Override

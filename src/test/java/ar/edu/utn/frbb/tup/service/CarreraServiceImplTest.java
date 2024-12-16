@@ -3,6 +3,7 @@ package ar.edu.utn.frbb.tup.service;
 import ar.edu.utn.frbb.tup.business.impl.CarreraServiceImpl;
 import ar.edu.utn.frbb.tup.model.Carrera;
 import ar.edu.utn.frbb.tup.model.dto.CarreraDto;
+import ar.edu.utn.frbb.tup.model.exception.CarreraYaExisteEstaException;
 import ar.edu.utn.frbb.tup.persistence.CarreraDaoMemoryImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +31,7 @@ public class CarreraServiceImplTest {
     }
 
     @Test
-    public void testCrearCarreraConDatosValidos() {
+    public void testCrearCarreraConDatosValidos() throws CarreraYaExisteEstaException {
         CarreraDto carreraDto = new CarreraDto();
         carreraDto.setNombre("Ingeniería en Sistemas");
 
@@ -46,7 +47,7 @@ public class CarreraServiceImplTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testCrearCarreraConNombreVacio() {
+    public void testCrearCarreraConNombreVacio() throws CarreraYaExisteEstaException {
         CarreraDto carreraDto = new CarreraDto();
         carreraDto.setNombre("  ");
 

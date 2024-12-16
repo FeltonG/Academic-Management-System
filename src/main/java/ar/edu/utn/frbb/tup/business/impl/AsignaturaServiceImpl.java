@@ -1,4 +1,5 @@
 package ar.edu.utn.frbb.tup.business.impl;
+
 import ar.edu.utn.frbb.tup.business.AsignaturaService;
 import ar.edu.utn.frbb.tup.model.Alumno;
 import ar.edu.utn.frbb.tup.model.Asignatura;
@@ -11,85 +12,81 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 @Service
 public class AsignaturaServiceImpl implements AsignaturaService {
 
     @Autowired
     private AsignaturaDaoMemoryImpl asignaturaDaoMemoryImpl;
     @Autowired
-    private AlumnoDaoMemoryImpl alumnoDaoMemoryimpl;
+    private AlumnoDaoMemoryImpl alumnoDaoMemoryImpl;
     @Autowired
-    private MateriaServiceImpl materiaServiceimpl;
+    private MateriaServiceImpl materiaServiceImpl;
 
     @Override
-    public Asignatura crearAsignatura(AsignaturaDto asignaturadto) throws AsignaturaYaExisteException {
+    public Asignatura crearAsignatura(AsignaturaDto asignaturaDto) throws AsignaturaYaExisteException {
         // Verificar que los datos del DTO sean válidos
-        if (asignaturadto.getNota() == null) { // Si 'Nota' es un objeto que puede ser null
+        if (asignaturaDto.getNota() == null) {
             throw new IllegalArgumentException("La nota no puede ser nula");
         }
 
-        // Verificar si 'idalumno' y 'idmateria' son 0 o valores inválidos
-        if (asignaturadto.getIdalumno() <= 0) {
+        if (asignaturaDto.getIdalumno() <= 0) {
             throw new IllegalArgumentException("El ID del alumno es inválido");
         }
 
-        if (asignaturadto.getIdmateria() <= 0) {
+        if (asignaturaDto.getIdmateria() <= 0) {
             throw new IllegalArgumentException("El ID de la materia es inválido");
         }
 
-        // Verificar si el alumno existe en el sistema
-        if (alumnoDaoMemoryimpl.buscarAlumnoporid(asignaturadto.getIdalumno()) == null) {
-            throw new IllegalStateException("El alumno con ID " + asignaturadto.getIdalumno() + " no existe");
+        // Verificar si el alumno y la materia existen
+        if (alumnoDaoMemoryImpl.buscarAlumnoporid(asignaturaDto.getIdalumno()) == null) {
+            throw new IllegalStateException("El alumno con ID " + asignaturaDto.getIdalumno() + " no existe");
         }
 
-        // Verificar si la materia existe en el sistema
-        if (materiaServiceimpl.buscarmateriaId(asignaturadto.getIdmateria()) == null) {
-            throw new IllegalStateException("La materia con ID " + asignaturadto.getIdmateria() + " no existe");
+        if (materiaServiceImpl.buscarmateriaId(asignaturaDto.getIdmateria()) == null) {
+            throw new IllegalStateException("La materia con ID " + asignaturaDto.getIdmateria() + " no existe");
         }
 
         // Crear una nueva Asignatura a partir del DTO
-        Asignatura asignatura1 = new Asignatura(
-                asignaturadto.getEstado(),
-                asignaturadto.getNota(),
-                asignaturadto.getIdalumno(),
-                asignaturadto.getIdmateria()
+        Asignatura asignatura = new Asignatura(
+                asignaturaDto.getEstado(),
+                asignaturaDto.getNota(),
+                asignaturaDto.getIdalumno(),
+                asignaturaDto.getIdmateria()
         );
 
         // Guardar la asignatura en el DAO
-        asignaturaDaoMemoryImpl.guardarAsignatura(asignatura1);
+        asignaturaDaoMemoryImpl.guardarAsignatura(asignatura);
 
-        // Retornar la asignatura creada
-        return asignatura1;
-    }
-
-
-    @Override
-    public Asignatura buscarAsignaturaId(long id) {
-        Asignatura asignatura=asignaturaDaoMemoryImpl.buscarAsignaturaporId(id);
         return asignatura;
     }
 
-    public List<Asignatura> buscarAsignaturas()
-    {
-        List<Asignatura> lista_de_asignaturas = asignaturaDaoMemoryImpl.buscarAsignaturas();
-        return lista_de_asignaturas;
+    @Override
+    public Asignatura buscarAsignaturaId(long id) {
+        Asignatura asignatura= asignaturaDaoMemoryImpl.buscarAsignaturaporId(id);
+        if (asignatura == null) {
+            throw new IllegalArgumentException("No se encontró el asignatura con ese ID: " + id);
+        }
+        return asignaturaDaoMemoryImpl.buscarAsignaturaporId(id);
     }
 
 
     @Override
+    public List<Asignatura> buscarAsignaturas() {
+        return asignaturaDaoMemoryImpl.buscarAsignaturas();
+    }
+
+    @Override
     public Asignatura borrarAsignaturaporid(long id) {
-        // primero salgo a buscarlo.
-        Asignatura asignatura_Existente = asignaturaDaoMemoryImpl.borrarAsignaturaporid(id);
-        if (asignatura_Existente != null)
-        {
+        Asignatura asignaturaExistente = asignaturaDaoMemoryImpl.borrarAsignaturaporid(id);
+        if (asignaturaExistente != null) {
             asignaturaDaoMemoryImpl.borrarAsignaturaporid(id);
         }
-        return asignatura_Existente;
+        return asignaturaExistente;
     }
 
     @Override
     public Asignatura modificarAsignatura(long id, AsignaturaDto asignaturaDto) {
-
         // Buscar si existe la asignatura a través del id
         Asignatura asignaturaExistente = asignaturaDaoMemoryImpl.buscarAsignaturaporId(id);
 
@@ -103,7 +100,6 @@ public class AsignaturaServiceImpl implements AsignaturaService {
             // Guardar los cambios
             asignaturaDaoMemoryImpl.modificarAsignatura(asignaturaExistente);
 
-            // Retornar la asignatura modificada
             return asignaturaExistente;
         }
 
@@ -112,36 +108,28 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         return null;
     }
 
-
     @Override
-    public Asignatura modificarEstadoAsignatura(long idAlumno, long idAsignatura)
-    {
+    public Asignatura modificarEstadoAsignatura(long idAlumno, long idAsignatura) {
         // Buscar si existe la asignatura a través del id
         Asignatura asignaturaExistente = asignaturaDaoMemoryImpl.buscarAsignaturaporIdAsignaturaIdAlumno(idAsignatura, idAlumno);
 
-
         if (asignaturaExistente != null) {
-            // Actualizar los datos de la asignatura existente con los nuevos datos del DTO
             EstadoAsignatura estadoActual = asignaturaExistente.getEstado();
             int numeroPosicion = estadoActual.ordinal();
             if (numeroPosicion < 1) {
                 numeroPosicion++;
-            } else if (numeroPosicion == 1 && asignaturaExistente.getNota() >= 4)
-            {
+            } else if (numeroPosicion == 1 && asignaturaExistente.getNota() >= 4) {
                 numeroPosicion++;
             }
-            if(asignaturaExistente.getNota()<4 && numeroPosicion == 1)
-            {
+            if (asignaturaExistente.getNota() < 4 && numeroPosicion == 1) {
                 System.out.println("No cambia a aprobado, porque no aprueba");
             }
-            asignaturaExistente.setEstado(EstadoAsignatura.values()[numeroPosicion]); // quiero el ordinal de numeroPosicion
+            asignaturaExistente.setEstado(EstadoAsignatura.values()[numeroPosicion]); // Cambia el estado
             asignaturaDaoMemoryImpl.modificarAsignatura(asignaturaExistente);
             return asignaturaExistente;
         }
 
-            // Guardar los cambios
-        System.out.println("No se encontro una asignatura para este alumno");
+        System.out.println("No se encontró una asignatura para este alumno");
         return null;
     }
-
 }

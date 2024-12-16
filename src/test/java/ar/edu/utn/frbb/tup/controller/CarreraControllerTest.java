@@ -7,6 +7,7 @@ import ar.edu.utn.frbb.tup.controller.validator.carreraValidator;
 import ar.edu.utn.frbb.tup.model.Carrera;
 import ar.edu.utn.frbb.tup.model.Profesor;
 import ar.edu.utn.frbb.tup.model.dto.CarreraDto;
+import ar.edu.utn.frbb.tup.model.exception.CarreraYaExisteEstaException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -38,7 +39,7 @@ public class CarreraControllerTest {
 
 
     @Test
-    public void testCrearCarrera() {
+    public void testCrearCarrera() throws CarreraYaExisteEstaException {
         // Configurar los datos de prueba
         CarreraDto carreraDto = new CarreraDto();
         carreraDto.setNombre("Abogacía");
@@ -50,7 +51,7 @@ public class CarreraControllerTest {
         doNothing().when(carreraValidator).carreraValidation(carreraDto);
 
         // Configurar el comportamiento del servicio
-        when(carreraService.crearCarrera(carreraDto)).thenReturn(nuevaCarrera);
+        when(carreraService. crearCarrera(carreraDto)).thenReturn(nuevaCarrera);
 
         // Ejecutar el método del controlador
         ResponseEntity<Carrera> response = carreraController.crearCarrera(carreraDto);

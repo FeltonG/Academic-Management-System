@@ -4,6 +4,9 @@ import ar.edu.utn.frbb.tup.controller.validator.profesorValidator;
 import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.Profesor;
 import ar.edu.utn.frbb.tup.model.dto.ProfesorDto;
+import ar.edu.utn.frbb.tup.model.exception.MateriaNoEncontradaException;
+import ar.edu.utn.frbb.tup.model.exception.ProfesorNoEncontradoException;
+import ar.edu.utn.frbb.tup.model.exception.ProfesorYaExisteException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +26,7 @@ public class ProfesorController {
 
     // Crear un nuevo profesor
     @PostMapping
-    public ResponseEntity<Profesor> crearProfesor(@RequestBody ProfesorDto profesorDto) {
+    public ResponseEntity<Profesor> crearProfesor(@RequestBody ProfesorDto profesorDto) throws ProfesorYaExisteException {
 
         profesorValidator.profesorValidation(profesorDto);
         Profesor nuevoProfesor = profesorService.crearProfesor(profesorDto);
@@ -37,7 +40,7 @@ public class ProfesorController {
     }
 
     @GetMapping("/materias/{idProfesor}")
-    public List<Materia> buscarMateriasPorProefesorId(@PathVariable("idProfesor") Integer idProfesor) {
+    public List<Materia> buscarMateriasPorProefesorId(@PathVariable("idProfesor") Integer idProfesor) throws ProfesorNoEncontradoException, MateriaNoEncontradaException {
         return profesorService.buscarMateriasPorProfesorId(idProfesor);
     }
 

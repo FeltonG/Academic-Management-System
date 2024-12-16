@@ -44,8 +44,11 @@ public class AlumnoServiceImpl implements AlumnoService {
 
 
     @Override
-    public Alumno buscarAlumnoId(long id) {
-        Alumno alumno = alumnoDaoMemoryImpl.buscarAlumnoporid(id);
+    public Alumno buscarAlumnoId(long idAlumno) {
+        Alumno alumno = alumnoDaoMemoryImpl.buscarAlumnoporid(idAlumno);
+        if (alumno == null) {
+            throw new IllegalArgumentException("No se encontró el alumno con ID: " + idAlumno);
+        }
         return alumno;
     }
 

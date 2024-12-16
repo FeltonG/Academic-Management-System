@@ -5,6 +5,7 @@ import ar.edu.utn.frbb.tup.controller.validator.carreraValidator;
 import ar.edu.utn.frbb.tup.model.Carrera;
 import ar.edu.utn.frbb.tup.model.Profesor;
 import ar.edu.utn.frbb.tup.model.dto.CarreraDto;
+import ar.edu.utn.frbb.tup.model.exception.CarreraYaExisteEstaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class CarreraController {
 
     // Crear una nueva carrera
     @PostMapping
-    public ResponseEntity<Carrera> crearCarrera(@RequestBody CarreraDto carreraDto) {
+    public ResponseEntity<Carrera> crearCarrera(@RequestBody CarreraDto carreraDto) throws CarreraYaExisteEstaException {
         carreValidator.carreraValidation(carreraDto);
         Carrera nuevaCarrera = carreraService.crearCarrera(carreraDto);
         return new ResponseEntity<>(nuevaCarrera, HttpStatus.CREATED);

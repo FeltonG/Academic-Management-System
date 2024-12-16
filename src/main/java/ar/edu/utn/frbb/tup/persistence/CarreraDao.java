@@ -16,4 +16,6 @@ public interface CarreraDao {
 
     public int obtenerUltimoId();
 
+    public Carrera buscarCarrerasPorNombre(String nombre);
+
 }

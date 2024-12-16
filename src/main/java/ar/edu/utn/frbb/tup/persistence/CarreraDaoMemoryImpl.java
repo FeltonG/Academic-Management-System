@@ -291,6 +291,19 @@ public class  CarreraDaoMemoryImpl implements  CarreraDao {
 
         return ultimoId;
     }
+
+    @Override
+    public Carrera buscarCarrerasPorNombre(String nombre) {
+        List<Carrera> carreras = buscarCarrera(); // Recupera todas las carreras del DAO
+
+        for (Carrera carrera : carreras) {
+            if (carrera.getNombre().equalsIgnoreCase(nombre)) { // Compara ignorando mayúsculas y minúsculas
+                return carrera; // Devuelve la primera carrera que coincida
+            }
+        }
+        return null; // Si no se encuentra ninguna carrera con el nombre dado
+    }
+
 }
 
 

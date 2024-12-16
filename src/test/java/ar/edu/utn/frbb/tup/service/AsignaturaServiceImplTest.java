@@ -51,7 +51,7 @@ public class AsignaturaServiceImplTest {
         Asignatura resultado = asignaturaService.crearAsignatura(asignaturaDto);
 
         assertNotNull(resultado);
-        assertEquals(asignaturaDto.getNota(), Optional.ofNullable(resultado.getNota()).orElse(null));
+        assertEquals(asignaturaDto.getNota(), Optional.of(resultado.getNota()).orElse(null));
         assertEquals(asignaturaDto.getIdalumno(), resultado.getIdalumno());
         assertEquals(asignaturaDto.getIdmateria(), resultado.getIdmateria());
         verify(asignaturaDaoMemoryImpl, times(1)).guardarAsignatura(any(Asignatura.class));

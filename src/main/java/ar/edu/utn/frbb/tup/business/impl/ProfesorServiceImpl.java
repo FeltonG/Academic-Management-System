@@ -3,29 +3,56 @@ import ar.edu.utn.frbb.tup.business.ProfesorService;
 import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.Profesor;
 import ar.edu.utn.frbb.tup.model.dto.ProfesorDto;
+import ar.edu.utn.frbb.tup.model.exception.MateriaNoEncontradaException;
+import ar.edu.utn.frbb.tup.model.exception.ProfesorNoEncontradoException;
+import ar.edu.utn.frbb.tup.model.exception.ProfesorYaExisteException;
 import ar.edu.utn.frbb.tup.persistence.MateriaDaoMemoryImpl;
 import ar.edu.utn.frbb.tup.persistence.ProfesorDaoMemoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
 public class ProfesorServiceImpl implements ProfesorService {
     @Autowired
     private ProfesorDaoMemoryImpl profesorDaoMemoryimpl;
-    @Autowired
-    private MateriaDaoMemoryImpl materiaDaoMemoryimpl = new MateriaDaoMemoryImpl();
 
-    public Profesor crearProfesor(ProfesorDto profesordto)
-    {
-        // el servicio ademas de crear la informacion y retornarla la almacena en DAO
-        // tambien lo que hace es VERIFICAR que todo este BIEN antes de el guardado.
-        Profesor profesor = new Profesor(profesordto.getNombre(),profesordto.getApellido(), profesordto.getTitulo());
+    @Autowired
+    private MateriaDaoMemoryImpl materiaDaoMemoryimpl;
+
+    @Override
+    public Profesor crearProfesor(ProfesorDto profesordto) throws IllegalArgumentException,ProfesorYaExisteException {
+        // Validar campos obligatorios
+        if (profesordto.getNombre() == null || profesordto.getNombre().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre del profesor no puede estar vacío.");
+        }
+
+        if (profesordto.getApellido() == null || profesordto.getApellido().trim().isEmpty()) {
+            throw new IllegalArgumentException("El apellido del profesor no puede estar vacío.");
+        }
+
+        if (profesordto.getTitulo() == null || profesordto.getTitulo().trim().isEmpty()) {
+            throw new IllegalArgumentException("El título del profesor no puede estar vacío.");
+        }
+
+        // Verificar si ya existe un profesor con el mismo nombre y apellido
+        List<Profesor> profesoresExistentes = profesorDaoMemoryimpl.buscarProfesores();
+        for (Profesor p : profesoresExistentes) {
+            if (p.getNombre().equalsIgnoreCase(profesordto.getNombre()) &&
+                    p.getApellido().equalsIgnoreCase(profesordto.getApellido())) {
+                throw new ProfesorYaExisteException("Ya existe un profesor con el mismo nombre y apellido.");
+            }
+        }
+
+        // Crear y guardar el profesor
+        Profesor profesor = new Profesor(profesordto.getNombre(), profesordto.getApellido(), profesordto.getTitulo());
         profesorDaoMemoryimpl.guardarProfesor(profesor);
-        return profesor; // lo retorno
+        return profesor; // Retornar el profesor creado
     }
+
 
     public Profesor borrarprofesor(long id) {
         // primero salgo a buscarlo.
@@ -94,12 +121,31 @@ public class ProfesorServiceImpl implements ProfesorService {
         }
     }
 
-    public List<Materia> buscarMateriasPorProfesorId(long idProfesor){
-        List<Materia> materiasEncontradas = new ArrayList<>();
+    @Override
+    public List<Materia> buscarMateriasPorProfesorId(long idProfesor) throws ProfesorNoEncontradoException, MateriaNoEncontradaException {
+        // Validar el ID del profesor
+        if (idProfesor <= 0) {
+            throw new IllegalArgumentException("El ID del profesor debe ser un valor positivo.");
+        }
 
-        materiasEncontradas= materiaDaoMemoryimpl.buscarMateriasPorProfesorId(idProfesor);
-        Collections.sort(materiasEncontradas);
-        return  materiasEncontradas;
+        // Verificar si el profesor existe
+        Profesor profesor = profesorDaoMemoryimpl.buscarProfesorporid(idProfesor);
+        if (profesor == null) {
+            throw new ProfesorNoEncontradoException("El profesor con el ID especificado no existe.");
+        }
+
+        // Buscar las materias asociadas al profesor
+        List<Materia> materiasEncontradas = materiaDaoMemoryimpl.buscarMateriasPorProfesorId(idProfesor);
+
+        // Verificar si se encontraron materias
+        if (materiasEncontradas == null || materiasEncontradas.isEmpty()) {
+            throw new MateriaNoEncontradaException("No se encontraron materias asociadas al profesor con ID: " + idProfesor);
+        }
+
+        // Ordenar las materias por nombre alfabético
+        materiasEncontradas.sort(Comparator.comparing(Materia::getNombre));
+
+        return materiasEncontradas;
     }
 
 }

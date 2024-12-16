@@ -4,6 +4,9 @@ import ar.edu.utn.frbb.tup.business.impl.ProfesorServiceImpl;
 import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.Profesor;
 import ar.edu.utn.frbb.tup.model.dto.ProfesorDto;
+import ar.edu.utn.frbb.tup.model.exception.MateriaNoEncontradaException;
+import ar.edu.utn.frbb.tup.model.exception.ProfesorNoEncontradoException;
+import ar.edu.utn.frbb.tup.model.exception.ProfesorYaExisteException;
 import ar.edu.utn.frbb.tup.persistence.MateriaDaoMemoryImpl;
 import ar.edu.utn.frbb.tup.persistence.ProfesorDaoMemoryImpl;
 import org.junit.Before;
@@ -36,7 +39,7 @@ public class ProfesorServiceImplTest {
     }
 
     @Test
-    public void testCrearProfesor() {
+    public void testCrearProfesor() throws ProfesorYaExisteException {
         ProfesorDto profesorDto = new ProfesorDto();
         profesorDto.setNombre("Juan");
         profesorDto.setApellido("Pérez");
@@ -120,7 +123,7 @@ public class ProfesorServiceImplTest {
     }
 
     @Test
-    public void testBuscarMateriasPorProfesorId() {
+    public void testBuscarMateriasPorProfesorId() throws ProfesorNoEncontradoException, MateriaNoEncontradaException {
         long idProfesor = 1L;
 
         // Crear materias con nombres específicos

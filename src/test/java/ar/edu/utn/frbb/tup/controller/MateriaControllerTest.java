@@ -5,6 +5,7 @@ import ar.edu.utn.frbb.tup.controller.validator.materiaValidator;
 import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
+import ar.edu.utn.frbb.tup.model.exception.MateriaYaExisteException;
 import ar.edu.utn.frbb.tup.model.exception.ProfesorNoEncontradoException;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,7 +66,7 @@ public class MateriaControllerTest {
     }
 
     @Test
-    public void testCrearMateria() throws ProfesorNoEncontradoException {
+    public void testCrearMateria() throws ProfesorNoEncontradoException, MateriaYaExisteException {
         // Configurar el comportamiento del validador
         doNothing().when(materiaValidator).materiaValidation(materiaDto);
 

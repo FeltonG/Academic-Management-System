@@ -5,6 +5,9 @@ import ar.edu.utn.frbb.tup.controller.validator.profesorValidator;
 import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.Profesor;
 import ar.edu.utn.frbb.tup.model.dto.ProfesorDto;
+import ar.edu.utn.frbb.tup.model.exception.MateriaNoEncontradaException;
+import ar.edu.utn.frbb.tup.model.exception.ProfesorNoEncontradoException;
+import ar.edu.utn.frbb.tup.model.exception.ProfesorYaExisteException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -55,7 +58,7 @@ public class ProfesorControllerTest {
     }
 
     @Test
-    public void testCrearProfesor() {
+    public void testCrearProfesor() throws ProfesorYaExisteException {
         // Configurar el comportamiento del validador
         doNothing().when(profesorValidator).profesorValidation(profesorDto);
 
@@ -90,7 +93,7 @@ public class ProfesorControllerTest {
     }
 
     @Test
-    public void testBuscarMateriasPorProfesorId() {
+    public void testBuscarMateriasPorProfesorId() throws MateriaNoEncontradaException, ProfesorNoEncontradoException {
 
         when(profesorService.buscarMateriasPorProfesorId(1)).thenReturn(materias);
 
