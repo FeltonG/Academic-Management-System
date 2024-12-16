@@ -5,6 +5,7 @@ import ar.edu.utn.frbb.tup.controller.validator.materiaValidator;
 import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
+import ar.edu.utn.frbb.tup.model.exception.MateriaNoEncontradaException;
 import ar.edu.utn.frbb.tup.model.exception.MateriaYaExisteException;
 import ar.edu.utn.frbb.tup.model.exception.ProfesorNoEncontradoException;
 import org.junit.Before;
@@ -99,7 +100,7 @@ public class MateriaControllerTest {
     }
 
     @Test
-    public void testModificarMateria() {
+    public void testModificarMateria() throws MateriaNoEncontradaException {
 
         when(materiaService.modificarMateria(1, materiaDto)).thenReturn(materia);
 

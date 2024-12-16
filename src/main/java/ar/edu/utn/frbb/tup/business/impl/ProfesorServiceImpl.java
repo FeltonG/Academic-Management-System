@@ -90,6 +90,9 @@ public class ProfesorServiceImpl implements ProfesorService {
     @Override
     public Profesor buscaProfesorporid(long id) {
         Profesor profesorid=profesorDaoMemoryimpl.buscarProfesorporid(id);
+        if(profesorid==null){
+            throw new IllegalArgumentException("el profesor id: "+ id+ "no existe");
+        }
         return profesorid;
     }
 

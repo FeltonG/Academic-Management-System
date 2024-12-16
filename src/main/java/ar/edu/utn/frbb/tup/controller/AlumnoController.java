@@ -5,7 +5,10 @@ import ar.edu.utn.frbb.tup.controller.validator.alumnoValidator;
 import ar.edu.utn.frbb.tup.model.Alumno;
 import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.dto.AlumnoDto;
+import ar.edu.utn.frbb.tup.model.exception.AlumnoNoEncontradoException;
 import ar.edu.utn.frbb.tup.model.exception.AlumnoYaExisteException;
+import ar.edu.utn.frbb.tup.model.exception.AsignaturaNoEncontradaException;
+import ar.edu.utn.frbb.tup.model.exception.EstadoIncorrectoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,23 +37,23 @@ public class AlumnoController {
     }
     // Método para buscar un alumno por su ID
     @GetMapping("/{idAlumno}")
-    public Alumno buscarAlumnoId(@PathVariable("idAlumno") Integer idAlumno) {
+    public Alumno buscarAlumnoId(@PathVariable("idAlumno") Integer idAlumno) throws AlumnoNoEncontradoException {
         return alumnoService.buscarAlumnoId(idAlumno);
     }
     // Modificar un alumno existente
     @PutMapping("/{idAlumno}")
-    public Alumno modificarAlumno(@PathVariable("idAlumno") Integer idAlumno, @RequestBody AlumnoDto alumnoDto) {
+    public Alumno modificarAlumno(@PathVariable("idAlumno") Integer idAlumno, @RequestBody AlumnoDto alumnoDto) throws AlumnoNoEncontradoException {
         return alumnoService.modificarAlumno(idAlumno, alumnoDto);
     }
 
     @PutMapping("/{idAlumno}/asignatura/{idAsignatura}")
-    public Asignatura modificarEstadoAsignatura(@PathVariable("idAlumno") Integer idAlumno,@PathVariable("idAsignatura") Integer idAsignatura) {
+    public Asignatura modificarEstadoAsignatura(@PathVariable("idAlumno") Integer idAlumno,@PathVariable("idAsignatura") Integer idAsignatura) throws AsignaturaNoEncontradaException, EstadoIncorrectoException {
         return asignaturaService.modificarEstadoAsignatura(idAlumno, idAsignatura);
     }
 
     // Eliminar un alumno
     @DeleteMapping("/{idAlumno}")
-    public Alumno eliminarAlumno(@PathVariable("idAlumnoz") Integer idAlumno) {
+    public Alumno eliminarAlumno(@PathVariable("idAlumno") Integer idAlumno) throws AlumnoNoEncontradoException {
         return alumnoService.borraralumnoId(idAlumno);
     }
 

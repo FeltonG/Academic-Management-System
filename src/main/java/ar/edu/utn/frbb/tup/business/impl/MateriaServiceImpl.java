@@ -3,9 +3,7 @@ import ar.edu.utn.frbb.tup.business.MateriaService;
 import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.Profesor;
 import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
-import ar.edu.utn.frbb.tup.model.exception.AlumnoYaExisteException;
-import ar.edu.utn.frbb.tup.model.exception.MateriaYaExisteException;
-import ar.edu.utn.frbb.tup.model.exception.ProfesorNoEncontradoException;
+import ar.edu.utn.frbb.tup.model.exception.*;
 import ar.edu.utn.frbb.tup.persistence.MateriaDaoMemoryImpl;
 import ar.edu.utn.frbb.tup.persistence.ProfesorDaoMemoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,23 +20,32 @@ public class MateriaServiceImpl implements MateriaService {
 
     @Override
     public Materia crearMateria(MateriaDto materiadto) throws ProfesorNoEncontradoException, MateriaYaExisteException {
-        // Validaciones
+        // Validar que el nombre no esté vacío
         if (materiadto.getNombre() == null || materiadto.getNombre().trim().isEmpty()) {
             throw new IllegalArgumentException("El nombre de la materia no puede estar vacío.");
         }
 
+        // Validar que el nombre solo contenga letras y espacios
+        if (!materiadto.getNombre().matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+")) {
+            throw new IllegalArgumentException("El nombre de la materia solo puede contener letras y espacios.");
+        }
+
+        // Validar que el año sea positivo
         if (materiadto.getAnio() <= 0) {
             throw new IllegalArgumentException("El año debe ser un número positivo.");
         }
 
+        // Validar que el cuatrimestre esté entre 1 y 4
         if (materiadto.getCuatrimestre() < 1 || materiadto.getCuatrimestre() > 4) {
             throw new IllegalArgumentException("El cuatrimestre debe estar entre 1 y 4.");
         }
+
         // Validar que la lista de correlatividades no sea nula ni vacía
         if (materiadto.getCorrelatividades() == null || materiadto.getCorrelatividades().isEmpty()) {
             throw new IllegalArgumentException("La materia debe tener al menos una correlatividad.");
         }
 
+        // Verificar que el profesor exista
         ProfesorDaoMemoryImpl profesorDaoMem = new ProfesorDaoMemoryImpl();
         Profesor profesor = profesorDaoMem.buscarProfesorporid(materiadto.getProfesorId());
         if (profesor == null) {
@@ -56,9 +63,6 @@ public class MateriaServiceImpl implements MateriaService {
 
         // Crear la nueva materia
         Materia materia = new Materia(materiadto.getNombre(), materiadto.getAnio(), materiadto.getCuatrimestre(), materiadto.getProfesorId(), materiadto.getCorrelatividades());
-
-        System.out.println("El id profesor de la materia es: " + materiadto.getProfesorId());
-        System.out.println("ID del profesor en Materia: " + materia.getIdprofesor());
 
         // Guardar la materia en el DAO
         materiaDaoMemoryimp.guardarMateria(materia);
@@ -78,45 +82,41 @@ public class MateriaServiceImpl implements MateriaService {
     @Override
     public Materia buscarmateriaId(long id) {
         Materia materiaId=materiaDaoMemoryimp.buscarMateriaId(id);
+        if(materiaId==null){
+            throw new IllegalArgumentException("No se encontró la materia con el ID: " + id);
+        }
         return materiaId;
     }
 
     @Override
-    public Materia modificarMateria(long id, MateriaDto materiaModificada) {
+    public Materia modificarMateria(long id, MateriaDto materiaModificada) throws MateriaNoEncontradaException {
 
-        // Buscar si existe el alumno a través del id
-        Materia materiaExistente= materiaDaoMemoryimp.buscarMateriaId(id);
+        // Buscar si existe la materia a través del id
+        Materia materiaExistente = materiaDaoMemoryimp.buscarMateriaId(id);
 
         if (materiaExistente != null) {
-            // Actualizar los datos del alumno existente con los nuevos datos del DTO
-            System.out.println("Materia modificada correlatividades: "+materiaModificada.getCorrelatividades().toString());
+            // Actualizar los datos de la materia existente con los nuevos datos del DTO
             materiaExistente.setNombre(materiaModificada.getNombre());
             materiaExistente.setAnio(materiaModificada.getAnio());
             materiaExistente.setCuatrimestre(materiaModificada.getCuatrimestre());
             materiaExistente.setIdprofesor(materiaModificada.getProfesorId());
             materiaExistente.setCorrelatividades(materiaModificada.getCorrelatividades());
 
-
-            // Aquí puedes seguir actualizando otros campos que tengas en AlumnoDto
-
             // Guardar los cambios
             materiaDaoMemoryimp.modificarMateria(materiaExistente);
 
-            // Retornar el alumno modificado
+            // Retornar la materia modificada
             return materiaExistente;
         } else {
-            // Si no se encuentra el alumno, retornar null o lanzar una excepción
-            System.out.println("No se encontró un profesor con el id proporcionado");
-            return null;
+            // Lanzar excepción personalizada si no se encuentra la materia
+            throw new MateriaNoEncontradaException("No se encontró una materia con el ID proporcionado");
         }
     }
 
     @Override
     public Materia borrarmateriaId(long id) {
-        // primero salgo a buscarlo.
         Materia materia_Existente = materiaDaoMemoryimp.buscarMateriaId(id);
-        if (materia_Existente != null)
-        {
+        if (materia_Existente != null) {
             materiaDaoMemoryimp.borrarmateriaporid(id);
         }
         return materia_Existente;

@@ -3,6 +3,7 @@ package ar.edu.utn.frbb.tup.service;
 import ar.edu.utn.frbb.tup.business.impl.AlumnoServiceImpl;
 import ar.edu.utn.frbb.tup.model.Alumno;
 import ar.edu.utn.frbb.tup.model.dto.AlumnoDto;
+import ar.edu.utn.frbb.tup.model.exception.AlumnoNoEncontradoException;
 import ar.edu.utn.frbb.tup.model.exception.AlumnoYaExisteException;
 import ar.edu.utn.frbb.tup.persistence.AlumnoDaoMemoryImpl;
 import org.junit.Before;
@@ -50,7 +51,7 @@ public class AlumnoServiceImplTest {
     }
 
     @Test
-    public void testBorrarAlumnoId() {
+    public void testBorrarAlumnoId() throws AlumnoNoEncontradoException {
         long id = 4L;
         Alumno alumno = new Alumno("Juan", "Perez", 12345678);
 
@@ -68,7 +69,7 @@ public class AlumnoServiceImplTest {
     }
 
     @Test
-    public void testBuscarAlumnoId() {
+    public void testBuscarAlumnoId() throws AlumnoNoEncontradoException {
         long id = 1L;
         Alumno alumno = new Alumno("Juan", "Perez", 12345678);
 
@@ -82,7 +83,7 @@ public class AlumnoServiceImplTest {
     }
 
     @Test
-    public void testModificarAlumno() {
+    public void testModificarAlumno() throws AlumnoNoEncontradoException {
         long id = 1L;
         AlumnoDto alumnoDto = new AlumnoDto();
         alumnoDto.setNombre("Carlos");

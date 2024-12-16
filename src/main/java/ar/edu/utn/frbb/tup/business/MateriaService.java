@@ -1,6 +1,7 @@
 package ar.edu.utn.frbb.tup.business;
 import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
+import ar.edu.utn.frbb.tup.model.exception.MateriaNoEncontradaException;
 import ar.edu.utn.frbb.tup.model.exception.MateriaYaExisteException;
 import ar.edu.utn.frbb.tup.model.exception.ProfesorNoEncontradoException;
 
@@ -14,7 +15,7 @@ public interface MateriaService {
 
     List<Materia> buscarMateria();
 
-    Materia modificarMateria(long id, MateriaDto materia);
+    Materia modificarMateria(long id, MateriaDto materia) throws MateriaNoEncontradaException;
 
     Materia borrarmateriaId(long id);
 

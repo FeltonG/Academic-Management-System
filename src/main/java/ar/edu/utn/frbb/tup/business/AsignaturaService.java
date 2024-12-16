@@ -1,7 +1,9 @@
 package ar.edu.utn.frbb.tup.business;
 import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.dto.AsignaturaDto;
+import ar.edu.utn.frbb.tup.model.exception.AsignaturaNoEncontradaException;
 import ar.edu.utn.frbb.tup.model.exception.AsignaturaYaExisteException;
+import ar.edu.utn.frbb.tup.model.exception.EstadoIncorrectoException;
 
 import java.util.List;
 
@@ -16,5 +18,5 @@ public interface AsignaturaService {
 
     Asignatura borrarAsignaturaporid(long id);
 
-    Asignatura modificarEstadoAsignatura(long idAlumno, long idAsignatura);
+    Asignatura modificarEstadoAsignatura(long idAlumno, long idAsignatura) throws AsignaturaNoEncontradaException, EstadoIncorrectoException;
 }

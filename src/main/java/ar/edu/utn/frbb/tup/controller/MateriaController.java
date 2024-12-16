@@ -3,6 +3,7 @@ import ar.edu.utn.frbb.tup.business.MateriaService;
 import ar.edu.utn.frbb.tup.controller.validator.materiaValidator;
 import ar.edu.utn.frbb.tup.model.Materia;
 import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
+import ar.edu.utn.frbb.tup.model.exception.MateriaNoEncontradaException;
 import ar.edu.utn.frbb.tup.model.exception.MateriaYaExisteException;
 import ar.edu.utn.frbb.tup.model.exception.ProfesorNoEncontradoException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class MateriaController {
 
     // Modificar una materia existente
     @PutMapping("/{idMateria}")
-    public Materia modificarMateria(@PathVariable("idMateria") Integer idMateria, @RequestBody MateriaDto materiaDto) {
+    public Materia modificarMateria(@PathVariable("idMateria") Integer idMateria, @RequestBody MateriaDto materiaDto) throws MateriaNoEncontradaException {
         return materiaService.modificarMateria(idMateria, materiaDto);
     }
 

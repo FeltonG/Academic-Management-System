@@ -8,7 +8,10 @@ import ar.edu.utn.frbb.tup.model.Alumno;
 import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.dto.AlumnoDto;
 import ar.edu.utn.frbb.tup.model.dto.AsignaturaDto;
+import ar.edu.utn.frbb.tup.model.exception.AlumnoNoEncontradoException;
 import ar.edu.utn.frbb.tup.model.exception.AlumnoYaExisteException;
+import ar.edu.utn.frbb.tup.model.exception.AsignaturaNoEncontradaException;
+import ar.edu.utn.frbb.tup.model.exception.EstadoIncorrectoException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -78,7 +81,7 @@ public class AlumnoControllerTest {
 
 
     @Test
-    public void testBuscarAlumnoId() {
+    public void testBuscarAlumnoId() throws AlumnoNoEncontradoException {
         Integer idAlumno = 1;
         Alumno alumno = new Alumno();
 
@@ -92,7 +95,7 @@ public class AlumnoControllerTest {
     }
 
     @Test
-    public void testModificarAlumno() {
+    public void testModificarAlumno() throws AlumnoNoEncontradoException {
         Integer idAlumno = 1;
         AlumnoDto alumnoDto = new AlumnoDto();
         Alumno alumno = new Alumno();
@@ -107,7 +110,7 @@ public class AlumnoControllerTest {
     }
 
     @Test
-    public void testModificarEstadoAsignatura() {
+    public void testModificarEstadoAsignatura() throws AsignaturaNoEncontradaException, EstadoIncorrectoException {
         Integer idAlumno = 1;
         Integer idAsignatura = 1;
         Asignatura asignatura = new Asignatura();
@@ -122,7 +125,7 @@ public class AlumnoControllerTest {
     }
 
     @Test
-    public void testEliminarAlumno() {
+    public void testEliminarAlumno() throws AlumnoNoEncontradoException {
         Integer idAlumno = 1;
         Alumno alumno = new Alumno();
 

@@ -4,7 +4,9 @@ import ar.edu.utn.frbb.tup.business.impl.AsignaturaServiceImpl;
 import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.EstadoAsignatura;
 import ar.edu.utn.frbb.tup.model.dto.AsignaturaDto;
+import ar.edu.utn.frbb.tup.model.exception.AsignaturaNoEncontradaException;
 import ar.edu.utn.frbb.tup.model.exception.AsignaturaYaExisteException;
+import ar.edu.utn.frbb.tup.model.exception.EstadoIncorrectoException;
 import ar.edu.utn.frbb.tup.persistence.AsignaturaDaoMemoryImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -123,7 +125,7 @@ public class AsignaturaServiceImplTest {
     }
 
     @Test
-    public void testModificarEstadoAsignatura() {
+    public void testModificarEstadoAsignatura() throws AsignaturaNoEncontradaException, EstadoIncorrectoException {
         long idAlumno = 1;
         long idAsignatura = 1;
         Asignatura asignatura = new Asignatura(EstadoAsignatura.APROBADA, 7, idAlumno, idAsignatura);
