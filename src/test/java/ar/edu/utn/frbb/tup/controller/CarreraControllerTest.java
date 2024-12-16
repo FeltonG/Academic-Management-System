@@ -8,6 +8,7 @@ import ar.edu.utn.frbb.tup.model.Carrera;
 import ar.edu.utn.frbb.tup.model.Profesor;
 import ar.edu.utn.frbb.tup.model.dto.CarreraDto;
 import ar.edu.utn.frbb.tup.model.exception.CarreraYaExisteEstaException;
+import ar.edu.utn.frbb.tup.model.exception.ProfesorNoEncontradoException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -97,7 +98,7 @@ public class CarreraControllerTest {
 
 
     @Test
-    public void testEliminarProfesor() {
+    public void testEliminarProfesor() throws ProfesorNoEncontradoException {
         Integer idProfesor = 1;
         Profesor profesor = new Profesor("Felipe","Garcia","licenciado");
         when(profesorService.borrarProfesorporid(idProfesor)).thenReturn(profesor);

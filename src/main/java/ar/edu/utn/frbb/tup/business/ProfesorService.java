@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ProfesorService {
 
-    public Profesor borrarProfesorporid(long id) ;
+    public Profesor borrarProfesorporid(long id) throws ProfesorNoEncontradoException;
 
     public Profesor buscaProfesorporid(long id);
 

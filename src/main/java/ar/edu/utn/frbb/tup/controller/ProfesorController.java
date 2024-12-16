@@ -50,7 +50,11 @@ public class ProfesorController {
        return  profesorService.modificarProfesor(idProfesor, profesorDto);
     }
 
-
+    @DeleteMapping("/{idProfesor}")
+    public ResponseEntity<Void> borrarProfesor(@PathVariable("idProfesor") Long idProfesor) throws ProfesorNoEncontradoException {
+        profesorService.borrarProfesorporid(idProfesor);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
 
 }

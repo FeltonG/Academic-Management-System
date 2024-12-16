@@ -59,7 +59,7 @@ public class ProfesorServiceImplTest {
     }
 
     @Test
-    public void testBorrarProfesor() {
+    public void testBorrarProfesor() throws ProfesorNoEncontradoException {
         long id = 1L;
         Profesor profesor = new Profesor("Juan", "Pérez", "Ingeniero");
 

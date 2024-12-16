@@ -66,17 +66,15 @@ public class ProfesorServiceImpl implements ProfesorService {
 
 
     @Override
-    public Profesor borrarProfesorporid(long id) {
-
+    public Profesor borrarProfesorporid(long id) throws ProfesorNoEncontradoException {
         Profesor profesorExistente = profesorDaoMemoryimpl.buscarProfesorporid(id);
 
         if (profesorExistente != null) {
             profesorDaoMemoryimpl.borrarProfesorporid(id);
-            return profesorExistente; // Retornar el profesor eliminado.
+            return profesorExistente; // Retorna el profesor eliminado.
+        } else {
+            throw new ProfesorNoEncontradoException("Profesor con ID " + id + " no encontrado.");
         }
-
-        // Si el profesor no existe, puedes lanzar una excepción o retornar null.
-        return null;
     }
 
 

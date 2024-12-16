@@ -6,6 +6,7 @@ import ar.edu.utn.frbb.tup.model.Carrera;
 import ar.edu.utn.frbb.tup.model.Profesor;
 import ar.edu.utn.frbb.tup.model.dto.CarreraDto;
 import ar.edu.utn.frbb.tup.model.exception.CarreraYaExisteEstaException;
+import ar.edu.utn.frbb.tup.model.exception.ProfesorNoEncontradoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +52,7 @@ public class CarreraController {
     }*/
 
     @DeleteMapping("/{idProfesor}")
-    public Profesor eliminarProfesor(@PathVariable("idProfesor") Integer idProfesor) {
+    public Profesor eliminarProfesor(@PathVariable("idProfesor") Integer idProfesor) throws ProfesorNoEncontradoException {
         return profesorService.borrarProfesorporid(idProfesor);
     }
 
