@@ -37,6 +37,7 @@ public class AsignaturaServiceImpl implements AsignaturaService {
             throw new IllegalArgumentException("El ID del alumno es inválido");
         }
 
+
         if (asignaturaDto.getIdmateria() <= 0) {
             throw new IllegalArgumentException("El ID de la materia es inválido");
         }
@@ -93,12 +94,42 @@ public class AsignaturaServiceImpl implements AsignaturaService {
 
     @Override
     public Asignatura modificarAsignatura(long id, AsignaturaDto asignaturaDto) {
-        // Buscar si existe la asignatura a través del id
         Asignatura asignaturaExistente = asignaturaDaoMemoryImpl.buscarAsignaturaporId(id);
 
         if (asignaturaExistente == null) {
             // Lanzar excepción personalizada si no se encuentra la asignatura
             throw new NoseEncontroAsignatura("No se encontró la asignatura con el ID proporcionado: " + id);
+        }
+
+        // Validaciones de los campos del DTO
+        if (asignaturaDto.getEstado() == null) {
+            throw new IllegalArgumentException("El estado de la asignatura no puede ser nulo.");
+        }
+
+        if (asignaturaDto.getNota() == null) {
+            throw new IllegalArgumentException("La nota no puede ser nula.");
+        }
+
+        if (asignaturaDto.getNota() < 1 || asignaturaDto.getNota() > 10) {
+            throw new IllegalArgumentException("La nota debe estar entre 1 y 10.");
+        }
+
+        if (asignaturaDto.getIdalumno() <= 0) {
+            throw new IllegalArgumentException("El ID del alumno es inválido.");
+        }
+
+        if (asignaturaDto.getIdmateria() <= 0) {
+            throw new IllegalArgumentException("El ID de la materia es inválido.");
+        }
+
+        // Verificar si el alumno existe
+        if (alumnoDaoMemoryImpl.buscarAlumnoporid(asignaturaDto.getIdalumno()) == null) {
+            throw new IllegalStateException("El alumno con ID " + asignaturaDto.getIdalumno() + " no existe.");
+        }
+
+        // Verificar si la materia existe
+        if (materiaServiceImpl.buscarmateriaId(asignaturaDto.getIdmateria()) == null) {
+            throw new IllegalStateException("La materia con ID " + asignaturaDto.getIdmateria() + " no existe.");
         }
 
         // Actualizar los datos de la asignatura existente con los nuevos datos del DTO
@@ -114,7 +145,7 @@ public class AsignaturaServiceImpl implements AsignaturaService {
     }
 
     @Override
-    public Asignatura modificarEstadoAsignatura(long idAlumno, long idAsignatura) throws AsignaturaNoEncontradaException {
+    public Asignatura modificarEstadoAsignatura(long idAlumno, long idAsignatura) throws AsignaturaNoEncontradaException, EstadoInvalidoException {
         // Buscar la asignatura asociada a este alumno
         Asignatura asignaturaExistente = asignaturaDaoMemoryImpl.buscarAsignaturaporIdAsignaturaIdAlumno(idAsignatura, idAlumno);
 
@@ -125,19 +156,27 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         EstadoAsignatura estadoActual = asignaturaExistente.getEstado();
         int numeroPosicion = estadoActual.ordinal();
 
-        // Incrementar el estado solo si es válido para avanzar a un estado siguiente
+        // Verificar si ya es el último estado permitido
+        if (numeroPosicion >= EstadoAsignatura.values().length - 1) {
+            throw new EstadoInvalidoException("El estado actual no permite avanzar más.");
+        }
+
+        // Verificar si la nota es menor o igual a 4
+        if (asignaturaExistente.getNota() <= 4) {
+            throw new EstadoInvalidoException("No se puede avanzar más debido a que la nota es de 4 o menos.");
+        }
+
+        // Si la nota es 6, el estado tampoco debe avanzar
+        if (asignaturaExistente.getNota() == 6) {
+            throw new EstadoInvalidoException("No se puede avanzar más debido a que la nota es de 6.");
+        }
+
+        // Si la nota es mayor a 6, avanzar al siguiente estado
         if (numeroPosicion < EstadoAsignatura.values().length - 1) {
-            // Si la nota es menor a 4, el estado debe ser NO_CURSADO
-            if (asignaturaExistente.getNota() <= 4) {
-                asignaturaExistente.setEstado(EstadoAsignatura.NO_CURSADA);
-            }
-            // Si la nota está entre 4 y 6.99, el estado es Cursado
-            else if (asignaturaExistente.getNota() <= 6) {
-                asignaturaExistente.setEstado(EstadoAsignatura.CURSADA);
-            }
-            // Si la nota es 7 o más, el estado es Aprobado
-            else if (asignaturaExistente.getNota() >= 7) {
+            if (asignaturaExistente.getNota() >= 7) {
                 asignaturaExistente.setEstado(EstadoAsignatura.APROBADA);
+            } else if (asignaturaExistente.getNota() <= 6) {
+                asignaturaExistente.setEstado(EstadoAsignatura.CURSADA);
             }
 
             // Guardar la asignatura con su nuevo estado

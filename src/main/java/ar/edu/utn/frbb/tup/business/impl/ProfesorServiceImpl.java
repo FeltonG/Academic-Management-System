@@ -96,31 +96,58 @@ public class ProfesorServiceImpl implements ProfesorService {
 
 
     @Override
-    public Profesor modificarProfesor(long id, ProfesorDto profesor) {
+    public Profesor modificarProfesor(long id, ProfesorDto profesor) throws ProfesorNoEncontradoException {
 
+        // Buscar si existe el profesor a través del id
+        Profesor profesorExistente = profesorDaoMemoryimpl.buscarProfesorporid(id);
 
-        // Buscar si existe el profesor  a través del id
-        Profesor profesorExistente= profesorDaoMemoryimpl.buscarProfesorporid(id);
-
-        if (profesorExistente != null) {
-            // Actualizar los datos del profesor existente con los nuevos datos del DTO
-            profesorExistente.setNombre(profesor.getNombre());
-            profesorExistente.setApellido(profesor.getApellido());
-            profesorExistente.setTitulo(profesor.getTitulo());
-
-            // Aquí puedes seguir actualizando otros campos que tengas en ProfesorDto
-
-            // Guardar los cambios
-            profesorDaoMemoryimpl.modificarProfesor(profesorExistente);
-
-            // Retornar el profesor modificado
-            return profesorExistente;
-        } else {
-            // Si no se encuentra el profesor, retornar null o lanzar una excepción
-            System.out.println("No se encontró un profesor con el id proporcionado");
-            return null;
+        if (profesorExistente == null) {
+            // Lanzar excepción personalizada si no se encuentra el profesor
+            throw new ProfesorNoEncontradoException("No se encontró un profesor con el ID proporcionado: " + id);
         }
+
+        // Validar que el nombre no sea nulo ni vacío
+        if (profesor.getNombre() == null || profesor.getNombre().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre del profesor no puede estar vacío.");
+        }
+
+        // Validar que el nombre solo contenga letras y espacios
+        if (!profesor.getNombre().matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+")) {
+            throw new IllegalArgumentException("El nombre del profesor solo puede contener letras y espacios.");
+        }
+
+        // Validar que el apellido no sea nulo ni vacío
+        if (profesor.getApellido() == null || profesor.getApellido().trim().isEmpty()) {
+            throw new IllegalArgumentException("El apellido del profesor no puede estar vacío.");
+        }
+
+        // Validar que el apellido solo contenga letras y espacios
+        if (!profesor.getApellido().matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+")) {
+            throw new IllegalArgumentException("El apellido del profesor solo puede contener letras y espacios.");
+        }
+
+        // Validar que el título no sea nulo ni vacío
+        if (profesor.getTitulo() == null || profesor.getTitulo().trim().isEmpty()) {
+            throw new IllegalArgumentException("El título del profesor no puede estar vacío.");
+        }
+
+        // Validar que el título solo contenga letras, espacios, y caracteres especiales razonables
+        if (!profesor.getTitulo().matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s\\.\\,\\-]+")) {
+            throw new IllegalArgumentException("El título del profesor contiene caracteres no válidos.");
+        }
+
+        // Actualizar los datos del profesor existente con los nuevos datos del DTO
+        profesorExistente.setNombre(profesor.getNombre());
+        profesorExistente.setApellido(profesor.getApellido());
+        profesorExistente.setTitulo(profesor.getTitulo());
+
+        // Guardar los cambios
+        profesorDaoMemoryimpl.modificarProfesor(profesorExistente);
+
+        // Retornar el profesor modificado
+        return profesorExistente;
     }
+
 
     @Override
     public List<Materia> buscarMateriasPorProfesorId(long idProfesor) throws ProfesorNoEncontradoException, MateriaNoEncontradaException {

@@ -2,12 +2,10 @@ package ar.edu.utn.frbb.tup.controller;
 
 import ar.edu.utn.frbb.tup.business.AlumnoService;
 import ar.edu.utn.frbb.tup.business.AsignaturaService;
-import ar.edu.utn.frbb.tup.controller.AlumnoController;
 import ar.edu.utn.frbb.tup.controller.validator.alumnoValidator;
 import ar.edu.utn.frbb.tup.model.Alumno;
 import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.dto.AlumnoDto;
-import ar.edu.utn.frbb.tup.model.dto.AsignaturaDto;
 import ar.edu.utn.frbb.tup.model.exception.AlumnoNoEncontradoException;
 import ar.edu.utn.frbb.tup.model.exception.AlumnoYaExisteException;
 import ar.edu.utn.frbb.tup.model.exception.AsignaturaNoEncontradaException;
@@ -17,10 +15,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -44,7 +39,7 @@ public class AlumnoControllerTest {
     }
 
     @Test
-    public void testCrearAlumno() throws AlumnoYaExisteException {
+    public void testCrearAlumno() throws AlumnoYaExisteException, AlumnoNoEncontradoException {
         // Configurar datos de prueba
         AlumnoDto alumnoDto = new AlumnoDto();
         alumnoDto.setNombre("Juan Perez");
@@ -95,7 +90,7 @@ public class AlumnoControllerTest {
     }
 
     @Test
-    public void testModificarAlumno() throws AlumnoNoEncontradoException {
+    public void testModificarAlumno() throws AlumnoNoEncontradoException, AlumnoYaExisteException {
         Integer idAlumno = 1;
         AlumnoDto alumnoDto = new AlumnoDto();
         Alumno alumno = new Alumno();

@@ -31,7 +31,7 @@ public class carreraValidator {
         carreraDto.setNombre(nombreNormalizado);
     }
 
-
+    // se usa para poner mayusculas al principio y que no tenga espacios
     private String normalizarNombre(String nombre) {
         StringBuilder resultado = new StringBuilder();
         String[] palabras = nombre.trim().split("\\s+");

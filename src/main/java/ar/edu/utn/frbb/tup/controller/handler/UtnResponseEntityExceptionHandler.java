@@ -13,12 +13,13 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class UtnResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(value = {AlumnoYaExisteException.class, ProfesorYaExisteException.class, IllegalArgumentException.class, CarreraYaExisteEstaException.class})
+    @ExceptionHandler(value = {AlumnoNoEncontradoException.class,ProfesorYaExisteException.class, IllegalArgumentException.class, CarreraYaExisteEstaException.class})
     protected ResponseEntity<Object> handleBadRequestExceptions(Exception ex, WebRequest request) {
         return buildErrorResponse(ex, HttpStatus.BAD_REQUEST, request);
     }
 
-    @ExceptionHandler(value = {AlumnoNoEncontradoException.class, ProfesorNoEncontradoException.class, MateriaNoEncontradaException.class, CarreraNoEncontradaException.class,NoseEncontroAsignatura.class,CarreraNotFoundException.class,AlumnoNoEncontradoException.class,AsignaturaNoEncontradaException.class,NombreDeLaMateriaException.class})
+    @ExceptionHandler(value = { ProfesorNoEncontradoException.class, MateriaNoEncontradaException.class, CarreraNoEncontradaException.class,NoseEncontroAsignatura.class,CarreraNotFoundException.class,AsignaturaNoEncontradaException.class,NombreDeLaMateriaException.class,IllegalStateException.class,
+    NombreProfesorAbreviadoException.class,NombreProfesorInvalidoException.class,TituloProfesorInvalidoException.class,NombreProfesorLargoException.class, EstadoIncorrectoException.class, EstadoInvalidoException.class,AlumnoYaExisteException.class})
     protected ResponseEntity<Object> handleNotFoundExceptions(Exception ex, WebRequest request) {
         return buildErrorResponse(ex, HttpStatus.NOT_FOUND, request);
     }

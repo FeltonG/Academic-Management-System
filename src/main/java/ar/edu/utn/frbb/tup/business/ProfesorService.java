@@ -18,7 +18,7 @@ public interface ProfesorService {
 
     Profesor crearProfesor(ProfesorDto profesor) throws IllegalArgumentException, ProfesorYaExisteException;
 
-    Profesor modificarProfesor( long id, ProfesorDto profesor);
+    Profesor modificarProfesor( long id, ProfesorDto profesor) throws ProfesorNoEncontradoException;
 
     public List<Materia> buscarMateriasPorProfesorId(long id)  throws ProfesorNoEncontradoException, MateriaNoEncontradaException;
 

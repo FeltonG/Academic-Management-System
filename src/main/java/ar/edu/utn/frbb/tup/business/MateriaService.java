@@ -15,7 +15,7 @@ public interface MateriaService {
 
     List<Materia> buscarMateria();
 
-    Materia modificarMateria(long id, MateriaDto materia) throws MateriaNoEncontradaException;
+    Materia modificarMateria(long id, MateriaDto materia) throws MateriaNoEncontradaException, ProfesorNoEncontradoException, MateriaYaExisteException;
 
     Materia borrarmateriaId(long id) throws MateriaNoEncontradaException;
 

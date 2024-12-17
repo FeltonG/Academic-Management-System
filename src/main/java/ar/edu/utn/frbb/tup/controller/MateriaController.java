@@ -34,7 +34,8 @@ public class MateriaController {
 
     // Modificar una materia existente
     @PutMapping("/{idMateria}")
-    public Materia modificarMateria(@PathVariable("idMateria") Integer idMateria, @RequestBody MateriaDto materiaDto) throws MateriaNoEncontradaException {
+    public Materia modificarMateria(@PathVariable("idMateria") Integer idMateria, @RequestBody MateriaDto materiaDto) throws MateriaNoEncontradaException, ProfesorNoEncontradoException, MateriaYaExisteException {
+        mateValidator.materiaValidation(materiaDto);
         return materiaService.modificarMateria(idMateria, materiaDto);
     }
 

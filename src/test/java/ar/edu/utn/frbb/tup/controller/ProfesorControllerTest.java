@@ -106,7 +106,7 @@ public class ProfesorControllerTest {
     }
 
     @Test
-    public void testModificarProfesor() {
+    public void testModificarProfesor() throws ProfesorNoEncontradoException {
 
         when(profesorService.modificarProfesor(1, profesorDto)).thenReturn(profesor);
 

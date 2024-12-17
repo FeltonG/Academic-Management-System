@@ -94,7 +94,7 @@ public class MateriaServiceImplTest {
     }
 
     @Test
-    public void testModificarMateria() throws MateriaNoEncontradaException {
+    public void testModificarMateria() throws MateriaNoEncontradaException, ProfesorNoEncontradoException, MateriaYaExisteException {
         long id = 1L;
         MateriaDto materiaModificada = new MateriaDto();
         materiaModificada.setNombre("Biología");

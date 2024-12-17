@@ -83,7 +83,7 @@ public class AlumnoServiceImplTest {
     }
 
     @Test
-    public void testModificarAlumno() throws AlumnoNoEncontradoException {
+    public void testModificarAlumno() throws AlumnoNoEncontradoException, AlumnoYaExisteException {
         long id = 1L;
         AlumnoDto alumnoDto = new AlumnoDto();
         alumnoDto.setNombre("Carlos");

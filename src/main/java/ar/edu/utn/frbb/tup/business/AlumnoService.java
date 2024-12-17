@@ -7,7 +7,7 @@ import ar.edu.utn.frbb.tup.model.exception.AlumnoYaExisteException;
 import java.util.List;
 
 public interface AlumnoService {
-    // void aprobarAsignatura(int materiaId, int nota, int dni) throws EstadoIncorrectoException, CorrelatividadesNoAprobadasException;
+
 
     Alumno crearAlumno(AlumnoDto alumno) throws AlumnoYaExisteException;
 
@@ -18,7 +18,7 @@ public interface AlumnoService {
 
 
 
-    Alumno modificarAlumno(long id, AlumnoDto alumno) throws AlumnoNoEncontradoException;
+    Alumno modificarAlumno(long id, AlumnoDto alumno) ;
 
     List<Alumno> buscarAlumnos();
 

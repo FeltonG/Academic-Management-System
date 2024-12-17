@@ -102,7 +102,7 @@ public class ProfesorServiceImplTest {
     }
 
     @Test
-    public void testModificarProfesor() {
+    public void testModificarProfesor() throws ProfesorNoEncontradoException {
         long id = 1L;
         ProfesorDto profesorDto = new ProfesorDto();
         profesorDto.setNombre("Carlos");

@@ -91,28 +91,72 @@ public class MateriaServiceImpl implements MateriaService {
     }
 
     @Override
-    public Materia modificarMateria(long id, MateriaDto materiaModificada) throws MateriaNoEncontradaException {
+    public Materia modificarMateria(long id, MateriaDto materiaModificada) throws MateriaNoEncontradaException, ProfesorNoEncontradoException, MateriaYaExisteException {
 
         // Buscar si existe la materia a través del id
         Materia materiaExistente = materiaDaoMemoryimp.buscarMateriaId(id);
 
-        if (materiaExistente != null) {
-            // Actualizar los datos de la materia existente con los nuevos datos del DTO
-            materiaExistente.setNombre(materiaModificada.getNombre());
-            materiaExistente.setAnio(materiaModificada.getAnio());
-            materiaExistente.setCuatrimestre(materiaModificada.getCuatrimestre());
-            materiaExistente.setIdprofesor(materiaModificada.getProfesorId());
-            materiaExistente.setCorrelatividades(materiaModificada.getCorrelatividades());
-
-            // Guardar los cambios
-            materiaDaoMemoryimp.modificarMateria(materiaExistente);
-
-            // Retornar la materia modificada
-            return materiaExistente;
-        } else {
+        if (materiaExistente == null) {
             // Lanzar excepción personalizada si no se encuentra la materia
-            throw new MateriaNoEncontradaException("No se encontró una materia con el ID proporcionado");
+            throw new MateriaNoEncontradaException("No se encontró una materia con el ID proporcionado: " + id);
         }
+
+        // Validar que el nombre no sea nulo ni vacío
+        if (materiaModificada.getNombre() == null || materiaModificada.getNombre().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre de la materia no puede estar vacío.");
+        }
+
+        // Validar que el nombre solo contenga letras y espacios
+        if (!materiaModificada.getNombre().matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+")) {
+            throw new IllegalArgumentException("El nombre de la materia solo puede contener letras y espacios.");
+        }
+
+        // Validar que el año sea positivo
+        if (materiaModificada.getAnio() <= 0) {
+            throw new IllegalArgumentException("El año debe ser un número positivo.");
+        }
+        if (materiaModificada.getAnio() > 5) {
+            throw new IllegalArgumentException("El año de la materia no puede ser mayor a 5.");
+        }
+
+        // Validar que el cuatrimestre esté entre 1 y 2
+        if (materiaModificada.getCuatrimestre() < 1 || materiaModificada.getCuatrimestre() > 2) {
+            throw new IllegalArgumentException("El cuatrimestre debe estar entre 1 y 2.");
+        }
+
+        // Validar que la lista de correlatividades no sea nula ni vacía
+        if (materiaModificada.getCorrelatividades() == null || materiaModificada.getCorrelatividades().isEmpty()) {
+            throw new IllegalArgumentException("La materia debe tener al menos una correlatividad.");
+        }
+
+        // Verificar que el profesor exista
+        ProfesorDaoMemoryImpl profesorDaoMem = new ProfesorDaoMemoryImpl();
+        Profesor profesor = profesorDaoMem.buscarProfesorporid(materiaModificada.getProfesorId());
+        if (profesor == null) {
+            throw new ProfesorNoEncontradoException("El id del Profesor no se encuentra en la BASE DE DATOS");
+        }
+
+        // Verificar si ya existe otra materia con el mismo nombre y cuatrimestre
+        List<Materia> todasLasMaterias = materiaDaoMemoryimp.buscarMaterias();
+        for (Materia materia : todasLasMaterias) {
+            if (materia.getId() != id && materia.getNombre().equalsIgnoreCase(materiaModificada.getNombre()) &&
+                    materia.getCuatrimestre() == materiaModificada.getCuatrimestre()) {
+                throw new MateriaYaExisteException("Ya existe otra materia con el mismo nombre y cuatrimestre.");
+            }
+        }
+
+        // Actualizar los datos de la materia existente con los nuevos datos del DTO
+        materiaExistente.setNombre(materiaModificada.getNombre());
+        materiaExistente.setAnio(materiaModificada.getAnio());
+        materiaExistente.setCuatrimestre(materiaModificada.getCuatrimestre());
+        materiaExistente.setIdprofesor(materiaModificada.getProfesorId());
+        materiaExistente.setCorrelatividades(materiaModificada.getCorrelatividades());
+
+        // Guardar los cambios
+        materiaDaoMemoryimp.modificarMateria(materiaExistente);
+
+        // Retornar la materia modificada
+        return materiaExistente;
     }
 
     @Override

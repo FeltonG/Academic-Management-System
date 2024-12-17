@@ -46,12 +46,14 @@ public class ProfesorController {
 
     // Modificar un profesor existente
     @PutMapping("/{idProfesor}")
-    public Profesor modificarProfesor(@PathVariable("idProfesor") Integer idProfesor, @RequestBody ProfesorDto profesorDto) {
-       return  profesorService.modificarProfesor(idProfesor, profesorDto);
+    public Profesor modificarProfesor(@PathVariable("idProfesor") Integer idProfesor, @RequestBody ProfesorDto profesorDto) throws ProfesorNoEncontradoException {
+       profesorValidator.profesorValidation(profesorDto);
+        return  profesorService.modificarProfesor(idProfesor, profesorDto);
     }
 
     @DeleteMapping("/{idProfesor}")
-    public ResponseEntity<Void> borrarProfesor(@PathVariable("idProfesor") Long idProfesor) throws ProfesorNoEncontradoException {
+    public ResponseEntity<Void> borrarProfesor(@PathVariable("idProfesor") Long idProfesor) throws ProfesorNoEncontradoException
+    {
         profesorService.borrarProfesorporid(idProfesor);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

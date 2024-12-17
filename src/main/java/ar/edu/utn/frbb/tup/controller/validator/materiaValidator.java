@@ -38,7 +38,7 @@ public class materiaValidator {
         materiaDto.setNombre(normalizarNombre(materiaDto.getNombre()));
     }
 
-    // Método privado para normalizar el nombre
+    // se usa para poner mayusculas al principio y que no tenga espacios
     private String normalizarNombre(String nombre) {
         StringBuilder resultado = new StringBuilder();
         String[] palabras = nombre.trim().split("\\s+");

@@ -20,11 +20,32 @@ public class AlumnoServiceImpl implements AlumnoService {
 
     @Override
     public Alumno crearAlumno(AlumnoDto alumnodto) throws AlumnoYaExisteException {
-        Alumno alumnoExistente = alumnoDaoMemoryImpl.buscarAlumnopordni(alumnodto.getDni());
-        if (alumnoExistente != null &&
-                alumnoExistente.getNombre().equals(alumnodto.getNombre()) &&
-                alumnoExistente.getApellido().equals(alumnodto.getApellido())) {
-            throw new AlumnoYaExisteException("Este alumno ya existe, no puede crear un alumno con el mismo nombre, apellido y DNI");
+        // Validación de campos vacíos
+        if (alumnodto.getNombre() == null || alumnodto.getNombre().trim().isEmpty()) {
+            throw new AlumnoYaExisteException("El nombre no puede estar vacío.");
+        }
+        if (alumnodto.getApellido() == null || alumnodto.getApellido().trim().isEmpty()) {
+            throw new AlumnoYaExisteException("El apellido no puede estar vacío.");
+        }
+
+        // Validación de caracteres en nombre y apellido
+        if (!alumnodto.getNombre().matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$")) {
+            throw new AlumnoYaExisteException("El nombre solo puede contener letras y espacios.");
+        }
+        if (!alumnodto.getApellido().matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$")) {
+            throw new AlumnoYaExisteException("El apellido solo puede contener letras y espacios.");
+        }
+
+        // Validación de DNI
+        if (alumnodto.getDni() <= 0) {
+            throw new AlumnoYaExisteException("El DNI debe ser un número positivo.");
+        }
+        if (String.valueOf(alumnodto.getDni()).length() > 9) {
+            throw new AlumnoYaExisteException("El DNI no puede tener más de 9 dígitos.");
+        }
+
+        if (alumnoDaoMemoryImpl.buscarAlumnopordni(alumnodto.getDni()) != null) {
+            throw new AlumnoYaExisteException("El alumno con el DNI " + alumnodto.getDni() + " ya existe.");
         }
         Alumno alumno = new Alumno(alumnodto.getNombre(), alumnodto.getApellido(), alumnodto.getDni());
         alumnoDaoMemoryImpl.guardarAlumno(alumno);
@@ -34,8 +55,9 @@ public class AlumnoServiceImpl implements AlumnoService {
     @Override
     public Alumno borraralumnoId(long id) throws AlumnoNoEncontradoException {
         Alumno alumnoExistente = alumnoDaoMemoryImpl.buscarAlumnoporid(id);
+        // Validación de existencia del alumno
         if (alumnoExistente == null) {
-            throw new AlumnoNoEncontradoException("No se encontró un alumno con el ID proporcionado: " + id);
+            throw new AlumnoNoEncontradoException("El alumno con ID " + id + " no existe en la base de datos.");
         }
         alumnoDaoMemoryImpl.borrarAlumnoporid(id);
         return alumnoExistente;
@@ -45,17 +67,14 @@ public class AlumnoServiceImpl implements AlumnoService {
     public Alumno buscarAlumnoId(long idAlumno) throws AlumnoNoEncontradoException {
         Alumno alumno = alumnoDaoMemoryImpl.buscarAlumnoporid(idAlumno);
         if (alumno == null) {
-            throw new AlumnoNoEncontradoException("No se encontró el alumno con ID: " + idAlumno);
+            throw new AlumnoNoEncontradoException("El alumno con ID " + idAlumno + " no existe en la base de datos.");
         }
         return alumno;
     }
 
     @Override
-    public Alumno modificarAlumno(long id, AlumnoDto alumnoModificado) throws AlumnoNoEncontradoException {
+    public Alumno modificarAlumno(long id, AlumnoDto alumnoModificado)  {
         Alumno alumnoExistente = alumnoDaoMemoryImpl.buscarAlumnoporid(id);
-        if (alumnoExistente == null) {
-            throw new AlumnoNoEncontradoException("No se encontró un alumno con el ID proporcionado: " + id);
-        }
 
         // Actualizar los datos del alumno existente con los nuevos datos del DTO
         alumnoExistente.setDni(alumnoModificado.getDni());

@@ -11,6 +11,7 @@ public class AsignaturaValidator {
         if (asignaturaDto.getEstado() == null) {
             throw new IllegalArgumentException("El estado de la asignatura no puede ser nulo");
         }
+
         // Validación de la nota
         if (asignaturaDto.getNota() == null) {
             throw new IllegalArgumentException("La nota no puede ser nula");
@@ -31,5 +32,6 @@ public class AsignaturaValidator {
             throw new IllegalArgumentException("El ID del alumno debe ser un número positivo y no cero");
         }
     }
+
 }
 

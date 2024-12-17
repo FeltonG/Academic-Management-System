@@ -100,7 +100,7 @@ public class MateriaControllerTest {
     }
 
     @Test
-    public void testModificarMateria() throws MateriaNoEncontradaException {
+    public void testModificarMateria() throws MateriaNoEncontradaException, ProfesorNoEncontradoException, MateriaYaExisteException {
 
         when(materiaService.modificarMateria(1, materiaDto)).thenReturn(materia);
 
@@ -111,7 +111,7 @@ public class MateriaControllerTest {
     }
 
     @Test
-    public void testEliminarMateria() {
+    public void testEliminarMateria() throws MateriaNoEncontradaException {
 
         when(materiaService.borrarmateriaId(1)).thenReturn(materia);
 
