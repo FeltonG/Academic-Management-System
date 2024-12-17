@@ -18,7 +18,7 @@ public interface AlumnoService {
 
 
 
-    Alumno modificarAlumno(long id, AlumnoDto alumno) ;
+    Alumno modificarAlumno(long id, AlumnoDto alumno) throws AlumnoYaExisteException;
 
     List<Alumno> buscarAlumnos();
 

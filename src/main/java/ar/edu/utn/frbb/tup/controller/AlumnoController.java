@@ -7,6 +7,7 @@ import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.dto.AlumnoDto;
 
 import ar.edu.utn.frbb.tup.model.exception.AlumnoNoEncontradoException;
+import ar.edu.utn.frbb.tup.model.exception.AlumnoYaExisteException;
 import ar.edu.utn.frbb.tup.model.exception.AsignaturaNoEncontradaException;
 import ar.edu.utn.frbb.tup.model.exception.EstadoIncorrectoException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +30,15 @@ public class AlumnoController {
 
 
     @PostMapping
-    public ResponseEntity<Alumno> crearAlumno(@RequestBody AlumnoDto alumnoDto)throws AlumnoNoEncontradoException {
+    public ResponseEntity<Alumno> crearAlumno(@RequestBody AlumnoDto alumnoDto) throws AlumnoNoEncontradoException, AlumnoYaExisteException {
         alumValidator.validarAlumno(alumnoDto);
-        Alumno nuevoAlumno = null;
+        Alumno nuevoAlumno;
         try {
             nuevoAlumno = alumnoService.crearAlumno(alumnoDto);
         } catch (ar.edu.utn.frbb.tup.model.exception.AlumnoYaExisteException e) {
-            throw new RuntimeException(e);
+            throw new AlumnoYaExisteException("El alumno con el DNI " + alumnoDto.getDni() + " ya existe.");
         }
+
         return new ResponseEntity<>(nuevoAlumno, HttpStatus.CREATED);
     }
 
@@ -46,7 +48,7 @@ public class AlumnoController {
     }
     // Modificar un alumno existente
     @PutMapping("/{idAlumno}")
-    public Alumno modificarAlumno(@PathVariable("idAlumno") Integer idAlumno, @RequestBody AlumnoDto alumnoDto) {
+    public Alumno modificarAlumno(@PathVariable("idAlumno") Integer idAlumno, @RequestBody AlumnoDto alumnoDto) throws AlumnoYaExisteException {
         return alumnoService.modificarAlumno(idAlumno, alumnoDto);
     }
 

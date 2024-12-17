@@ -73,9 +73,36 @@ public class AlumnoServiceImpl implements AlumnoService {
     }
 
     @Override
-    public Alumno modificarAlumno(long id, AlumnoDto alumnoModificado)  {
+    public Alumno modificarAlumno(long id, AlumnoDto alumnoModificado) throws AlumnoYaExisteException {
         Alumno alumnoExistente = alumnoDaoMemoryImpl.buscarAlumnoporid(id);
 
+        // Validaciones
+        if (alumnoModificado.getNombre() == null || alumnoModificado.getNombre().trim().isEmpty()) {
+            throw new AlumnoYaExisteException("El nombre no puede estar vacío.");
+        }
+        if (alumnoModificado.getApellido() == null || alumnoModificado.getApellido().trim().isEmpty()) {
+            throw new AlumnoYaExisteException("El apellido no puede estar vacío.");
+        }
+
+        // Validación de caracteres en nombre y apellido
+        if (!alumnoModificado.getNombre().matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$")) {
+            throw new AlumnoYaExisteException("El nombre solo puede contener letras y espacios.");
+        }
+        if (!alumnoModificado.getApellido().matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$")) {
+            throw new AlumnoYaExisteException("El apellido solo puede contener letras y espacios.");
+        }
+
+        // Validación de DNI
+        if (alumnoModificado.getDni() <= 0) {
+            throw new AlumnoYaExisteException("El DNI debe ser un número positivo.");
+        }
+        if (String.valueOf(alumnoModificado.getDni()).length() > 9) {
+            throw new AlumnoYaExisteException("El DNI no puede tener más de 9 dígitos.");
+        }
+
+        if (alumnoDaoMemoryImpl.buscarAlumnopordni(alumnoModificado.getDni()) != null) {
+            throw new AlumnoYaExisteException("El alumno con el DNI " + alumnoModificado.getDni() + " ya existe.");
+        }
         // Actualizar los datos del alumno existente con los nuevos datos del DTO
         alumnoExistente.setDni(alumnoModificado.getDni());
         alumnoExistente.setApellido(alumnoModificado.getApellido());
