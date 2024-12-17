@@ -118,7 +118,7 @@ public class MateriaServiceImplTest {
     }
 
     @Test
-    public void testBorrarmateriaId() {
+    public void testBorrarmateriaId() throws MateriaNoEncontradaException {
         long id = 1L;
         Materia materiaExistente = new Materia("Filosofía", 2, 1, 104L, Collections.emptyList());
 

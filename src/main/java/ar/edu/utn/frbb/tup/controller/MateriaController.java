@@ -40,7 +40,7 @@ public class MateriaController {
 
     // Eliminar una materia
     @DeleteMapping("/{idMateria}")
-    public Materia eliminarMateria(@PathVariable("idMateria") Integer idMateria) {
+    public Materia eliminarMateria(@PathVariable("idMateria") Integer idMateria) throws MateriaNoEncontradaException {
         return materiaService.borrarmateriaId(idMateria);
     }
 }

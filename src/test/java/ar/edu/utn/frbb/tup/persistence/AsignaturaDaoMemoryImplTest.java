@@ -69,14 +69,14 @@ public class AsignaturaDaoMemoryImplTest {
         // Verificar que la asignatura encontrada tiene los valores correctos
         assertNotNull(asignatura);
         assertEquals(1L, asignatura.getId()); // Comprobar el ID
-        assertEquals(EstadoAsignatura.CURSADA, asignatura.getEstado()); // Comprobar el estado
+        assertEquals(EstadoAsignatura.APROBADA, asignatura.getEstado()); // Comprobar el estado
         assertEquals(8, asignatura.getNota()); // Comprobar la nota
         System.out.println(asignatura.getNota()); // Agregar un print para depurar
     }
 
     @Test
     public void testBorrarAsignaturaPorId() {
-        Asignatura asignatura = new Asignatura(2L, EstadoAsignatura.CURSADA, 7, 124L, 457L);
+        Asignatura asignatura = new Asignatura(2L, EstadoAsignatura.APROBADA, 7, 124L, 457L);
         asignaturaDaoMemoryImpl.guardarAsignatura(asignatura);  // Guardamos la asignatura en el repositorio
 
         // Verificamos que la asignatura con ID 2 está en el repositorio

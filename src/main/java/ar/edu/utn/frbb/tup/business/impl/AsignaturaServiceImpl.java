@@ -33,6 +33,9 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         if (asignaturaDto.getIdalumno() <= 0) {
             throw new IllegalArgumentException("El ID del alumno es inválido");
         }
+        if (asignaturaDto.getNota() < 1) {
+            throw new IllegalArgumentException("El ID del alumno es inválido");
+        }
 
         if (asignaturaDto.getIdmateria() <= 0) {
             throw new IllegalArgumentException("El ID de la materia es inválido");
@@ -125,11 +128,11 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         // Incrementar el estado solo si es válido para avanzar a un estado siguiente
         if (numeroPosicion < EstadoAsignatura.values().length - 1) {
             // Si la nota es menor a 4, el estado debe ser NO_CURSADO
-            if (asignaturaExistente.getNota() < 4) {
+            if (asignaturaExistente.getNota() <= 4) {
                 asignaturaExistente.setEstado(EstadoAsignatura.NO_CURSADA);
             }
             // Si la nota está entre 4 y 6.99, el estado es Cursado
-            else if (asignaturaExistente.getNota() <= 7) {
+            else if (asignaturaExistente.getNota() <= 6) {
                 asignaturaExistente.setEstado(EstadoAsignatura.CURSADA);
             }
             // Si la nota es 7 o más, el estado es Aprobado

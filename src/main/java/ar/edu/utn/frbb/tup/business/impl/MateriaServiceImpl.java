@@ -34,9 +34,11 @@ public class MateriaServiceImpl implements MateriaService {
         if (materiadto.getAnio() <= 0) {
             throw new IllegalArgumentException("El año debe ser un número positivo.");
         }
-
+        if (materiadto.getAnio() > 5) {
+            throw new IllegalArgumentException("El año de la materia no puede ser mayor a 5.");
+        }
         // Validar que el cuatrimestre esté entre 1 y 4
-        if (materiadto.getCuatrimestre() < 1 || materiadto.getCuatrimestre() > 4) {
+        if (materiadto.getCuatrimestre() < 1 || materiadto.getCuatrimestre() > 2) {
             throw new IllegalArgumentException("El cuatrimestre debe estar entre 1 y 4.");
         }
 
@@ -114,12 +116,18 @@ public class MateriaServiceImpl implements MateriaService {
     }
 
     @Override
-    public Materia borrarmateriaId(long id) {
-        Materia materia_Existente = materiaDaoMemoryimp.buscarMateriaId(id);
-        if (materia_Existente != null) {
-            materiaDaoMemoryimp.borrarmateriaporid(id);
+    public Materia borrarmateriaId(long id) throws MateriaNoEncontradaException {
+        Materia materiaExistente = materiaDaoMemoryimp.buscarMateriaId(id);
+
+        // Validar si la materia existe
+        if (materiaExistente == null) {
+            throw new MateriaNoEncontradaException("La materia con ID " + id + " no existe en la base de datos.");
         }
-        return materia_Existente;
+
+        // Eliminar la materia
+        materiaDaoMemoryimp.borrarmateriaporid(id);
+
+        return materiaExistente;
     }
 
 

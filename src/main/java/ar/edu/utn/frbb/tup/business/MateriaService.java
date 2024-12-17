@@ -17,6 +17,6 @@ public interface MateriaService {
 
     Materia modificarMateria(long id, MateriaDto materia) throws MateriaNoEncontradaException;
 
-    Materia borrarmateriaId(long id);
+    Materia borrarmateriaId(long id) throws MateriaNoEncontradaException;
 
 }
