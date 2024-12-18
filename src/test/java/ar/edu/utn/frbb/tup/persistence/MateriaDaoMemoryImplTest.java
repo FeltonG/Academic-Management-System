@@ -58,7 +58,7 @@ public class MateriaDaoMemoryImplTest {
             writer.write("2,Física,2,1,101,\n");
         }
 
-        // Verifica que el método buscarMaterias esté leyendo correctamente las líneas
+
         List<Materia> materias = materiaDao.buscarMaterias();
 
         // Verifica la cantidad de materias y sus nombres

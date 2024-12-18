@@ -120,7 +120,7 @@ public class MateriaServiceImplTest {
         // Simular que no se encuentra la materia
         when(materiaDaoMemoryImpl.buscarMateriaId(1L)).thenReturn(null);
 
-        // Ejecutar el método y verificar que se lanza la excepción
+
         assertThrows(MateriaNoEncontradaException.class, () -> {
             materiaService.borrarmateriaId(1L);
         });
@@ -131,7 +131,7 @@ public class MateriaServiceImplTest {
         // Simular que no se encuentra la materia
         when(materiaDaoMemoryImpl.buscarMateriaId(1L)).thenReturn(null);
 
-        // Ejecutar el método y verificar que se lanza la excepción
+
         assertThrows(IllegalArgumentException.class, () -> {
             materiaService.buscarmateriaId(1L);
         });

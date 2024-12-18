@@ -57,7 +57,7 @@ public class AlumnoControllerTest {
         // Configurar comportamiento del servicio
         when(alumnoService.crearAlumno(alumnoDto)).thenReturn(alumno);
 
-        // Ejecutar el método del controlador
+
         ResponseEntity<Alumno> response = alumnoController.crearAlumno(alumnoDto);
 
         // Verificaciones

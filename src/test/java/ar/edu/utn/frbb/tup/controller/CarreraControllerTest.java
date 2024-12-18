@@ -54,7 +54,7 @@ public class CarreraControllerTest {
         // Configurar el comportamiento del servicio
         when(carreraService.crearCarrera(carreraDto)).thenReturn(nuevaCarrera);
 
-        // Ejecutar el método del controlador
+
         ResponseEntity<Carrera> response = carreraController.crearCarrera(carreraDto);
 
         // Verificaciones

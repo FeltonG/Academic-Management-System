@@ -55,7 +55,7 @@ class AlumnoDaoMemoryImplTest {
         // Crear un nuevo alumno con un DNI específico
         Alumno alumno = new Alumno(2L, "Ana", "González", 87654321);
 
-        // Guardar el alumno en el repositorio (suponiendo que el método guarda correctamente)
+
         alumnoDaoMemoryImpl.guardarAlumno(alumno);
 
         // Buscar el alumno por el DNI
