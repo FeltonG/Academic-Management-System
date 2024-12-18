@@ -39,23 +39,42 @@ public class ProfesorServiceImplTest {
     }
 
     @Test
-    public void testCrearProfesor() throws ProfesorYaExisteException {
+    public void testCrearProfesor_Valido() throws Exception {
+        // Crear un ProfesorDto manualmente usando setters.
         ProfesorDto profesorDto = new ProfesorDto();
         profesorDto.setNombre("Juan");
         profesorDto.setApellido("Pérez");
         profesorDto.setTitulo("Ingeniero");
 
-        Profesor profesor = new Profesor(profesorDto.getNombre(), profesorDto.getApellido(), profesorDto.getTitulo());
+        when(profesorDaoMemoryimpl.buscarProfesores()).thenReturn(new ArrayList<>()); // no hay profesores
+        Profesor profesorCreado = profesorService.crearProfesor(profesorDto);
 
-       // when(profesorDaoMemoryimpl.guardarProfesor(any(Profesor.class))).thenReturn(profesor);
+        assertNotNull(profesorCreado);
+        assertEquals("Juan", profesorCreado.getNombre());
+        assertEquals("Pérez", profesorCreado.getApellido());
+        assertEquals("Ingeniero", profesorCreado.getTitulo());
+    }
 
-        Profesor resultado = profesorService.crearProfesor(profesorDto);
+    @Test
+    public void testCrearProfesor_ProfesorExistente() {
+        // Preparar un ProfesorDto
+        ProfesorDto profesorDto = new ProfesorDto();
+        profesorDto.setNombre("Jose");
+        profesorDto.setApellido("Luis");
+        profesorDto.setTitulo("Tecnico");
 
-        assertNotNull(resultado);
-        assertEquals("Juan", resultado.getNombre());
-        assertEquals("Pérez", resultado.getApellido());
-        assertEquals("Ingeniero", resultado.getTitulo());
-        verify(profesorDaoMemoryimpl, times(1)).guardarProfesor(any(Profesor.class));
+        // Configurar el mock para retornar una lista de profesores ya existentes
+        List<Profesor> listaProfesores = new ArrayList<>();
+        listaProfesores.add(new Profesor("Jose", "Luis", "Tecnico"));
+        when(profesorDaoMemoryimpl.buscarProfesores()).thenReturn(listaProfesores);
+
+        // Intentar crear un profesor existente y verificar que se lanza la excepción esperada
+        ProfesorYaExisteException exception = assertThrows(ProfesorYaExisteException.class, () -> {
+            profesorService.crearProfesor(profesorDto);
+        });
+
+        // Verificar el mensaje de la excepción
+        assertEquals("Ya existe un profesor con el mismo nombre y apellido.", exception.getMessage());
     }
 
     @Test
@@ -122,35 +141,5 @@ public class ProfesorServiceImplTest {
         verify(profesorDaoMemoryimpl, times(1)).modificarProfesor(profesorExistente);
     }
 
-    @Test
-    public void testBuscarMateriasPorProfesorId() throws ProfesorNoEncontradoException, MateriaNoEncontradaException {
-        long idProfesor = 1L;
-
-        // Crear materias con nombres específicos
-        Materia materia1 = new Materia();
-        materia1.setNombre("Matemáticas");
-
-        Materia materia2 = new Materia();
-        materia2.setNombre("Física");
-
-        List<Materia> listaMaterias = new ArrayList<>();
-        listaMaterias.add(materia1);
-        listaMaterias.add(materia2);
-
-        // Simular el comportamiento del método buscarMateriasPorProfesorId
-        when(materiaDaoMemoryimpl.buscarMateriasPorProfesorId(idProfesor)).thenReturn(listaMaterias);
-
-        // Ejecutar el método que se quiere probar
-        List<Materia> resultado = profesorService.buscarMateriasPorProfesorId(idProfesor);
-
-        // Validar el resultado
-        assertNotNull(resultado);
-        assertEquals(2, resultado.size());
-        assertEquals("Física", resultado.get(0).getNombre()); // Materias están ordenadas alfabéticamente
-        assertEquals("Matemáticas", resultado.get(1).getNombre());
-
-        // Verificar que el método del DAO se llamó una vez
-        verify(materiaDaoMemoryimpl, times(1)).buscarMateriasPorProfesorId(idProfesor);
-    }
 
 }

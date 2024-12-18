@@ -42,9 +42,9 @@ public class AlumnoDaoMemoryImplTest {
         alumnoDaoMemoryImpl.guardarAlumno(alumno);
         Alumno alumnoGuardado = alumnoDaoMemoryImpl.buscarAlumnoporid(1L);
         assertNotNull(alumnoGuardado);
-        assertEquals("marcos", alumnoGuardado.getNombre().trim());
-        assertEquals("bayon", alumnoGuardado.getApellido().trim());
-        assertEquals(45740531, alumnoGuardado.getDni());
+        assertEquals("Luis", alumnoGuardado.getNombre().trim());
+        assertEquals("Delafuente", alumnoGuardado.getApellido().trim());
+        assertEquals(2342345, alumnoGuardado.getDni());
     }
 
 

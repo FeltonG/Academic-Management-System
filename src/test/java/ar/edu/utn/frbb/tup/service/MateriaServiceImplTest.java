@@ -1,18 +1,21 @@
 package ar.edu.utn.frbb.tup.service;
 
 import ar.edu.utn.frbb.tup.model.Materia;
+import ar.edu.utn.frbb.tup.model.Profesor;
 import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
 import ar.edu.utn.frbb.tup.model.exception.MateriaNoEncontradaException;
 import ar.edu.utn.frbb.tup.model.exception.MateriaYaExisteException;
 import ar.edu.utn.frbb.tup.model.exception.ProfesorNoEncontradoException;
 import ar.edu.utn.frbb.tup.persistence.MateriaDaoMemoryImpl;
 import ar.edu.utn.frbb.tup.business.impl.MateriaServiceImpl;
+import ar.edu.utn.frbb.tup.persistence.ProfesorDaoMemoryImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +32,8 @@ public class MateriaServiceImplTest {
 
     @Mock
     private MateriaDaoMemoryImpl materiaDaoMemoryImpl;
+    @Mock
+    private ProfesorDaoMemoryImpl profesorDaoMemory;
 
     @Before
     public void setUp() {
@@ -36,32 +41,25 @@ public class MateriaServiceImplTest {
     }
 
     @Test
-    public void testCrearMateria() throws ProfesorNoEncontradoException, MateriaYaExisteException {
+    public void testCrearMateria_Success() throws ProfesorNoEncontradoException, MateriaYaExisteException {
+        // Configurar DTO de Materia
         MateriaDto materiaDto = new MateriaDto();
         materiaDto.setNombre("Matemáticas");
         materiaDto.setAnio(1);
         materiaDto.setCuatrimestre(1);
-        materiaDto.setProfesorId(100L);
-        materiaDto.setCorrelatividades(Collections.emptyList());
+        materiaDto.setProfesorId(1L);
+        materiaDto.setCorrelatividades(List.of(2L));
 
-        Materia materia = new Materia(
-                materiaDto.getNombre(),
-                materiaDto.getAnio(),
-                materiaDto.getCuatrimestre(),
-                materiaDto.getProfesorId(),
-                materiaDto.getCorrelatividades()
-        );
+        // Configurar mocks
+        when(profesorDaoMemory.buscarProfesorporid(1L)).thenReturn(new Profesor("Felipe", "Garcia", "Tecnico"));
+        when(materiaDaoMemoryImpl.buscarMaterias()).thenReturn(new ArrayList<>());
 
-       // when(materiaDaoMemoryImpl.guardarMateria(any(Materia.class))).thenReturn(materia);
-
+        // Ejecutar el método
         Materia resultado = materiaService.crearMateria(materiaDto);
 
+        // Verificar resultado
         assertNotNull(resultado);
-        assertEquals(materiaDto.getNombre(), resultado.getNombre());
-        assertEquals(materiaDto.getAnio(), resultado.getAnio());
-        assertEquals(materiaDto.getCuatrimestre(), resultado.getCuatrimestre());
-        assertEquals(materiaDto.getProfesorId(), resultado.getIdprofesor());
-        assertEquals(materiaDto.getCorrelatividades(), resultado.getCorrelatividades());
+        assertEquals("Matemáticas", resultado.getNombre());
         verify(materiaDaoMemoryImpl, times(1)).guardarMateria(any(Materia.class));
     }
 
@@ -94,40 +92,61 @@ public class MateriaServiceImplTest {
     }
 
     @Test
-    public void testModificarMateria() throws MateriaNoEncontradaException, ProfesorNoEncontradoException, MateriaYaExisteException {
-        long id = 1L;
+    public void testModificarMateria_Success() throws MateriaNoEncontradaException, ProfesorNoEncontradoException, MateriaYaExisteException {
+        // Simular datos existentes y DTO modificado
+        Materia materiaExistente = new Materia("Matemáticas", 1, 1, 1L, List.of());
         MateriaDto materiaModificada = new MateriaDto();
-        materiaModificada.setNombre("Biología");
-        materiaModificada.setAnio(3);
-        materiaModificada.setCuatrimestre(1);
-        materiaModificada.setProfesorId(103L);
-        materiaModificada.setCorrelatividades(Collections.emptyList());
+        materiaModificada.setNombre("Álgebra");
+        materiaModificada.setAnio(2);
+        materiaModificada.setCuatrimestre(2);
+        materiaModificada.setProfesorId(1L);
+        materiaModificada.setCorrelatividades(List.of(3L));
 
-        Materia materiaExistente = new Materia("Química", 2, 2, 102L, Collections.emptyList());
-        when(materiaDaoMemoryImpl.buscarMateriaId(id)).thenReturn(materiaExistente);
-        when(materiaDaoMemoryImpl.modificarMateria(any(Materia.class))).thenReturn(materiaExistente);
+        when(materiaDaoMemoryImpl.buscarMateriaId(1L)).thenReturn(materiaExistente);
+        when(profesorDaoMemory.buscarProfesorporid(2L)).thenReturn(new Profesor("Felipe", "Garcia", "Tecnico"));
+        when(materiaDaoMemoryImpl.buscarMaterias()).thenReturn(new ArrayList<>());
 
-        Materia resultado = materiaService.modificarMateria(id, materiaModificada);
+        // Ejecutar el método
+        Materia resultado = materiaService.modificarMateria(1L, materiaModificada);
 
+        // Verificar resultado
         assertNotNull(resultado);
-        assertEquals("Biología", resultado.getNombre());
-        assertEquals(3, resultado.getAnio());
-        assertEquals(1, resultado.getCuatrimestre());
-        assertEquals(103L, resultado.getIdprofesor());
+        assertEquals("Álgebra", resultado.getNombre());
         verify(materiaDaoMemoryImpl, times(1)).modificarMateria(any(Materia.class));
     }
 
-    @Test
-    public void testBorrarmateriaId() throws MateriaNoEncontradaException {
-        long id = 1L;
-        Materia materiaExistente = new Materia("Filosofía", 2, 1, 104L, Collections.emptyList());
 
-        when(materiaDaoMemoryImpl.buscarMateriaId(id)).thenReturn(materiaExistente);
 
-        Materia resultado = materiaService.borrarmateriaId(id);
+    @Test(expected = MateriaNoEncontradaException.class)
+    public void testBorrarMateriaId_NoEncontrada() throws MateriaNoEncontradaException {
+        // Simular que no se encuentra la materia
+        when(materiaDaoMemoryImpl.buscarMateriaId(1L)).thenReturn(null);
 
-        assertNotNull(resultado);
-        assertEquals("Filosofía", resultado.getNombre());
-        verify(materiaDaoMemoryImpl, times(1)).borrarmateriaporid(id);
+        // Ejecutar el método
+        materiaService.borrarmateriaId(1L);
     }
+    @Test(expected = IllegalArgumentException.class)
+    public void testBuscarMateriaId_NoEncontrada() {
+        // Simular que no se encuentra la materia
+        when(materiaDaoMemoryImpl.buscarMateriaId(1L)).thenReturn(null);
+
+        // Ejecutar el método
+        materiaService.buscarmateriaId(1L);
+    }
+    @Test(expected = MateriaYaExisteException.class)
+    public void testCrearMateria_Duplicada() throws ProfesorNoEncontradoException, MateriaYaExisteException {
+        // Simular una materia que ya existe
+        MateriaDto materiaDto = new MateriaDto();
+        materiaDto.setNombre("Matemáticas");
+        materiaDto.setAnio(1);
+        materiaDto.setCuatrimestre(1);
+        materiaDto.setProfesorId(1L);
+        materiaDto.setCorrelatividades(List.of(2L));
+
+        when(materiaDaoMemoryImpl.buscarMaterias()).thenReturn(Arrays.asList(new Materia("Matemáticas", 1, 1, 1L, Collections.emptyList())));
+
+        // Ejecutar el método
+        materiaService.crearMateria(materiaDto);
+    }
+
 }

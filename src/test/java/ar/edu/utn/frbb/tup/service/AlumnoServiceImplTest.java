@@ -119,4 +119,51 @@ public class AlumnoServiceImplTest {
         verify(alumnoDaoMemoryImpl, times(1)).buscarAlumnos();
         System.out.println(alumnos);
     }
+    @Test(expected = AlumnoNoEncontradoException.class)
+    public void testBorrarAlumnoIdAlumnoNoEncontrado() throws AlumnoNoEncontradoException {
+        long id = 99L; // Un ID que sabemos que no existe
+
+        when(alumnoDaoMemoryImpl.buscarAlumnoporid(id)).thenReturn(null);
+
+        alumnoService.borraralumnoId(id);
+    }
+    @Test(expected = AlumnoYaExisteException.class)
+    public void testCrearAlumnoConDniYaExistente() throws AlumnoYaExisteException {
+        AlumnoDto alumnoDto = new AlumnoDto();
+        alumnoDto.setNombre("Juan");
+        alumnoDto.setApellido("Perez");
+        alumnoDto.setDni(12345678); // DNI ya existente
+
+        when(alumnoDaoMemoryImpl.buscarAlumnopordni(12345678)).thenReturn(new Alumno("Juan", "Perez", 12345678));
+
+        alumnoService.crearAlumno(alumnoDto);
+    }
+    @Test
+    public void testBuscarAlumnosListaVacia() {
+        when(alumnoDaoMemoryImpl.buscarAlumnos()).thenReturn(new ArrayList<>());
+
+        List<Alumno> result = alumnoService.buscarAlumnos();
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(alumnoDaoMemoryImpl, times(1)).buscarAlumnos();
+    }
+
+    @Test
+    public void testBuscarAlumnosNoContieneElementosNulos() {
+        List<Alumno> alumnos = new ArrayList<>();
+        alumnos.add(new Alumno("Juan", "Perez", 12345678));
+        alumnos.add(new Alumno("Ana", "Garcia", 87654321));
+
+        when(alumnoDaoMemoryImpl.buscarAlumnos()).thenReturn(alumnos);
+
+        List<Alumno> result = alumnoService.buscarAlumnos();
+
+        for (Alumno alumno : result) {
+            assertNotNull(alumno);
+        }
+
+        verify(alumnoDaoMemoryImpl, times(1)).buscarAlumnos();
+    }
+
 }

@@ -3,6 +3,7 @@ package ar.edu.utn.frbb.tup.service;
 import ar.edu.utn.frbb.tup.business.impl.CarreraServiceImpl;
 import ar.edu.utn.frbb.tup.model.Carrera;
 import ar.edu.utn.frbb.tup.model.dto.CarreraDto;
+import ar.edu.utn.frbb.tup.model.exception.CarreraNotFoundException;
 import ar.edu.utn.frbb.tup.model.exception.CarreraYaExisteEstaException;
 import ar.edu.utn.frbb.tup.persistence.CarreraDaoMemoryImpl;
 import org.junit.Before;
@@ -45,6 +46,7 @@ public class CarreraServiceImplTest {
         assertEquals(carreraDto.getNombre(), resultado.getNombre());
         verify(carreraDaoMemoryImpl, times(1)).guardarCarrera(any(Carrera.class));
     }
+
 
     @Test(expected = IllegalArgumentException.class)
     public void testCrearCarreraConNombreVacio() throws CarreraYaExisteEstaException {
@@ -101,18 +103,16 @@ public class CarreraServiceImplTest {
         verify(carreraDaoMemoryImpl, times(1)).modificarCarrera(carreraExistente);
     }
 
-    @Test
+    @Test(expected = CarreraNotFoundException.class)
     public void testModificarCarreraNoExistente() {
         long id = 1;
         CarreraDto carreraDto = new CarreraDto();
-        carreraDto.setNombre("Ingeniería en Software");
+        carreraDto.setNombre("Ingeniería Química");
 
         when(carreraDaoMemoryImpl.buscarCarreraporId(id)).thenReturn(null);
 
-        Carrera resultado = carreraService.modificarCarrera(id, carreraDto);
+        carreraService.modificarCarrera(id, carreraDto);
 
-        assertNull(resultado);
-        verify(carreraDaoMemoryImpl, never()).modificarCarrera(any(Carrera.class));
     }
 
     @Test
@@ -128,15 +128,49 @@ public class CarreraServiceImplTest {
         verify(carreraDaoMemoryImpl, times(1)).borrarCarreraporid(id);
     }
 
-    @Test
+    @Test(expected = CarreraNotFoundException.class)
     public void testBorrarCarreraPorIdNoExistente() {
-        long id = 1;
+        long id = 3;
         when(carreraDaoMemoryImpl.buscarCarreraporId(id)).thenReturn(null);
 
-        Carrera resultado = carreraService.borrarCarreraporid(id);
+        carreraService.borrarCarreraporid(id);
+    }
+    @Test(expected = CarreraNotFoundException.class)
+    public void testModificarCarreraConNombreExistente() throws CarreraNotFoundException, CarreraYaExisteEstaException {
+        long id = 1;
+        CarreraDto carreraDto1 = new CarreraDto();
+        carreraDto1.setNombre("Ingeniería en Sistemas");
+        carreraService.crearCarrera(carreraDto1);
 
-        assertNull(resultado);
-        verify(carreraDaoMemoryImpl, never()).borrarCarreraporid(id);
+        CarreraDto carreraDto2 = new CarreraDto();
+        carreraDto2.setNombre("Ingeniería en Sistemas");
+
+        carreraService.modificarCarrera(id, carreraDto2);
+    }
+
+    @Test(expected = CarreraNotFoundException.class)
+    public void testModificarCarreraConDatosIncompletos() {
+        long id = 1;
+        CarreraDto carreraDto = new CarreraDto();
+        carreraDto.setNombre("");
+
+        carreraService.modificarCarrera(id, carreraDto);
+    }
+    @Test
+    public void testBuscarCarrerasConListaVacia() {
+        when(carreraDaoMemoryImpl.buscarCarrera()).thenReturn(new ArrayList<>());
+
+        List<Carrera> resultado = carreraService.buscarCarreras();
+
+        assertNotNull(resultado);
+        assertTrue(resultado.isEmpty());
+    }
+    @Test(expected = CarreraNotFoundException.class)
+    public void testModificarCarreraSinNombre() {
+        long id = 1;
+        CarreraDto carreraDto = new CarreraDto();
+
+        carreraService.modificarCarrera(id, carreraDto);
     }
 }
 
