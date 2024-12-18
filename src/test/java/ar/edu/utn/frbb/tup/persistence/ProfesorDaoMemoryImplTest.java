@@ -1,16 +1,15 @@
 package ar.edu.utn.frbb.tup.persistence;
 
 import ar.edu.utn.frbb.tup.model.Profesor;
-
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.io.*;
 
-
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class ProfesorDaoMemoryImplTest {
@@ -20,9 +19,9 @@ public class ProfesorDaoMemoryImplTest {
 
     private Profesor profesor;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
 
         // Configuración básica del profesor para pruebas
         profesor = new Profesor(1L, "Juan", "Perez", "Licenciado en Física");
@@ -48,11 +47,8 @@ public class ProfesorDaoMemoryImplTest {
         assertEquals("Licenciado en Física", encontrado.getTitulo());
     }
 
-
-
     @Test
     public void testModificarProfesor() throws IOException {
-
         profesor.setNombre("Carlos");
         profesor.setApellido("Gonzalez");
 

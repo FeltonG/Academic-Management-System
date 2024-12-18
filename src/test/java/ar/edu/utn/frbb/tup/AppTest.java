@@ -1,10 +1,10 @@
 package ar.edu.utn.frbb.tup;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AppTest 
+public class AppTest
 {
     @Test
     public void shouldAnswerWithTrue()

@@ -9,35 +9,35 @@ import ar.edu.utn.frbb.tup.model.Profesor;
 import ar.edu.utn.frbb.tup.model.dto.CarreraDto;
 import ar.edu.utn.frbb.tup.model.exception.CarreraYaExisteEstaException;
 import ar.edu.utn.frbb.tup.model.exception.ProfesorNoEncontradoException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 public class CarreraControllerTest {
     @InjectMocks
     private CarreraController carreraController;
+
     @Mock
     private CarreraService carreraService;
 
     @Mock
     private ProfesorService profesorService;
+
     @Mock
     private carreraValidator carreraValidator;
 
-
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
-
 
     @Test
     public void testCrearCarrera() throws CarreraYaExisteEstaException {
@@ -52,7 +52,7 @@ public class CarreraControllerTest {
         doNothing().when(carreraValidator).carreraValidation(carreraDto);
 
         // Configurar el comportamiento del servicio
-        when(carreraService. crearCarrera(carreraDto)).thenReturn(nuevaCarrera);
+        when(carreraService.crearCarrera(carreraDto)).thenReturn(nuevaCarrera);
 
         // Ejecutar el método del controlador
         ResponseEntity<Carrera> response = carreraController.crearCarrera(carreraDto);
@@ -67,7 +67,6 @@ public class CarreraControllerTest {
         verify(carreraService, times(1)).crearCarrera(carreraDto); // Verificar que se llamó al servicio de creación de carrera
     }
 
-
     @Test
     public void testBuscarCarreraId() {
         Integer idCarrera = 1;
@@ -80,7 +79,6 @@ public class CarreraControllerTest {
         assertEquals(carrera, resultado);
         verify(carreraService, times(1)).buscarCarreraId(idCarrera);
     }
-
 
     @Test
     public void testModificarCarrera() {
@@ -96,11 +94,10 @@ public class CarreraControllerTest {
         verify(carreraService, times(1)).modificarCarrera(idCarrera, carreraDto);
     }
 
-
     @Test
     public void testEliminarProfesor() throws ProfesorNoEncontradoException {
         Integer idProfesor = 1;
-        Profesor profesor = new Profesor("Felipe","Garcia","licenciado");
+        Profesor profesor = new Profesor("Felipe", "Garcia", "licenciado");
         when(profesorService.borrarProfesorporid(idProfesor)).thenReturn(profesor);
 
         Profesor resultado = carreraController.eliminarProfesor(idProfesor);
@@ -108,7 +105,5 @@ public class CarreraControllerTest {
         assertNotNull(resultado);
         assertEquals(profesor, resultado);
         verify(profesorService, times(1)).borrarProfesorporid(idProfesor);
-
-
     }
 }

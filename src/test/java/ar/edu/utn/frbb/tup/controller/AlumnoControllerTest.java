@@ -10,18 +10,19 @@ import ar.edu.utn.frbb.tup.model.exception.AlumnoNoEncontradoException;
 import ar.edu.utn.frbb.tup.model.exception.AlumnoYaExisteException;
 import ar.edu.utn.frbb.tup.model.exception.AsignaturaNoEncontradaException;
 import ar.edu.utn.frbb.tup.model.exception.EstadoIncorrectoException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 public class AlumnoControllerTest {
+
     @InjectMocks
     private AlumnoController alumnoController;
 
@@ -33,7 +34,7 @@ public class AlumnoControllerTest {
     @Mock
     private AsignaturaService asignaturaService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
@@ -69,11 +70,7 @@ public class AlumnoControllerTest {
         // Verificar interacciones con el validador y el servicio
         verify(alumValidator, times(1)).validarAlumno(alumnoDto);
         verify(alumnoService, times(1)).crearAlumno(alumnoDto);
-
-        System.out.println(alumno);
     }
-
-
 
     @Test
     public void testBuscarAlumnoId() throws AlumnoNoEncontradoException {

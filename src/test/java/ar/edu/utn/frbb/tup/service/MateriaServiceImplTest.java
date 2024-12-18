@@ -9,8 +9,9 @@ import ar.edu.utn.frbb.tup.model.exception.ProfesorNoEncontradoException;
 import ar.edu.utn.frbb.tup.persistence.MateriaDaoMemoryImpl;
 import ar.edu.utn.frbb.tup.business.impl.MateriaServiceImpl;
 import ar.edu.utn.frbb.tup.persistence.ProfesorDaoMemoryImpl;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -20,9 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class MateriaServiceImplTest {
@@ -32,10 +31,11 @@ public class MateriaServiceImplTest {
 
     @Mock
     private MateriaDaoMemoryImpl materiaDaoMemoryImpl;
+
     @Mock
     private ProfesorDaoMemoryImpl profesorDaoMemory;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
@@ -103,7 +103,7 @@ public class MateriaServiceImplTest {
         materiaModificada.setCorrelatividades(List.of(3L));
 
         when(materiaDaoMemoryImpl.buscarMateriaId(1L)).thenReturn(materiaExistente);
-        when(profesorDaoMemory.buscarProfesorporid(2L)).thenReturn(new Profesor("Felipe", "Garcia", "Tecnico"));
+        when(profesorDaoMemory.buscarProfesorporid(1L)).thenReturn(new Profesor("Felipe", "Garcia", "Tecnico"));
         when(materiaDaoMemoryImpl.buscarMaterias()).thenReturn(new ArrayList<>());
 
         // Ejecutar el método
@@ -115,25 +115,29 @@ public class MateriaServiceImplTest {
         verify(materiaDaoMemoryImpl, times(1)).modificarMateria(any(Materia.class));
     }
 
-
-
-    @Test(expected = MateriaNoEncontradaException.class)
+    @Test
     public void testBorrarMateriaId_NoEncontrada() throws MateriaNoEncontradaException {
         // Simular que no se encuentra la materia
         when(materiaDaoMemoryImpl.buscarMateriaId(1L)).thenReturn(null);
 
-        // Ejecutar el método
-        materiaService.borrarmateriaId(1L);
+        // Ejecutar el método y verificar que se lanza la excepción
+        assertThrows(MateriaNoEncontradaException.class, () -> {
+            materiaService.borrarmateriaId(1L);
+        });
     }
-    @Test(expected = IllegalArgumentException.class)
+
+    @Test
     public void testBuscarMateriaId_NoEncontrada() {
         // Simular que no se encuentra la materia
         when(materiaDaoMemoryImpl.buscarMateriaId(1L)).thenReturn(null);
 
-        // Ejecutar el método
-        materiaService.buscarmateriaId(1L);
+        // Ejecutar el método y verificar que se lanza la excepción
+        assertThrows(IllegalArgumentException.class, () -> {
+            materiaService.buscarmateriaId(1L);
+        });
     }
-    @Test(expected = MateriaYaExisteException.class)
+
+    @Test
     public void testCrearMateria_Duplicada() throws ProfesorNoEncontradoException, MateriaYaExisteException {
         // Simular una materia que ya existe
         MateriaDto materiaDto = new MateriaDto();
@@ -145,8 +149,9 @@ public class MateriaServiceImplTest {
 
         when(materiaDaoMemoryImpl.buscarMaterias()).thenReturn(Arrays.asList(new Materia("Matemáticas", 1, 1, 1L, Collections.emptyList())));
 
-        // Ejecutar el método
-        materiaService.crearMateria(materiaDto);
+        // Ejecutar el método y verificar que se lanza la excepción
+        assertThrows(MateriaYaExisteException.class, () -> {
+            materiaService.crearMateria(materiaDto);
+        });
     }
-
 }

@@ -9,17 +9,16 @@ import ar.edu.utn.frbb.tup.model.exception.ProfesorNoEncontradoException;
 import ar.edu.utn.frbb.tup.model.exception.ProfesorYaExisteException;
 import ar.edu.utn.frbb.tup.persistence.MateriaDaoMemoryImpl;
 import ar.edu.utn.frbb.tup.persistence.ProfesorDaoMemoryImpl;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class ProfesorServiceImplTest {
@@ -33,20 +32,20 @@ public class ProfesorServiceImplTest {
     @Mock
     private MateriaDaoMemoryImpl materiaDaoMemoryimpl;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testCrearProfesor_Valido() throws Exception {
-        // Crear un ProfesorDto manualmente usando setters.
+    public void testCrearProfesorValido() throws ProfesorYaExisteException {
+        // Crear un ProfesorDto con datos válidos.
         ProfesorDto profesorDto = new ProfesorDto();
         profesorDto.setNombre("Juan");
         profesorDto.setApellido("Pérez");
         profesorDto.setTitulo("Ingeniero");
 
-        when(profesorDaoMemoryimpl.buscarProfesores()).thenReturn(new ArrayList<>()); // no hay profesores
+        when(profesorDaoMemoryimpl.buscarProfesores()).thenReturn(new ArrayList<>()); // no hay profesores existentes
         Profesor profesorCreado = profesorService.crearProfesor(profesorDto);
 
         assertNotNull(profesorCreado);
@@ -56,7 +55,7 @@ public class ProfesorServiceImplTest {
     }
 
     @Test
-    public void testCrearProfesor_ProfesorExistente() {
+    public void testCrearProfesorProfesorExistente() {
         // Preparar un ProfesorDto
         ProfesorDto profesorDto = new ProfesorDto();
         profesorDto.setNombre("Jose");
@@ -141,5 +140,57 @@ public class ProfesorServiceImplTest {
         verify(profesorDaoMemoryimpl, times(1)).modificarProfesor(profesorExistente);
     }
 
+    @Test
+    public void testModificarProfesorNoExistente() {
+        long id = 1L;
+        ProfesorDto profesorDto = new ProfesorDto();
+        profesorDto.setNombre("Carlos");
+        profesorDto.setApellido("Ramírez");
+        profesorDto.setTitulo("Doctor");
 
+        when(profesorDaoMemoryimpl.buscarProfesorporid(id)).thenReturn(null);
+
+        ProfesorNoEncontradoException exception = assertThrows(ProfesorNoEncontradoException.class, () -> {
+            profesorService.modificarProfesor(id, profesorDto);
+        });
+
+        assertEquals("No se encontró un profesor con el ID proporcionado: 1", exception.getMessage());
+    }
+
+
+
+    @Test
+    public void testModificarProfesorConDatosIncompletos() {
+        long id = 1L;
+        ProfesorDto profesorDto = new ProfesorDto();
+        profesorDto.setNombre("");
+
+        ProfesorNoEncontradoException exception = assertThrows(ProfesorNoEncontradoException.class, () -> {
+            profesorService.modificarProfesor(id, profesorDto);
+        });
+
+        assertEquals("No se encontró un profesor con el ID proporcionado: 1", exception.getMessage());
+    }
+
+    @Test
+    public void testBuscarProfesoresConListaVacia() {
+        when(profesorDaoMemoryimpl.buscarProfesores()).thenReturn(new ArrayList<>());
+
+        List<Profesor> resultado = profesorService.buscarProfesores();
+
+        assertNotNull(resultado);
+        assertTrue(resultado.isEmpty());
+    }
+
+    @Test
+    public void testModificarProfesorSinNombre() {
+        long id = 1L;
+        ProfesorDto profesorDto = new ProfesorDto();
+
+        ProfesorNoEncontradoException exception = assertThrows(ProfesorNoEncontradoException.class, () -> {
+            profesorService.modificarProfesor(id, profesorDto);
+        });
+
+        assertEquals("No se encontró un profesor con el ID proporcionado: 1", exception.getMessage());
+    }
 }

@@ -1,18 +1,21 @@
 package ar.edu.utn.frbb.tup.persistence;
 
 import ar.edu.utn.frbb.tup.model.Alumno;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-
 import org.mockito.MockitoAnnotations;
 
-import java.io.*;
-import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 
-public class AlumnoDaoMemoryImplTest {
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+class AlumnoDaoMemoryImplTest {
 
     @InjectMocks
     private AlumnoDaoMemoryImpl alumnoDaoMemoryImpl;
@@ -31,14 +34,14 @@ public class AlumnoDaoMemoryImplTest {
 
     private static final String CSV_FILE_PATH = "C:/Users/Felipe/IdeaProjects/Academic-Management-System/src/main/java/ar/edu/utn/frbb/tup/persistence/dataCSV/alumnoDATA.csv";
 
-    @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testGuardarAlumno() {
-        Alumno alumno = new Alumno(1L, "marcos", "bayon", 45740531);
+    void testGuardarAlumno() {
+        Alumno alumno = new Alumno(1L, "Luis", "Delafuente", 2342345);
         alumnoDaoMemoryImpl.guardarAlumno(alumno);
         Alumno alumnoGuardado = alumnoDaoMemoryImpl.buscarAlumnoporid(1L);
         assertNotNull(alumnoGuardado);
@@ -47,10 +50,8 @@ public class AlumnoDaoMemoryImplTest {
         assertEquals(2342345, alumnoGuardado.getDni());
     }
 
-
-
     @Test
-    public void testBuscarAlumnoPorDni() {
+    void testBuscarAlumnoPorDni() {
         // Crear un nuevo alumno con un DNI específico
         Alumno alumno = new Alumno(2L, "Ana", "González", 87654321);
 
@@ -71,9 +72,9 @@ public class AlumnoDaoMemoryImplTest {
         assertEquals(87654321, alumnoEncontrado.getDni());
     }
 
-        @Test
-    public void testBorrarAlumnoPorId() {
-        Alumno alumno = new Alumno(2, "Martin", "Gimenez", 33345678);
+    @Test
+    void testBorrarAlumnoPorId() {
+        Alumno alumno = new Alumno(2L, "Martin", "Gimenez", 33345678);
         alumnoDaoMemoryImpl.guardarAlumno(alumno);  // Guardamos el alumno en el repositorio
 
         Alumno deletedAlumno = alumnoDaoMemoryImpl.borrarAlumnoporid(2L);  // Llamamos al método de eliminación
@@ -85,11 +86,11 @@ public class AlumnoDaoMemoryImplTest {
         assertEquals(33345678, deletedAlumno.getDni());
 
         // Verificamos que el alumno ya no existe en el repositorio
-        assertNull(alumnoDaoMemoryImpl.buscarAlumnoporid(2));
+        assertNull(alumnoDaoMemoryImpl.buscarAlumnoporid(2L));
     }
 
     @Test
-    public void testModificarAlumno() {
+    void testModificarAlumno() {
         Alumno alumno = new Alumno(3L, "Carlos", "Rodríguez", 11223344);
         alumnoDaoMemoryImpl.guardarAlumno(alumno);
         Alumno alumnoModificado = new Alumno(3L, "Carlos", "Rodríguez", 99887766);
@@ -99,8 +100,9 @@ public class AlumnoDaoMemoryImplTest {
         assertNotNull(alumnoBuscado);
         assertEquals(99887766, alumnoBuscado.getDni());
     }
+
     @Test
-    public void testObtenerUltimoId() {
+    void testObtenerUltimoId() {
         Alumno alumno1 = new Alumno(7L, "Sofía", "García", 22334455);
         Alumno alumno2 = new Alumno(8L, "Pedro", "Martín", 66778899);
         alumnoDaoMemoryImpl.guardarAlumno(alumno1);

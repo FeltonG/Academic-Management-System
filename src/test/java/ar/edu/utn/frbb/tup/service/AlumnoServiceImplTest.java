@@ -6,8 +6,8 @@ import ar.edu.utn.frbb.tup.model.dto.AlumnoDto;
 import ar.edu.utn.frbb.tup.model.exception.AlumnoNoEncontradoException;
 import ar.edu.utn.frbb.tup.model.exception.AlumnoYaExisteException;
 import ar.edu.utn.frbb.tup.persistence.AlumnoDaoMemoryImpl;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -15,7 +15,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -27,19 +27,18 @@ public class AlumnoServiceImplTest {
     @InjectMocks
     private AlumnoServiceImpl alumnoService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void     testCrearAlumno() throws AlumnoYaExisteException {
+    public void testCrearAlumno() throws AlumnoYaExisteException {
         AlumnoDto alumnoDto = new AlumnoDto();
         alumnoDto.setNombre("Juan");
         alumnoDto.setApellido("Perez");
         alumnoDto.setDni(12345678);
         Alumno alumno = new Alumno("Juan", "Perez", 12345678);
-
 
         Alumno result = alumnoService.crearAlumno(alumnoDto);
 
@@ -56,8 +55,6 @@ public class AlumnoServiceImplTest {
         Alumno alumno = new Alumno("Juan", "Perez", 12345678);
 
         when(alumnoDaoMemoryImpl.buscarAlumnoporid(id)).thenReturn(alumno);
-
-        // Si borrarAlumnoporid retorna un valor, usamos thenReturn para simularlo
         when(alumnoDaoMemoryImpl.borrarAlumnoporid(id)).thenReturn(alumno);
 
         Alumno result = alumnoService.borraralumnoId(id);
@@ -117,17 +114,18 @@ public class AlumnoServiceImplTest {
         assertNotNull(result);
         assertEquals(2, result.size());
         verify(alumnoDaoMemoryImpl, times(1)).buscarAlumnos();
-        System.out.println(alumnos);
     }
-    @Test(expected = AlumnoNoEncontradoException.class)
+
+    @Test
     public void testBorrarAlumnoIdAlumnoNoEncontrado() throws AlumnoNoEncontradoException {
         long id = 99L; // Un ID que sabemos que no existe
 
         when(alumnoDaoMemoryImpl.buscarAlumnoporid(id)).thenReturn(null);
 
-        alumnoService.borraralumnoId(id);
+        assertThrows(AlumnoNoEncontradoException.class, () -> alumnoService.borraralumnoId(id));
     }
-    @Test(expected = AlumnoYaExisteException.class)
+
+    @Test
     public void testCrearAlumnoConDniYaExistente() throws AlumnoYaExisteException {
         AlumnoDto alumnoDto = new AlumnoDto();
         alumnoDto.setNombre("Juan");
@@ -136,8 +134,9 @@ public class AlumnoServiceImplTest {
 
         when(alumnoDaoMemoryImpl.buscarAlumnopordni(12345678)).thenReturn(new Alumno("Juan", "Perez", 12345678));
 
-        alumnoService.crearAlumno(alumnoDto);
+        assertThrows(AlumnoYaExisteException.class, () -> alumnoService.crearAlumno(alumnoDto));
     }
+
     @Test
     public void testBuscarAlumnosListaVacia() {
         when(alumnoDaoMemoryImpl.buscarAlumnos()).thenReturn(new ArrayList<>());
@@ -165,5 +164,4 @@ public class AlumnoServiceImplTest {
 
         verify(alumnoDaoMemoryImpl, times(1)).buscarAlumnos();
     }
-
 }

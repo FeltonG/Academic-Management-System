@@ -13,18 +13,15 @@ import ar.edu.utn.frbb.tup.model.exception.EstadoIncorrectoException;
 import ar.edu.utn.frbb.tup.model.exception.NoseEncontroAsignatura;
 import ar.edu.utn.frbb.tup.persistence.AlumnoDaoMemoryImpl;
 import ar.edu.utn.frbb.tup.persistence.AsignaturaDaoMemoryImpl;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class AsignaturaServiceImplTest {
@@ -39,15 +36,14 @@ public class AsignaturaServiceImplTest {
     @Mock
     private AlumnoDaoMemoryImpl alumnoDaoMemory;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         Alumno alumno = new Alumno(1, "Diego", "Maradona", 23232424);
         when(alumnoDaoMemory.buscarAlumnoporid(1)).thenReturn(alumno);
         Materia materia =new Materia("Historia", 1,2,1);
         when(materiaServiceimpl.buscarmateriaId(1)).thenReturn(materia);
     }
-
 
     @Test
     public void testCrearAsignaturaConDatosValidos() throws AsignaturaYaExisteException {
@@ -73,7 +69,6 @@ public class AsignaturaServiceImplTest {
         verify(asignaturaDaoMemoryImpl, times(1)).guardarAsignatura(any(Asignatura.class));
     }
 
-
     @Test
     public void testCrearAsignaturaConNotaNula() {
         AsignaturaDto asignaturaDto = new AsignaturaDto();
@@ -86,7 +81,7 @@ public class AsignaturaServiceImplTest {
         assertEquals("La nota no puede ser nula", exception.getMessage());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testCrearAsignaturaNotaNula() throws AsignaturaYaExisteException {
         AsignaturaDto asignaturaDto = new AsignaturaDto();
         asignaturaDto.setEstado(EstadoAsignatura.CURSADA);
@@ -94,7 +89,7 @@ public class AsignaturaServiceImplTest {
         asignaturaDto.setIdalumno(1);
         asignaturaDto.setIdmateria(1);
 
-        asignaturaService.crearAsignatura(asignaturaDto);
+        assertThrows(IllegalArgumentException.class, () -> asignaturaService.crearAsignatura(asignaturaDto));
     }
 
     @Test
@@ -124,10 +119,9 @@ public class AsignaturaServiceImplTest {
         assertNotNull(resultado);
         assertEquals(asignatura, resultado);
         verify(asignaturaDaoMemoryImpl, times(2)).borrarAsignaturaporid(id);
-
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testCrearAsignaturaIdMateriaInvalido() throws AsignaturaYaExisteException {
         AsignaturaDto asignaturaDto = new AsignaturaDto();
         asignaturaDto.setEstado(EstadoAsignatura.CURSADA);
@@ -135,10 +129,10 @@ public class AsignaturaServiceImplTest {
         asignaturaDto.setIdalumno(1);
         asignaturaDto.setIdmateria(-1); // ID de la materia inválido
 
-        asignaturaService.crearAsignatura(asignaturaDto);
+        assertThrows(IllegalArgumentException.class, () -> asignaturaService.crearAsignatura(asignaturaDto));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testCrearAsignaturaIdAlumnoInvalido() throws AsignaturaYaExisteException {
         AsignaturaDto asignaturaDto = new AsignaturaDto();
         asignaturaDto.setEstado(EstadoAsignatura.CURSADA);
@@ -146,10 +140,8 @@ public class AsignaturaServiceImplTest {
         asignaturaDto.setIdalumno(-1); // ID del alumno inválido
         asignaturaDto.setIdmateria(1);
 
-        asignaturaService.crearAsignatura(asignaturaDto);
+        assertThrows(IllegalArgumentException.class, () -> asignaturaService.crearAsignatura(asignaturaDto));
     }
-
-
 
     @Test
     public void testModificarEstadoAsignatura() throws AsignaturaNoEncontradaException, EstadoIncorrectoException {
@@ -166,12 +158,14 @@ public class AsignaturaServiceImplTest {
         verify(asignaturaDaoMemoryImpl, times(1)).modificarAsignatura(asignatura);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testBuscarAsignaturaIdNoExistente() {
         long id = 999; // ID de asignatura no existente
-        asignaturaService.buscarAsignaturaId(id);
+
+        assertThrows(IllegalArgumentException.class, () -> asignaturaService.buscarAsignaturaId(id));
     }
-    @Test(expected = NoseEncontroAsignatura.class)
+
+    @Test
     public void testModificarAsignaturaNoExistente() {
         long id = 999; // ID de asignatura no existente
         AsignaturaDto asignaturaDto = new AsignaturaDto();
@@ -180,20 +174,16 @@ public class AsignaturaServiceImplTest {
         asignaturaDto.setIdalumno(1);
         asignaturaDto.setIdmateria(1);
 
-        asignaturaService.modificarAsignatura(id, asignaturaDto);
+        assertThrows(NoseEncontroAsignatura.class, () -> asignaturaService.modificarAsignatura(id, asignaturaDto));
     }
-    @Test(expected = NoseEncontroAsignatura.class)
+
+    @Test
     public void testBorrarAsignaturaNoExistente() {
         long id = 999; // ID de asignatura no existente
 
-        asignaturaService.borrarAsignaturaporid(id);
+        assertThrows(NoseEncontroAsignatura.class, () -> asignaturaService.borrarAsignaturaporid(id));
     }
-    @Test(expected = IllegalArgumentException.class)
-    public void testBuscarAsignaturaIdInvalido() {
-        long id = 999; // ID de asignatura no existente
 
-        asignaturaService.buscarAsignaturaId(id);
-    }
     @Test
     public void testModificarEstadoAsignaturaExistente() throws AsignaturaNoEncontradaException, EstadoIncorrectoException {
         long idAlumno = 1;
@@ -208,16 +198,15 @@ public class AsignaturaServiceImplTest {
         assertEquals(EstadoAsignatura.APROBADA, resultado.getEstado());
         verify(asignaturaDaoMemoryImpl, times(1)).modificarAsignatura(asignatura);
     }
-    @Test(expected = IllegalStateException.class)
+
+    @Test
     public void testCrearAsignaturaRelacionInvalida() throws IllegalArgumentException, AsignaturaYaExisteException {
         AsignaturaDto asignaturaDto = new AsignaturaDto();
         asignaturaDto.setEstado(EstadoAsignatura.CURSADA);
         asignaturaDto.setNota(8);
-        asignaturaDto.setIdalumno(999); // ID de alumno no existente
-        asignaturaDto.setIdmateria(1); // ID de materia válida
+        asignaturaDto.setIdalumno(999); // Alumno no existente
+        asignaturaDto.setIdmateria(1);
 
-        asignaturaService.crearAsignatura(asignaturaDto);
+        assertThrows(IllegalStateException.class, () -> asignaturaService.crearAsignatura(asignaturaDto));
     }
-
-
 }

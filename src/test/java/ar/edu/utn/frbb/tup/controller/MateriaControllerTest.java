@@ -8,8 +8,8 @@ import ar.edu.utn.frbb.tup.model.dto.MateriaDto;
 import ar.edu.utn.frbb.tup.model.exception.MateriaNoEncontradaException;
 import ar.edu.utn.frbb.tup.model.exception.MateriaYaExisteException;
 import ar.edu.utn.frbb.tup.model.exception.ProfesorNoEncontradoException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -18,10 +18,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class MateriaControllerTest {
+class MateriaControllerTest {
 
     @InjectMocks
     private MateriaController materiaController;
@@ -36,10 +36,9 @@ public class MateriaControllerTest {
     private Materia materia;
     private List<Materia> materias;
 
-    @Before
-    public void setUp() {
-
-        MockitoAnnotations.initMocks(this);
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
 
         // Crear la lista de correlatividades con identificadores de asignaturas
         List<Long> c = new ArrayList<>();
@@ -67,7 +66,7 @@ public class MateriaControllerTest {
     }
 
     @Test
-    public void testCrearMateria() throws ProfesorNoEncontradoException, MateriaYaExisteException {
+    void testCrearMateria() throws ProfesorNoEncontradoException, MateriaYaExisteException {
         // Configurar el comportamiento del validador
         doNothing().when(materiaValidator).materiaValidation(materiaDto);
 
@@ -84,13 +83,10 @@ public class MateriaControllerTest {
         // Verificar interacciones con el validador y el servicio
         verify(materiaValidator, times(1)).materiaValidation(materiaDto); // Verificar que el validador fue invocado una vez
         verify(materiaService, times(1)).crearMateria(materiaDto); // Verificar que el servicio fue invocado una vez
-
-        System.out.println(materia);  // Para verificar el contenido de materia
     }
 
     @Test
-    public void testBuscarMateriaId() {
-
+    void testBuscarMateriaId() {
         when(materiaService.buscarmateriaId(1)).thenReturn(materia);
 
         Materia response = materiaController.buscarMateriaId(1);
@@ -100,8 +96,7 @@ public class MateriaControllerTest {
     }
 
     @Test
-    public void testModificarMateria() throws MateriaNoEncontradaException, ProfesorNoEncontradoException, MateriaYaExisteException {
-
+    void testModificarMateria() throws MateriaNoEncontradaException, ProfesorNoEncontradoException, MateriaYaExisteException {
         when(materiaService.modificarMateria(1, materiaDto)).thenReturn(materia);
 
         Materia response = materiaController.modificarMateria(1, materiaDto);
@@ -111,14 +106,12 @@ public class MateriaControllerTest {
     }
 
     @Test
-    public void testEliminarMateria() throws MateriaNoEncontradaException {
-
+    void testEliminarMateria() throws MateriaNoEncontradaException {
         when(materiaService.borrarmateriaId(1)).thenReturn(materia);
 
         Materia response = materiaController.eliminarMateria(1);
 
         assertNotNull(response);
         assertEquals("Matemáticas", response.getNombre());
-
     }
 }

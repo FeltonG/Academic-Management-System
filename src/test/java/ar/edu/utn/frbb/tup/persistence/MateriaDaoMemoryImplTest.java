@@ -1,8 +1,8 @@
 package ar.edu.utn.frbb.tup.persistence;
 
 import ar.edu.utn.frbb.tup.model.Materia;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MateriaDaoMemoryImplTest {
 
@@ -24,15 +24,14 @@ public class MateriaDaoMemoryImplTest {
 
     private final String testFilePath = "C:/Users/Felipe/IdeaProjects/Academic-Management-System/src/main/java/ar/edu/utn/frbb/tup/persistence/dataCSV/materiaDATA.csv";
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         MockitoAnnotations.openMocks(this);
-        // Crear un archivo de prueba si no existe
         File testFile = new File(testFilePath);
         if (testFile.exists()) {
             assertTrue(testFile.delete());
         }
-        assertTrue(testFile.createNewFile());
+        assertTrue(testFile.createNewFile(), "Error al crear el archivo de prueba");
     }
 
     @Test
@@ -40,14 +39,14 @@ public class MateriaDaoMemoryImplTest {
         // Crear un objeto Materia
         Materia materia = new Materia(1L, "Matemática", 2024, 1, 100L, new ArrayList<>());
 
-        // Llamar al método guardarMateria (usando el PrintWriter real)
+        // Llamar al método guardarMateria
         materiaDao.guardarMateria(materia);
 
         // Leer el archivo para verificar que se haya guardado la información
         try (BufferedReader reader = new BufferedReader(new FileReader(testFilePath))) {
             String line = reader.readLine();
-            assertNotNull(line);  // Verifica que haya contenido en el archivo
-            assertTrue(line.contains("Matemática"));  // Verifica que el contenido esté en el archivo
+            assertNotNull(line, "El archivo no tiene contenido");
+            assertTrue(line.contains("Matemática"), "El nombre de la materia no está en el archivo");
         }
     }
 
@@ -59,13 +58,13 @@ public class MateriaDaoMemoryImplTest {
             writer.write("2,Física,2,1,101,\n");
         }
 
-// Verifica que el método buscarMaterias esté leyendo correctamente las líneas
+        // Verifica que el método buscarMaterias esté leyendo correctamente las líneas
         List<Materia> materias = materiaDao.buscarMaterias();
 
-// Verifica la cantidad de materias y sus nombres
-        assertEquals(2, materias.size());
-        assertEquals("Matemática", materias.get(0).getNombre());
-        assertEquals("Física", materias.get(1).getNombre());  // Verifica el nombre de la segunda materia
+        // Verifica la cantidad de materias y sus nombres
+        assertEquals(2, materias.size(), "No se ha leído correctamente el número de materias");
+        assertEquals("Matemática", materias.get(0).getNombre(), "El nombre de la primera materia es incorrecto");
+        assertEquals("Física", materias.get(1).getNombre(), "El nombre de la segunda materia es incorrecto");
     }
 
     @Test
@@ -76,8 +75,8 @@ public class MateriaDaoMemoryImplTest {
         }
 
         Materia materia = materiaDao.buscarMateriaId(1L);
-        assertNotNull(materia);
-        assertEquals("Matemática", materia.getNombre());
+        assertNotNull(materia, "La materia no debería ser nula");
+        assertEquals("Matemática", materia.getNombre(), "El nombre de la materia es incorrecto");
     }
 
     @Test
@@ -88,12 +87,12 @@ public class MateriaDaoMemoryImplTest {
         }
 
         Materia materia = materiaDao.borrarmateriaporid(1L);
-        assertNotNull(materia);
-        assertEquals("Matemática", materia.getNombre());
+        assertNotNull(materia, "La materia no debería ser nula");
+        assertEquals("Matemática", materia.getNombre(), "El nombre de la materia es incorrecto");
 
         // Comprobar que el archivo se haya vaciado después de borrar
         try (BufferedReader reader = new BufferedReader(new FileReader(testFilePath))) {
-            assertNull(reader.readLine());  // No debería haber nada en el archivo
+            assertNull(reader.readLine(), "El archivo no debería tener contenido después de borrar la materia");
         }
     }
 }

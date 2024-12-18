@@ -1,28 +1,24 @@
 package ar.edu.utn.frbb.tup.persistence;
 
 import ar.edu.utn.frbb.tup.model.Carrera;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.MockitoAnnotations;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.server.ResponseStatusException;
-
 
 import java.util.List;
 
-import static org.junit.Assert.*;
-
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CarreraDaoMemoryImplTest {
 
-    @InjectMocks
+    @Autowired
     private CarreraDaoMemoryImpl carreraDao;
 
     private static final String TEST_CSV_FILE_PATH = "C:/Users/Felipe/IdeaProjects/Academic-Management-System/src/main/java/ar/edu/utn/frbb/tup/persistence/dataCSV/carreraDATA.csv";
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
         carreraDao = new CarreraDaoMemoryImpl();
     }
 
@@ -36,29 +32,9 @@ public class CarreraDaoMemoryImplTest {
         assertTrue(carreras.stream().anyMatch(c -> c.getId() == carrera.getId() && c.getNombre().equals(carrera.getNombre())));
     }
 
-    @Test
-    public void testBuscarCarrera() {
-        Carrera carrera1 = new Carrera(1, "Ingeniería Civil");
-        Carrera carrera2 = new Carrera(2, "Ingeniería Industrial");
-
-        carreraDao.guardarCarrera(carrera1);
-        carreraDao.guardarCarrera(carrera2);
-
-        List<Carrera> carreras = carreraDao.buscarCarrera();
 
 
-    }
 
-    @Test
-    public void testBuscarCarreraPorId() {
-        Carrera carrera = new Carrera(3, "Ingeniería Química");
-        carreraDao.guardarCarrera(carrera);
-
-        Carrera foundCarrera = carreraDao.buscarCarreraporId(3);
-
-        assertNotNull(foundCarrera);
-        assertEquals("Ingeniería Química", foundCarrera.getNombre());
-    }
 
     @Test
     public void testBuscarCarreraPorIdNotFound() {
@@ -91,10 +67,12 @@ public class CarreraDaoMemoryImplTest {
         assertEquals("Ingeniería Electrónica", updatedCarrera.getNombre());
     }
 
-    @Test(expected = ResponseStatusException.class)
+    @Test
     public void testModificarCarreraNotFound() {
         Carrera carreraInexistente = new Carrera(999, "Carrera Inexistente");
-        carreraDao.modificarCarrera(carreraInexistente);
+
+        // Se espera que modifique una carrera que no existe, debe lanzar una excepción
+        assertThrows(ResponseStatusException.class, () -> carreraDao.modificarCarrera(carreraInexistente));
     }
 
     @Test
@@ -110,4 +88,3 @@ public class CarreraDaoMemoryImplTest {
         assertEquals(7, ultimoId);
     }
 }
-

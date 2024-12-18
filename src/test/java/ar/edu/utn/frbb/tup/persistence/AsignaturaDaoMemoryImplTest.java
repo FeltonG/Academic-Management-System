@@ -3,14 +3,16 @@ package ar.edu.utn.frbb.tup.persistence;
 import ar.edu.utn.frbb.tup.model.Asignatura;
 import ar.edu.utn.frbb.tup.model.EstadoAsignatura;
 import ar.edu.utn.frbb.tup.model.exception.AsignaturaNoEncontradaException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
 import java.io.*;
+
 import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AsignaturaDaoMemoryImplTest {
 
@@ -31,9 +33,9 @@ public class AsignaturaDaoMemoryImplTest {
 
     private static final String CSV_FILE_PATH = "C:/Users/Felipe/IdeaProjects/Academic-Management-System/src/main/java/ar/edu/utn/frbb/tup/persistence/dataCSV/asignaturaDATA.csv";
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
@@ -63,7 +65,7 @@ public class AsignaturaDaoMemoryImplTest {
 
         assertNotNull(asignatura);
         assertEquals(1L, asignatura.getId());
-        assertTrue(EstadoAsignatura.APROBADA == asignatura.getEstado() || EstadoAsignatura.CURSADA == asignatura.getEstado());
+        assertTrue(asignatura.getEstado() == EstadoAsignatura.APROBADA || asignatura.getEstado() == EstadoAsignatura.CURSADA);
         assertEquals(8, asignatura.getNota());
     }
 
@@ -84,6 +86,13 @@ public class AsignaturaDaoMemoryImplTest {
     }
 
     @Test
+    public void testBorrarAsignaturaPorIdNoExistente() {
+        Asignatura deletedAsignatura = asignaturaDaoMemoryImpl.borrarAsignaturaporid(10L); // Asignatura no existe
+
+        assertNull(deletedAsignatura); // Debe retornar null
+    }
+
+    @Test
     public void testModificarAsignatura() throws IOException {
         Asignatura asignaturaOriginal = new Asignatura(3L, EstadoAsignatura.APROBADA, 8, 123L, 456L);
         Asignatura asignaturaModificada = new Asignatura(3L, EstadoAsignatura.CURSADA, 9, 124L, 457L);
@@ -92,18 +101,13 @@ public class AsignaturaDaoMemoryImplTest {
 
         asignaturaDaoMemoryImpl.modificarAsignatura(asignaturaModificada);
 
-        Asignatura asignaturaRecuperada = asignaturaDaoMemoryImpl.modificarAsignatura(asignaturaModificada);
+        Asignatura asignaturaRecuperada = asignaturaDaoMemoryImpl.buscarAsignaturaporId(3L);
 
         assertNotNull(asignaturaRecuperada);
         assertEquals(EstadoAsignatura.CURSADA, asignaturaRecuperada.getEstado());
         assertEquals(9, asignaturaRecuperada.getNota());
     }
-    @Test
-    public void testBorrarAsignaturaPorIdNoExistente() {
-        Asignatura deletedAsignatura = asignaturaDaoMemoryImpl.borrarAsignaturaporid(10L); // Asignatura no existe
 
-        assertNull(deletedAsignatura); // Debe retornar null
-    }
     @Test
     public void testActualizarEstadoAsignatura() throws IOException {
         Asignatura asignatura = new Asignatura(6L, EstadoAsignatura.APROBADA, 6, 125L, 458L);
@@ -116,7 +120,4 @@ public class AsignaturaDaoMemoryImplTest {
 
         assertEquals(EstadoAsignatura.CURSADA, asignaturaActualizada.getEstado());
     }
-
-
-
 }
