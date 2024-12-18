@@ -53,12 +53,25 @@ public class CarreraServiceImpl implements CarreraService {
     }
 
     @Override
-    public Carrera modificarCarrera(long id, CarreraDto carreraDto) {
+    public Carrera modificarCarrera(long id, CarreraDto carreraDto) throws CarreraYaExisteEstaException {
         Carrera carreraExistente = carreraDaoMemoryImpl.buscarCarreraporId(id);
         if (carreraExistente == null) {
             throw new CarreraNotFoundException("No se encontró la carrera con el ID: " + id);
         }
+        if (carreraDto.getNombre() == null || carreraDto.getNombre().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre de la carrera no puede estar vacío.");
+        }
 
+        // Validar que el nombre no contenga números
+        if (carreraDto.getNombre().matches(".*\\d.*")) {
+            throw new IllegalArgumentException("El nombre de la carrera no puede contener números.");
+        }
+
+
+        Carrera carrera = carreraDaoMemoryImpl.buscarCarrerasPorNombre(carreraDto.getNombre());
+        if (carrera != null) {
+            throw new CarreraYaExisteEstaException("Ya existe una carrera con el nombre especificado.");
+        }
         carreraExistente.setNombre(carreraDto.getNombre());
         carreraDaoMemoryImpl.modificarCarrera(carreraExistente);
         return carreraExistente;

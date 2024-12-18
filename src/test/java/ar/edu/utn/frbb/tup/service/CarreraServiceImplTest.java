@@ -89,7 +89,7 @@ public class CarreraServiceImplTest {
     }
 
     @Test
-    public void testModificarCarreraExistente() {
+    public void testModificarCarreraExistente() throws CarreraYaExisteEstaException {
         long id = 1;
         CarreraDto carreraDto = new CarreraDto();
         carreraDto.setNombre("Ingenieria en Software");

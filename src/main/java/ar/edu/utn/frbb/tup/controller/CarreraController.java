@@ -41,7 +41,7 @@ public class CarreraController {
 
     // Modificar una carrera existente
     @PutMapping("/{idCarrera}")
-    public Carrera modificarCarrera(@PathVariable("idCarrera") Integer idCarrera, @RequestBody CarreraDto carreraDto) {
+    public Carrera modificarCarrera(@PathVariable("idCarrera") Integer idCarrera, @RequestBody CarreraDto carreraDto) throws CarreraYaExisteEstaException {
         return carreraService.modificarCarrera(idCarrera, carreraDto);
     }
 

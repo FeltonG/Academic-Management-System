@@ -81,7 +81,7 @@ public class CarreraControllerTest {
     }
 
     @Test
-    public void testModificarCarrera() {
+    public void testModificarCarrera() throws CarreraYaExisteEstaException {
         Integer idCarrera = 1;
         CarreraDto carreraDto = new CarreraDto();
         Carrera carreraModificada = new Carrera();

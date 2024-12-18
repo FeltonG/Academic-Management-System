@@ -12,7 +12,7 @@ public interface CarreraService {
 
     List<Carrera> buscarCarreras();
 
-    Carrera modificarCarrera(long id, CarreraDto carrera);
+    Carrera modificarCarrera(long id, CarreraDto carrera) throws CarreraYaExisteEstaException;
 
     Carrera borrarCarreraporid(long id);
 
