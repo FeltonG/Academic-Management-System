@@ -31,7 +31,7 @@ public class AsignaturaDaoMemoryImplTest {
     @Mock
     private FileWriter fileWriter;
 
-    private static final String CSV_FILE_PATH = "C:/Users/Felipe/IdeaProjects/Academic-Management-System/src/main/java/ar/edu/utn/frbb/tup/persistence/dataCSV/asignaturaDATA.csv";
+    private static final String CSV_FILE_PATH = "C:/tup/Academic-Management-System/src/main/java/ar/edu/utn/frbb/tup/persistence/dataCSV/asignaturaDATA.csv";
 
     @BeforeEach
     public void setUp() {
