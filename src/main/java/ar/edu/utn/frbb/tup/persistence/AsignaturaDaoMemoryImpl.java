@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public class AsignaturaDaoMemoryImpl implements AsignaturaDao {
 
-    private static final String CSV_FILE_PATH = "C:/Users/Felipe/IdeaProjects/Academic-Management-System/src/main/java/ar/edu/utn/frbb/tup/persistence/dataCSV/asignaturaDATA.csv";
+    private static final String CSV_FILE_PATH = "C:/tup/Academic-Management-System/src/main/java/ar/edu/utn/frbb/tup/persistence/dataCSV/asignaturaDATA.csv";
 
     public void guardarAsignatura(Asignatura asignatura) {
         FileWriter fileWriter = null;

@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public class  CarreraDaoMemoryImpl implements  CarreraDao {
 
-    private static final String CSV_FILE_PATH = "C:/Users/Felipe/IdeaProjects/Academic-Management-System/src/main/java/ar/edu/utn/frbb/tup/persistence/dataCSV/carreraDATA.csv";
+    private static final String CSV_FILE_PATH = "C:/tup/Academic-Management-System/src/main/java/ar/edu/utn/frbb/tup/persistence/dataCSV/carreraDATA.csv";
 
     @Override
     public void guardarCarrera(Carrera carrera) {
