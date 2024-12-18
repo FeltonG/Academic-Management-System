@@ -127,7 +127,7 @@ public class ProfesorServiceImplTest {
         profesorDto.setApellido("Ramírez");
         profesorDto.setTitulo("Doctor");
 
-        Profesor profesorExistente = new Profesor("Juan", "Pérez", "Ingeniero");
+        Profesor profesorExistente = new Profesor("Juan", "Perez", "Ingeniero");
 
         when(profesorDaoMemoryimpl.buscarProfesorporid(id)).thenReturn(profesorExistente);
 

@@ -34,9 +34,9 @@ public class CarreraServiceImplTest {
     @Test
     public void testCrearCarreraConDatosValidos() throws CarreraYaExisteEstaException {
         CarreraDto carreraDto = new CarreraDto();
-        carreraDto.setNombre("Ingeniería en Sistemas");
+        carreraDto.setNombre("Ingenieria en Sistemas");
 
-        Carrera carrera = new Carrera("Ingeniería en Sistemas");
+        Carrera carrera = new Carrera("Ingenieria en Sistemas");
 
         //when(carreraDaoMemoryImpl.guardarCarrera(any(Carrera.class))).thenReturn(carrera);
 
@@ -63,8 +63,8 @@ public class CarreraServiceImplTest {
     @Test
     public void testBuscarCarreras() {
         List<Carrera> listaCarreras = new ArrayList<>();
-        listaCarreras.add(new Carrera("Ingeniería en Sistemas"));
-        listaCarreras.add(new Carrera("Licenciatura en Administración"));
+        listaCarreras.add(new Carrera("Ingenieria en Sistemas"));
+        listaCarreras.add(new Carrera("Licenciatura en Administracion"));
 
         when(carreraDaoMemoryImpl.buscarCarrera()).thenReturn(listaCarreras);
 
@@ -78,13 +78,13 @@ public class CarreraServiceImplTest {
     @Test
     public void testBuscarCarreraPorId() {
         long id = 1;
-        Carrera carrera = new Carrera("Ingeniería en Sistemas");
+        Carrera carrera = new Carrera("Ingenieria en Sistemas");
         when(carreraDaoMemoryImpl.buscarCarreraporId(id)).thenReturn(carrera);
 
         Carrera resultado = carreraService.buscarCarreraId(id);
 
         assertNotNull(resultado);
-        assertEquals("Ingeniería en Sistemas", resultado.getNombre());
+        assertEquals("Ingenieria en Sistemas", resultado.getNombre());
         verify(carreraDaoMemoryImpl, times(1)).buscarCarreraporId(id);
     }
 
@@ -92,15 +92,15 @@ public class CarreraServiceImplTest {
     public void testModificarCarreraExistente() {
         long id = 1;
         CarreraDto carreraDto = new CarreraDto();
-        carreraDto.setNombre("Ingeniería en Software");
+        carreraDto.setNombre("Ingenieria en Software");
 
-        Carrera carreraExistente = new Carrera("Ingeniería en Sistemas");
+        Carrera carreraExistente = new Carrera("Ingenieria en Sistemas");
         when(carreraDaoMemoryImpl.buscarCarreraporId(id)).thenReturn(carreraExistente);
 
         Carrera resultado = carreraService.modificarCarrera(id, carreraDto);
 
         assertNotNull(resultado);
-        assertEquals("Ingeniería en Software", resultado.getNombre());
+        assertEquals("Ingenieria en Software", resultado.getNombre());
         verify(carreraDaoMemoryImpl, times(1)).modificarCarrera(carreraExistente);
     }
 
@@ -108,7 +108,7 @@ public class CarreraServiceImplTest {
     public void testModificarCarreraNoExistente() {
         long id = 1;
         CarreraDto carreraDto = new CarreraDto();
-        carreraDto.setNombre("Ingeniería Química");
+        carreraDto.setNombre("Ingenieria Quimica");
 
         when(carreraDaoMemoryImpl.buscarCarreraporId(id)).thenReturn(null);
 
@@ -122,13 +122,13 @@ public class CarreraServiceImplTest {
     @Test
     public void testBorrarCarreraPorIdExistente() {
         long id = 1;
-        Carrera carreraExistente = new Carrera("Ingeniería en Sistemas");
+        Carrera carreraExistente = new Carrera("Ingenieria en Sistemas");
         when(carreraDaoMemoryImpl.buscarCarreraporId(id)).thenReturn(carreraExistente);
 
         Carrera resultado = carreraService.borrarCarreraporid(id);
 
         assertNotNull(resultado);
-        assertEquals("Ingeniería en Sistemas", resultado.getNombre());
+        assertEquals("Ingenieria en Sistemas", resultado.getNombre());
         verify(carreraDaoMemoryImpl, times(1)).borrarCarreraporid(id);
     }
 

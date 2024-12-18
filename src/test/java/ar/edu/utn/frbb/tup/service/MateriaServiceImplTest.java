@@ -65,27 +65,27 @@ public class MateriaServiceImplTest {
 
     @Test
     public void testBuscarMateria() {
-        Materia materia = new Materia("Física", 1, 1, 101L, Collections.emptyList());
+        Materia materia = new Materia("Fisica", 1, 1, 101L, Collections.emptyList());
         when(materiaDaoMemoryImpl.buscarMaterias()).thenReturn(Arrays.asList(materia));
 
         List<Materia> resultado = materiaService.buscarMateria();
 
         assertNotNull(resultado);
         assertEquals(1, resultado.size());
-        assertEquals("Física", resultado.get(0).getNombre());
+        assertEquals("Fisica", resultado.get(0).getNombre());
         verify(materiaDaoMemoryImpl, times(1)).buscarMaterias();
     }
 
     @Test
     public void testBuscarmateriaId() {
         long id = 1L;
-        Materia materia = new Materia("Química", 2, 2, 102L, Collections.emptyList());
+        Materia materia = new Materia("Quimica", 2, 2, 102L, Collections.emptyList());
         when(materiaDaoMemoryImpl.buscarMateriaId(id)).thenReturn(materia);
 
         Materia resultado = materiaService.buscarmateriaId(id);
 
         assertNotNull(resultado);
-        assertEquals("Química", resultado.getNombre());
+        assertEquals("Quimica", resultado.getNombre());
         assertEquals(2, resultado.getAnio());
         assertEquals(2, resultado.getCuatrimestre());
         verify(materiaDaoMemoryImpl, times(1)).buscarMateriaId(id);
@@ -94,7 +94,7 @@ public class MateriaServiceImplTest {
     @Test
     public void testModificarMateria_Success() throws MateriaNoEncontradaException, ProfesorNoEncontradoException, MateriaYaExisteException {
         // Simular datos existentes y DTO modificado
-        Materia materiaExistente = new Materia("Matemáticas", 1, 1, 1L, List.of());
+        Materia materiaExistente = new Materia("Matematicas", 1, 1, 1L, List.of());
         MateriaDto materiaModificada = new MateriaDto();
         materiaModificada.setNombre("Álgebra");
         materiaModificada.setAnio(2);
@@ -141,15 +141,15 @@ public class MateriaServiceImplTest {
     public void testCrearMateria_Duplicada() throws ProfesorNoEncontradoException, MateriaYaExisteException {
         // Simular una materia que ya existe
         MateriaDto materiaDto = new MateriaDto();
-        materiaDto.setNombre("Matemáticas");
+        materiaDto.setNombre("Matematicas");
         materiaDto.setAnio(1);
         materiaDto.setCuatrimestre(1);
         materiaDto.setProfesorId(1L);
         materiaDto.setCorrelatividades(List.of(2L));
 
-        when(materiaDaoMemoryImpl.buscarMaterias()).thenReturn(Arrays.asList(new Materia("Matemáticas", 1, 1, 1L, Collections.emptyList())));
+        when(materiaDaoMemoryImpl.buscarMaterias()).thenReturn(Arrays.asList(new Materia("Matematicas", 1, 1, 1L, Collections.emptyList())));
 
-        // Ejecutar el método y verificar que se lanza la excepción
+
         assertThrows(MateriaYaExisteException.class, () -> {
             materiaService.crearMateria(materiaDto);
         });
